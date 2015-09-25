@@ -1,3 +1,3 @@
-# chat_java_web
+Sample video chat java
 
-Text chat on java
+Use WebRTC technology
