@@ -41,20 +41,34 @@ public class ServletWebrtc extends HttpServlet {
     @OnMessage
     public void onMessage(String message, Session client)
             throws IOException, EncodeException {
+        //System.out.println(111);
         JSONObject jsonObject = new JSONObject(message);
 
         int type = jsonObject.getInt("type");
+
+
 
         switch(type) {
             //получение ICE key
             case 0:
                 String keyWebrtc = jsonObject.getString("candidate");
+                //System.out.println(keyWebrtc);
 
                 userSessionId.put(client.getId(), keyWebrtc);
 
                 System.out.println(keyWebrtc);
 
                 break;
+
+            //sent another ICE key
+            case 1:
+                for (Session session : sessions) {
+                    if (!session.getId().equals(client.getId())) {
+                        session.getBasicRemote().sendText("{\"candidate\":" + "\"" + userSessionId.get(client.getId()) + "\"" + "}");
+                        break;
+                    }
+                }
+
             default:
                 System.out.println("default case");
 

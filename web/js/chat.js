@@ -2,14 +2,8 @@ var startButton = $('#startButton');
 var callButton = $('#callButton');
 var hangupButton = $('#hangupButton');
 
-var startTime;
 var localVideo = $('#localVideo');
-//alert(localVideo);
 var remoteVideo = $('#remoteVideo');
-//alert(remoteVideo);
-
-//var localVideo = null;
-//var remoteVideo = null;
 
 var ws = new WebSocket("ws://" + "localhost:8080" + "/webrtc");
 
@@ -35,22 +29,18 @@ function getOtherPc(pc) {
     return (pc === pc1) ? pc2 : pc1;
 }
 
-function gotStream(stream) {
-    trace('Received local stream');
-    // Call the polyfill wrapper to attach the media stream to this element.
-    attachMediaStream(document.getElementById('localVideo'), stream);
-    localStream = stream;
-    $("#callButton").prop('disabled', false);
-}
-
 function start() {
-    trace('Requesting local stream');
     $("#startButton").prop('disabled', true);
+
     navigator.mediaDevices.getUserMedia({
         audio: true,
         video: true
     })
-        .then(gotStream)
+        .then(function(stream){
+            attachMediaStream(document.getElementById('localVideo'), stream);
+            localStream = stream;
+            $("#callButton").prop('disabled', false);
+        })
         .catch(function(e) {
             alert('getUserMedia() error: ' + e.name);
         });
@@ -76,14 +66,11 @@ function call(ws) {
                     onAddIceCandidateError(pc1, err);
                 }
             );
-            ws.send(JSON.stringify({
-                type : 0,
-                data : {
-                    data : {
-                        candidate : JSON.stringify(e.candidate)
-                    }
-                }
-            }));
+            var jsonToSent = new Object();
+            jsonToSent.type = 0;
+            jsonToSent.candidate = JSON.stringify(e.candidate);
+            ws.send(JSON.stringify(jsonToSent));
+            alert(e.candidate.candidate);
         }
     };
 
@@ -99,16 +86,17 @@ function call(ws) {
                     onAddIceCandidateError(pc2, err);
                 }
             );
-            ws.send(JSON.stringify({
-                type : 0,
-                data : {
-                    candidate : JSON.stringify(e.candidate)
-                }
-            }));
+            var jsonToSent = new Object();
+            jsonToSent.type = 0;
+            jsonToSent.candidate = JSON.stringify(e.candidate);
+            ws.send(JSON.stringify(jsonToSent));
         }
     };
 
-    pc2.onaddstream = gotRemoteStream;
+
+    pc2.onaddstream = function(e) {
+        attachMediaStream(document.getElementById('remoteVideo'), e.stream);
+    };
 
     pc1.addStream(localStream);
 
@@ -116,21 +104,24 @@ function call(ws) {
         offerOptions);
 }
 
+function start_connect() {
+
+
+}
+
 function onCreateSessionDescriptionError(error) {
     trace('Failed to create session description: ' + error.toString());
 }
 
 function onCreateOfferSuccess(desc) {
-    trace('Offer from pc1\n' + desc.sdp);
-    trace('pc1 setLocalDescription start');
     pc1.setLocalDescription(desc, function() {
         onSetLocalSuccess(pc1);
     }, onSetSessionDescriptionError);
-    trace('pc2 setRemoteDescription start');
+
     pc2.setRemoteDescription(desc, function() {
         onSetRemoteSuccess(pc2);
     }, onSetSessionDescriptionError);
-    trace('pc2 createAnswer start');
+
     pc2.createAnswer(onCreateAnswerSuccess, onCreateSessionDescriptionError);
 }
 
@@ -144,12 +135,6 @@ function onSetRemoteSuccess(pc) {
 
 function onSetSessionDescriptionError(error) {
     trace('Failed to set session description: ' + error.toString());
-}
-
-function gotRemoteStream(e) {
-    // Call the polyfill wrapper to attach the media stream to this element.
-    attachMediaStream(document.getElementById('remoteVideo'), e.stream);
-    trace('pc2 received remote stream');
 }
 
 function onCreateAnswerSuccess(desc) {
@@ -194,7 +179,7 @@ $(document).ready(
         ws.onopen = function (event) {};
 
         ws.onmessage = function (event) {
-
+            var msg = JSON.parse(message.data);
         };
 
         ws.onclose = function (event) {};
