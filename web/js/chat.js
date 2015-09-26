@@ -66,33 +66,15 @@ function call(ws) {
                     onAddIceCandidateError(pc1, err);
                 }
             );
-            var jsonToSent = new Object();
-            jsonToSent.type = 0;
-            jsonToSent.candidate = JSON.stringify(e.candidate);
-            ws.send(JSON.stringify(jsonToSent));
-            alert(e.candidate.candidate);
+            //var jsonToSent = new Object();
+            //jsonToSent.type = 0;
+            //jsonToSent.candidate = JSON.stringify(e.candidate);
+            //ws.send(JSON.stringify(jsonToSent));
+            //alert(e.candidate.candidate);
         }
     };
 
     pc2 = new RTCPeerConnection(configuration);
-
-    pc2.onicecandidate = function(e) {
-        if (e.candidate) {
-            getOtherPc(pc2).addIceCandidate(new RTCIceCandidate(e.candidate),
-                function() {
-                    onAddIceCandidateSuccess(pc2);
-                },
-                function(err) {
-                    onAddIceCandidateError(pc2, err);
-                }
-            );
-            var jsonToSent = new Object();
-            jsonToSent.type = 0;
-            jsonToSent.candidate = JSON.stringify(e.candidate);
-            ws.send(JSON.stringify(jsonToSent));
-        }
-    };
-
 
     pc2.onaddstream = function(e) {
         attachMediaStream(document.getElementById('remoteVideo'), e.stream);
@@ -104,25 +86,19 @@ function call(ws) {
         offerOptions);
 }
 
-function start_connect() {
-
-
-}
-
-function onCreateSessionDescriptionError(error) {
-    trace('Failed to create session description: ' + error.toString());
-}
-
 function onCreateOfferSuccess(desc) {
+
     pc1.setLocalDescription(desc, function() {
         onSetLocalSuccess(pc1);
     }, onSetSessionDescriptionError);
 
-    pc2.setRemoteDescription(desc, function() {
-        onSetRemoteSuccess(pc2);
-    }, onSetSessionDescriptionError);
+    ws.send(desc);
 
     pc2.createAnswer(onCreateAnswerSuccess, onCreateSessionDescriptionError);
+}
+
+function onCreateSessionDescriptionError(error) {
+    alert('Failed to create session description: ' + error.toString());
 }
 
 function onSetLocalSuccess(pc) {
@@ -134,16 +110,13 @@ function onSetRemoteSuccess(pc) {
 }
 
 function onSetSessionDescriptionError(error) {
-    trace('Failed to set session description: ' + error.toString());
+    //alert('Failed to set session description: ' + error.toString());
 }
 
 function onCreateAnswerSuccess(desc) {
-    trace('Answer from pc2:\n' + desc.sdp);
-    trace('pc2 setLocalDescription start');
     pc2.setLocalDescription(desc, function() {
         onSetLocalSuccess(pc2);
     }, onSetSessionDescriptionError);
-    trace('pc1 setRemoteDescription start');
     pc1.setRemoteDescription(desc, function() {
         onSetRemoteSuccess(pc1);
     }, onSetSessionDescriptionError);
@@ -154,7 +127,7 @@ function onAddIceCandidateSuccess(pc) {
 }
 
 function onAddIceCandidateError(pc, error) {
-    trace(getName(pc) + ' failed to add ICE Candidate: ' + error.toString());
+    //alert(getName(pc) + ' failed to add ICE Candidate: ' + error.toString());
 }
 
 function hangup() {
@@ -170,6 +143,7 @@ function hangup() {
 
 $(document).ready(
     function () {
+
         $("#startButton").prop('disabled', false);
         $("#callButton").prop('disabled', true);
         $("#hangupButton").prop('disabled', true);
@@ -179,7 +153,33 @@ $(document).ready(
         ws.onopen = function (event) {};
 
         ws.onmessage = function (event) {
-            var msg = JSON.parse(message.data);
+
+            //alert(JSON.parse(event.data));
+
+            pc2.setRemoteDescription(event.data, function() {
+                onSetRemoteSuccess(pc2);
+            }, onSetSessionDescriptionError);
+
+
+
+
+
+
+            //var jsonGet = JSON.parse(event.data);
+
+            //if (jsonGet["answer"] === "candidate")
+            //{
+            //    pc.addIceCandidate(new RTCIceCandidate(JSON.parse(jsonGet["key"])));
+                //alert("candidate");
+            //}
+
+            //if (jsonGet["answer"] =  "received_offer") {
+
+            //    pc2.setRemoteDescription(JSON.parse(jsonGet["description"]));
+            //    alert(jsonGet["description"]);
+
+
+            //}
         };
 
         ws.onclose = function (event) {};
@@ -200,4 +200,3 @@ $(document).ready(
 
     }
 );
-
