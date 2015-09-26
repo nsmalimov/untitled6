@@ -1,179 +1,125 @@
-var startButton = document.getElementById('startButton');
-var callButton = document.getElementById('callButton');
-var hangupButton = document.getElementById('hangupButton');
-callButton.disabled = true;
-hangupButton.disabled = true;
-startButton.onclick = start;
-callButton.onclick = call;
-hangupButton.onclick = hangup;
+var initiator;
+var pc;
 
-var startTime;
-var localVideo = document.getElementById('localVideo');
-var remoteVideo = document.getElementById('remoteVideo');
+var ws = new WebSocket("ws://" + "localhost:8080" + "/webrtc");
 
-var localStream;
-var pc1;
-var pc2;
-var offerOptions = {
-    offerToReceiveAudio: 1,
-    offerToReceiveVideo: 1
-};
+var PeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+var IceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
+var SessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
+navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 
-function getName(pc) {
-    return (pc === pc1) ? 'pc1' : 'pc2';
+function socketCallback(event) {
+    if (event.data == "magic_overload") {
+        alert("Sorry, but this node is overloaded!");
+    }
+    if (event.data == "owner") {
+        initiator = false;
+        initialize();
+    }
+    if (event.data == "guest") {
+        initiator = true;
+        initialize();
+    }
 }
+// add handler
+ws.onmessage = socketCallback;
 
-function getOtherPc(pc) {
-    return (pc === pc1) ? pc2 : pc1;
-}
-
-function gotStream(stream) {
-    trace('Received local stream');
-    // Call the polyfill wrapper to attach the media stream to this element.
-    attachMediaStream(localVideo, stream);
-    localStream = stream;
-    callButton.disabled = false;
-}
-
-function start() {
-    trace('Requesting local stream');
-    startButton.disabled = true;
-    navigator.mediaDevices.getUserMedia({
+function initialize() {
+    var constraints = {
         audio: true,
         video: true
-    })
-        .then(gotStream)
-        .catch(function(e) {
-            alert('getUserMedia() error: ' + e.name);
-        });
-}
-
-function call() {
-    callButton.disabled = true;
-    hangupButton.disabled = false;
-    trace('Starting call');
-    startTime = window.performance.now();
-    var videoTracks = localStream.getVideoTracks();
-    var audioTracks = localStream.getAudioTracks();
-//    if (videoTracks.length > 0) {
-//        trace('Using video device: ' + videoTracks[0].label);
-//    }
-//    if (audioTracks.length > 0) {
-//        trace('Using audio device: ' + audioTracks[0].label);
-//    }
-    var servers = null;
-    pc1 = new RTCPeerConnection(servers);
-    trace('Created local peer connection object pc1');
-    pc1.onicecandidate = function(e) {
-        onIceCandidate(pc1, e);
     };
-    pc2 = new RTCPeerConnection(servers);
-    trace('Created remote peer connection object pc2');
-    pc2.onicecandidate = function(e) {
-        onIceCandidate(pc2, e);
+    navigator.getUserMedia(constraints, success, fail);
+}
+
+function success(stream) {
+    pc = new PeerConnection(null);
+
+    if (stream) {
+        pc.addStream(stream);
+        $('#local').attachStream(stream);
+    }
+
+    pc.onaddstream = function(event) {
+        $('#remote').attachStream(event.stream);
+        logStreaming(true);
     };
-    pc1.oniceconnectionstatechange = function(e) {
-        onIceStateChange(pc1, e);
+
+    pc.onicecandidate = function(event) {
+        if (event.candidate) {
+            ws.send(JSON.stringify(event.candidate));
+        }
     };
-    pc2.oniceconnectionstatechange = function(e) {
-        onIceStateChange(pc2, e);
-    };
-    pc2.onaddstream = gotRemoteStream;
 
-    pc1.addStream(localStream);
-    trace('Added local stream to pc1');
-
-    trace('pc1 createOffer start');
-    pc1.createOffer(onCreateOfferSuccess, onCreateSessionDescriptionError,
-        offerOptions);
-}
-
-function onCreateSessionDescriptionError(error) {
-    trace('Failed to create session description: ' + error.toString());
-}
-
-function onCreateOfferSuccess(desc) {
-    trace('Offer from pc1\n' + desc.sdp);
-    trace('pc1 setLocalDescription start');
-    pc1.setLocalDescription(desc, function() {
-        onSetLocalSuccess(pc1);
-    }, onSetSessionDescriptionError);
-    trace('pc2 setRemoteDescription start');
-    pc2.setRemoteDescription(desc, function() {
-        onSetRemoteSuccess(pc2);
-    }, onSetSessionDescriptionError);
-    trace('pc2 createAnswer start');
-    // Since the 'remote' side has no media stream we need
-    // to pass in the right constraints in order for it to
-    // accept the incoming offer of audio and video.
-    pc2.createAnswer(onCreateAnswerSuccess, onCreateSessionDescriptionError);
-}
-
-function onSetLocalSuccess(pc) {
-    trace(getName(pc) + ' setLocalDescription complete');
-}
-
-function onSetRemoteSuccess(pc) {
-    trace(getName(pc) + ' setRemoteDescription complete');
-}
-
-function onSetSessionDescriptionError(error) {
-    trace('Failed to set session description: ' + error.toString());
-}
-
-function gotRemoteStream(e) {
-    // Call the polyfill wrapper to attach the media stream to this element.
-    attachMediaStream(remoteVideo, e.stream);
-    trace('pc2 received remote stream');
-}
-
-function onCreateAnswerSuccess(desc) {
-    trace('Answer from pc2:\n' + desc.sdp);
-    trace('pc2 setLocalDescription start');
-    pc2.setLocalDescription(desc, function() {
-        onSetLocalSuccess(pc2);
-    }, onSetSessionDescriptionError);
-    trace('pc1 setRemoteDescription start');
-    pc1.setRemoteDescription(desc, function() {
-        onSetRemoteSuccess(pc1);
-    }, onSetSessionDescriptionError);
-}
-
-function onIceCandidate(pc, event) {
-    if (event.candidate) {
-        getOtherPc(pc).addIceCandidate(new RTCIceCandidate(event.candidate),
-            function() {
-                onAddIceCandidateSuccess(pc);
-            },
-            function(err) {
-                onAddIceCandidateError(pc, err);
+    ws.onmessage = function (event) {
+        var signal = JSON.parse(event.data);
+        if (signal.sdp) {
+            if (initiator) {
+                receiveAnswer(signal);
+            } else {
+                receiveOffer(signal);
             }
-        );
-        trace(getName(pc) + ' ICE candidate: \n' + event.candidate.candidate);
+        } else if (signal.candidate) {
+            pc.addIceCandidate(new IceCandidate(signal));
+        }
+    };
+
+    if (initiator) {
+        createOffer();
+    } else {
+        log('Waiting for guest connection...');
     }
+    logStreaming(false);
 }
 
-function onAddIceCandidateSuccess(pc) {
-    trace(getName(pc) + ' addIceCandidate success');
+function fail() {
+    $('#traceback').text(Array.prototype.join.call(arguments, ' '));
+    $('#traceback').attr('class', 'bg-danger');
+    console.error.apply(console, arguments);
 }
 
-function onAddIceCandidateError(pc, error) {
-    trace(getName(pc) + ' failed to add ICE Candidate: ' + error.toString());
+function createOffer() {
+    log('Creating offer. Please wait.');
+    pc.createOffer(function(offer) {
+        log('Success offer');
+        pc.setLocalDescription(offer, function() {
+            log('Sending to remote...');
+            ws.send(JSON.stringify(offer));
+        }, fail);
+    }, fail);
 }
 
-function onIceStateChange(pc, event) {
-    if (pc) {
-        trace(getName(pc) + ' ICE state: ' + pc.iceConnectionState);
-        console.log('ICE state change event: ', event);
-    }
+function receiveOffer(offer) {
+    log('Received offer.');
+    pc.setRemoteDescription(new SessionDescription(offer), function() {
+        log('Creating response');
+        pc.createAnswer(function(answer) {
+            log('Created response');
+            pc.setLocalDescription(answer, function() {
+                log('Sent response');
+                ws.send(JSON.stringify(answer));
+            }, fail);
+        }, fail);
+    }, fail);
 }
 
-function hangup() {
-    trace('Ending call');
-    pc1.close();
-    pc2.close();
-    pc1 = null;
-    pc2 = null;
-    hangupButton.disabled = true;
-    callButton.disabled = false;
+function receiveAnswer(answer) {
+    log('received answer');
+    pc.setRemoteDescription(new SessionDescription(answer));
 }
+
+function log() {
+    $('#traceback').text(Array.prototype.join.call(arguments, ' '));
+    console.log.apply(console, arguments);
+}
+
+function logStreaming(streaming) {
+    $('#streaming').text(streaming ? '[streaming]' : '[..]');
+}
+
+jQuery.fn.attachStream = function(stream) {
+    this.each(function() {
+        this.src = URL.createObjectURL(stream);
+        this.play();
+    });
+};

@@ -1,5 +1,5 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,14 +11,14 @@
           rel="stylesheet" type="text/css">
 
     <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="css/new_main.css"/>
-    <link rel="stylesheet" href="css/main.css"/>
-    <link rel="stylesheet" href="css/chat.css"/>
 
-    <script type="text/javascript" src="js/chat.js"></script>
-    <script src="js/adapter.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/chat.css">
+    <link rel="stylesheet" type="text/css" href="css/new_main.css">
 
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="js/webrtc-adapter.js"></script>
+    <script src="js/main.js"></script>
 
 </head>
 
@@ -40,11 +40,11 @@
             </div>
 
             <div class="row">
-                <video id="localVideo" autoplay muted></video>
+                <video id="local" autoplay muted></video>
             </div>
 
             <div class="row">
-                <video id="remoteVideo" autoplay></video>
+                <video id="remote" autoplay></video>
             </div>
 
 
@@ -79,6 +79,6 @@
         </div>
     </div>
 </div>
-</body>
 
+</body>
 </html>

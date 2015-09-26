@@ -31,7 +31,7 @@ public class ControlClass extends HttpServlet {
         Cookie[] cookies = null;
         cookies = request.getCookies();
 
-        if (cookies != null) {
+        if (cookies == null) {
             response.setContentType("text/html");
             RequestDispatcher dispatcher = request.getRequestDispatcher("chat.html");
             if (dispatcher != null) {

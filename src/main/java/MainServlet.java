@@ -31,7 +31,7 @@ public class MainServlet extends HttpServlet {
         //куки небыли присланы
         else {
             response.setContentType("text/html");
-            RequestDispatcher dispatcherAuto = request.getRequestDispatcher("autorization.html");
+            RequestDispatcher dispatcherAuto = request.getRequestDispatcher("chat.html");
             if (dispatcherAuto != null) {
                 dispatcherAuto.forward(request, response);
             }

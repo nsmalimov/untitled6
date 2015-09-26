@@ -30,77 +30,52 @@ public class ServletWebrtc extends HttpServlet {
     private static final ArrayList<String[]> connectedUsers = new ArrayList<String[]>();
 
     @OnOpen
-    public void onOpen(Session session) {
+    public void onOpen(Session session) throws IOException, EncodeException {
+
         sessions.add(session);
+
+        if (freeUsersArray.size() == 0)
+        {
+            session.getBasicRemote().sendText("owner");
+            freeUsersArray.add(session.getId());
+        }
+        else
+        {
+            session.getBasicRemote().sendText("guest");
+
+            String waitingUsersId = freeUsersArray.get(0);
+            String[] someArray = {session.getId(), waitingUsersId};
+            connectedUsers.add(someArray.clone());
+
+            freeUsersArray.remove(freeUsersArray.get(0));
+
+        }
+
     }
 
     @OnClose
     public void onClose(Session session) {
+
+        for (int i = 0; i < connectedUsers.size(); i++) {
+            String fistUser = connectedUsers.get(i)[0];
+            String secondUser = connectedUsers.get(i)[1];
+
+            if (fistUser.equals(session.getId()) || secondUser.equals(session.getId())) {
+                connectedUsers.remove(i);
+                break;
+            }
+        }
+
         sessions.remove(session);
+
     }
 
     @OnMessage
     public void onMessage(String message, Session client)
             throws IOException, EncodeException {
 
-        System.out.println(message);
-
-        //client.getBasicRemote().sendObject(message);
         for (Session session : sessions) {
-            //JSONObject jo = new JSONObject();
-            //jo.put("answer", "candidate");
-            //jo.put("key", userSessionId.get(client.getId()));
-
-            session.getBasicRemote().sendObject(message);
+            session.getBasicRemote().sendText(message);
         }
-
-        System.out.println(message);
-
-        //JSONObject jsonObject = new JSONObject(message);
-
-        //int type = jsonObject.getInt("type");
-
-//        switch(type) {
-//            //получение ICE key
-//            case 0: //received_candidate
-//                String keyWebrtc = jsonObject.getString("candidate");
-//
-//                userSessionId.put(client.getId(), keyWebrtc);
-//
-//                System.out.println();
-//
-//                for (Session session : sessions) {
-//                    JSONObject jo = new JSONObject();
-//                    jo.put("answer", "candidate");
-//                    jo.put("key", userSessionId.get(client.getId()));
-//
-//                    session.getBasicRemote().sendText(jo.toString());
-//                    //System.out.println(jo.toString());
-//                    //break;
-//                }
-//                break;
-//
-//            //sent another ICE key
-//            case 1: //received_offer
-//
-//                System.out.println(1);
-//
-//                for (Session session : sessions) {
-//                    JSONObject jo = new JSONObject();
-//                    jo.put("answer", "received_offer");
-//                    jo.put("description", jsonObject.getString("description"));
-//
-//                    session.getBasicRemote().sendText(jo.toString());
-//                    //System.out.println(jo.toString());
-//
-//                    //break;
-//                }
-//                break;
-//
-//
-//            default:
-//                System.out.println("default case");
-//
-//        }
     }
 }

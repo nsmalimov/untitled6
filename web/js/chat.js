@@ -10,6 +10,7 @@ var ws = new WebSocket("ws://" + "localhost:8080" + "/webrtc");
 var localStream;
 var pc1;
 var pc2;
+
 var offerOptions = {
     offerToReceiveAudio: true,
     offerToReceiveVideo: true
@@ -46,7 +47,8 @@ function start() {
         });
 }
 
-function call(ws) {
+function call() {
+
 
     var localVideo = document.getElementById('localVideo');
     var remoteVideo = document.getElementById('remoteVideo');
@@ -55,6 +57,8 @@ function call(ws) {
     $("#hangupButton").prop('disabled', false);
 
     pc1 = new RTCPeerConnection(configuration);
+
+
 
     pc1.onicecandidate = function(e) {
         if (e.candidate) {
@@ -84,6 +88,24 @@ function call(ws) {
 
     pc1.createOffer(onCreateOfferSuccess, onCreateSessionDescriptionError,
         offerOptions);
+
+
+
+    ws.onopen = function (event) {};
+
+    ws.onmessage = function (event) {
+
+        var signal = JSON.parse(event.data);
+
+        pc2.setRemoteDescription(signal, function() {
+            onSetRemoteSuccess(pc2);
+        }, onSetSessionDescriptionError);
+
+        pc2.createAnswer(onCreateAnswerSuccess, onCreateSessionDescriptionError);
+    };
+
+    ws.onclose = function (event) {};
+
 }
 
 function onCreateOfferSuccess(desc) {
@@ -92,9 +114,8 @@ function onCreateOfferSuccess(desc) {
         onSetLocalSuccess(pc1);
     }, onSetSessionDescriptionError);
 
-    ws.send(desc);
+    ws.send(JSON.stringify(desc));
 
-    pc2.createAnswer(onCreateAnswerSuccess, onCreateSessionDescriptionError);
 }
 
 function onCreateSessionDescriptionError(error) {
@@ -117,6 +138,8 @@ function onCreateAnswerSuccess(desc) {
     pc2.setLocalDescription(desc, function() {
         onSetLocalSuccess(pc2);
     }, onSetSessionDescriptionError);
+
+
     pc1.setRemoteDescription(desc, function() {
         onSetRemoteSuccess(pc1);
     }, onSetSessionDescriptionError);
@@ -141,62 +164,20 @@ function hangup() {
     $("#callButton").prop('disabled', false);
 }
 
-$(document).ready(
-    function () {
-
-        $("#startButton").prop('disabled', false);
-        $("#callButton").prop('disabled', true);
-        $("#hangupButton").prop('disabled', true);
+$("#startButton").prop('disabled', false);
+$("#callButton").prop('disabled', true);
+$("#hangupButton").prop('disabled', true);
 
 
-        start();
-        ws.onopen = function (event) {};
+start();
 
-        ws.onmessage = function (event) {
+//function myFunction() {
+//    alert("111");
+//}
 
-            //alert(JSON.parse(event.data));
+//
+//document.getElementById('callButton').addEventListener('click', function() {
+//    alert("I am an alert box!");
+//});
 
-            pc2.setRemoteDescription(event.data, function() {
-                onSetRemoteSuccess(pc2);
-            }, onSetSessionDescriptionError);
-
-
-
-
-
-
-            //var jsonGet = JSON.parse(event.data);
-
-            //if (jsonGet["answer"] === "candidate")
-            //{
-            //    pc.addIceCandidate(new RTCIceCandidate(JSON.parse(jsonGet["key"])));
-                //alert("candidate");
-            //}
-
-            //if (jsonGet["answer"] =  "received_offer") {
-
-            //    pc2.setRemoteDescription(JSON.parse(jsonGet["description"]));
-            //    alert(jsonGet["description"]);
-
-
-            //}
-        };
-
-        ws.onclose = function (event) {};
-
-
-
-        $('#startButton').click(function () {
-            start();
-        });
-
-        $('#callButton').click(function () {
-            call(ws);
-        });
-
-        $('#hangupButton').click(function () {
-            hangup();
-        });
-
-    }
-);
+//call(ws);
