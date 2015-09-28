@@ -123,3 +123,4 @@ jQuery.fn.attachStream = function(stream) {
         this.play();
     });
 };
+

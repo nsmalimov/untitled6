@@ -12,31 +12,35 @@
 
     <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
 
-    <link rel="stylesheet" type="text/css" href="css/main.css">
-    <link rel="stylesheet" type="text/css" href="css/chat.css">
-    <link rel="stylesheet" type="text/css" href="css/new_main.css">
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="js/webrtc-adapter.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/chat.css">
+
+    <script src="js/init_script.js"></script>
+
     <script src="js/main.js"></script>
+
+
+    <script type="text/javascript" src="http://l2.io/ip.js?var=myip"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 </head>
 
-<body>
+<script type="text/javascript">
+    autorizeFunc();
+</script>
+
+<body bgcolor="#E6E6FA">
 <div class="section">
     <div class="container">
         <div class="col-md-5">
 
             <div class="row">
-                <button id="startButton">Start</button>
-                <button id="callButton">Call</button>
-                <button id="hangupButton">Hang Up</button>
-            </div>
-
-            <div class="row">
-                <button id="start_chat">Start chat</button>
-                <button id="stop_chat">Stop chat</button>
-                <button id="find_new_interlocutor">Find new interlocutor</button>
+                    <button id="startButton" class="button_main">Start chat</button>
+                    <button id="callButton" class="button_main">Stop chat</button>
+                    <button id="hangupButton" class="button_main">Find new interlocutor</button>
             </div>
 
             <div class="row">
@@ -78,6 +82,38 @@
 
         </div>
     </div>
+</div>
+
+<button type="button" onclick=someFunc() id="some_but">
+    Launch demo modal
+</button>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="text-align: center;">
+        <h4 class="modal-title" id="myModalLabel">Вход</h4>
+      </div>
+      <div class="modal-body">
+          <form role="form">
+              <div class="form-group">
+                  <p>Your name</p>
+                  <input class="form-control" id="NameInput"
+                         placeholder="Enter your name">
+              </div>
+
+              <div class="form-group">
+                  <p>Your key number</p>
+                  <input class="form-control" id="KeyInput"
+                         placeholder="Enter key number">
+              </div>
+          </form>
+      </div>
+      <div class="modal-footer" style="text-align: center;">
+        <button type="button" class="btn btn-primary" id="button_sent">Войти</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 </body>
