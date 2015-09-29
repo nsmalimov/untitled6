@@ -22,7 +22,8 @@ public class SQLiteClass {
 
     public static boolean checkKeyGenDb(String keyGen) throws ClassNotFoundException, SQLException {
         stat = conn.createStatement();
-        ResultSet rs = stat.executeQuery("select id from keyGens where keyGen = '" + keyGen + "'");
+        ResultSet rs = stat.executeQuery("select id from keyGens where keyGen = '" + keyGen + "'" +
+                "and isUse != " + "'1'");
         while (rs.next()) {
             rs.close();
             stat.close();

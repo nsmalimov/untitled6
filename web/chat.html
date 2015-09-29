@@ -32,15 +32,15 @@
     autorizeFunc();
 </script>
 
-<body bgcolor="#E6E6FA">
+<body>
 <div class="section">
     <div class="container">
         <div class="col-md-5">
 
             <div class="row">
-                    <button id="startButton" class="button_main">Start chat</button>
-                    <button id="callButton" class="button_main">Stop chat</button>
-                    <button id="hangupButton" class="button_main">Find new interlocutor</button>
+                <button id="startButton" class="button_main">Start chat</button>
+                <button id="callButton" class="button_main">Stop chat</button>
+                <button id="hangupButton" class="button_main">Find new interlocutor</button>
             </div>
 
             <div class="row">
@@ -59,6 +59,7 @@
             <p id="videoKey"></p>
 
             <p id="your_name">Hello:</p>
+
             <p id="interlocutor_name">You connected with:</p>
 
             <div class="panel panel-primary" id="chat_window">
@@ -89,31 +90,35 @@
 </button>
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header" style="text-align: center;">
-        <h4 class="modal-title" id="myModalLabel">Вход</h4>
-      </div>
-      <div class="modal-body">
-          <form role="form">
-              <div class="form-group">
-                  <p>Your name</p>
-                  <input class="form-control" id="NameInput"
-                         placeholder="Enter your name">
-              </div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="text-align: center;">
+                <h4 class="modal-title" id="myModalLabel">Вход</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form">
+                    <div class="form-group">
+                        <p>Выберите себе ник:</p>
+                        <input class="form-control" id="NameInput"
+                               placeholder="Enter your name">
+                    </div>
 
-              <div class="form-group">
-                  <p>Your key number</p>
-                  <input class="form-control" id="KeyInput"
-                         placeholder="Enter key number">
-              </div>
-          </form>
-      </div>
-      <div class="modal-footer" style="text-align: center;">
-        <button type="button" class="btn btn-primary" id="button_sent">Войти</button>
-      </div>
+                    <div class="form-group">
+                        <p>Введите ключ:</p>
+                        <input class="form-control" id="KeyInput"
+                               placeholder="Enter key number">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <a type="button" class="btn btn-primary" onclick=sentRegistrationData()>Войти</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 </body>
