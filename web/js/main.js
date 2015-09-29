@@ -1,7 +1,22 @@
 var initiator;
 var pc;
 
-var ws = new WebSocket("ws://" + "localhost:8080" + "/webrtc");
+//var userName = $('#your_name').text().replace("Hello: ");
+var serverHostName = window.location.hostname;
+//
+var portName = window.location.port;
+if (portName.length == 0) {
+    portName = "80";
+}
+
+var ws = null;
+
+ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
+
+function initSocket()
+{
+    alert("111");
+}
 
 var PeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
 var IceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
