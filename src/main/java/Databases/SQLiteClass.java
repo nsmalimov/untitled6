@@ -17,6 +17,8 @@ public class SQLiteClass {
 
     public static void Conn() throws ClassNotFoundException, SQLException, NamingException {
         Class.forName("org.sqlite.JDBC");
+
+        //полный путь к базе данных
         conn = DriverManager.getConnection("jdbc:sqlite:/Users/Nurislam/Downloads/untitled6/ChatDatabase");
     }
 
