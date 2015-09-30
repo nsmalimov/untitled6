@@ -16,34 +16,29 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import BuildClass.SessionUser;
+
 @ServerEndpoint(value = "/chatwork")
 public class ChatServlet extends HttpServlet {
-    private static final Set<Session> sessions = Collections.synchronizedSet(new HashSet<Session>());
-
-    private static final ArrayList<String> freeUsersArray = new ArrayList<String>();
-
-    private static final ArrayList<String[]> connectedUsers = new ArrayList<String[]>();
-
-    private static final Map userSessionId = new HashMap<String, String>();
 
     @OnOpen
     public void onOpen(Session session) {
-        sessions.add(session);
+        //BuildClass.SessionUser.sessions.add(session);
         //freeUsersArray.add(session.getId());
     }
 
     @OnClose
     public void onClose(Session session) {
-        sessions.remove(session);
+        BuildClass.SessionUser.sessions.remove(session);
 
-        freeUsersArray.remove(session.getId());
+        BuildClass.SessionUser.freeUsersArray.remove(session.getId());
 
-        for (int i = 0; i < connectedUsers.size(); i++) {
-            String fistUser = connectedUsers.get(i)[0];
-            String secondUser = connectedUsers.get(i)[1];
+        for (int i = 0; i < BuildClass.SessionUser.connectedUsers.size(); i++) {
+            String fistUser = BuildClass.SessionUser.connectedUsers.get(i)[0];
+            String secondUser = BuildClass.SessionUser.connectedUsers.get(i)[1];
 
             if (fistUser.equals(session.getId()) || secondUser.equals(session.getId())) {
-                connectedUsers.remove(i);
+                BuildClass.SessionUser.connectedUsers.remove(i);
                 break;
             }
         }
@@ -52,10 +47,10 @@ public class ChatServlet extends HttpServlet {
     public static String getInterlocutor(Session client) {
         String needSent = "";
 
-        for (int i = 0; i < connectedUsers.size(); i++) {
+        for (int i = 0; i < BuildClass.SessionUser.connectedUsers.size(); i++) {
 
-            String firstUser = connectedUsers.get(i)[0];
-            String secondUser = connectedUsers.get(i)[1];
+            String firstUser = BuildClass.SessionUser.connectedUsers.get(i)[0];
+            String secondUser = BuildClass.SessionUser.connectedUsers.get(i)[1];
 
             if (firstUser.equals(client.getId())) {
                 needSent = secondUser;
@@ -78,58 +73,58 @@ public class ChatServlet extends HttpServlet {
         String command = jsonObject.getString("command");
 
         String userName = jsonObject.getString("name");
-        userSessionId.put(client.getId(), userName);
+        BuildClass.SessionUser.userSessionId.put(client.getId(), userName);
 
         if (command.equals("connect")) {
 
-            freeUsersArray.add(client.getId());
+            BuildClass.SessionUser.freeUsersArray.add(client.getId());
 
             //если свободных юзеров нет
-            if (freeUsersArray.size() == 1)
+            if (BuildClass.SessionUser.freeUsersArray.size() == 1)
             {
                 client.getBasicRemote().sendText("{\"answer\":" + "\"" + "not_free_users" + "\"" + "}");
                 return;
             }
 
             //добавили в конец списка
-            String waitingUsersId = freeUsersArray.get(0);
+            String waitingUsersId = BuildClass.SessionUser.freeUsersArray.get(0);
 
             String[] someArray = {client.getId(), waitingUsersId};
 
             client.getBasicRemote().sendText("{\"answer\":" + "\"" + "connected" + "\"" + ","
-                    + "\"interlocutor\":" + "\"" + userSessionId.get(client.getId()) + "\"" + "}");
+                    + "\"interlocutor\":" + "\"" + BuildClass.SessionUser.userSessionId.get(client.getId()) + "\"" + "}");
 
-            for (Session session : sessions) {
+            for (Session session : BuildClass.SessionUser.sessions) {
                 if (session.getId().equals(waitingUsersId)) {
                     session.getBasicRemote().sendText("{\"answer\":" + "\"" + "connected" + "\"" + ","
-                            + "\"interlocutor\":" + "\"" + userSessionId.get(waitingUsersId) + "\"" + "}");
+                            + "\"interlocutor\":" + "\"" + BuildClass.SessionUser.userSessionId.get(waitingUsersId) + "\"" + "}");
                     break;
                 }
             }
 
-            freeUsersArray.remove(freeUsersArray.get(0));
+            BuildClass.SessionUser.freeUsersArray.remove(BuildClass.SessionUser.freeUsersArray.get(0));
 
-            freeUsersArray.remove(client.getId());
+            BuildClass.SessionUser.freeUsersArray.remove(client.getId());
 
-            connectedUsers.add(someArray.clone());
+            BuildClass.SessionUser.connectedUsers.add(someArray.clone());
 
         }
 
         if (command.equals("disconnect")) {
             String needSent = getInterlocutor(client);
-            freeUsersArray.add(needSent);
+            BuildClass.SessionUser.freeUsersArray.add(needSent);
 
-            for (int i = 0; i < connectedUsers.size(); i++) {
-                String fistUser = connectedUsers.get(i)[0];
-                String secondUser = connectedUsers.get(i)[1];
+            for (int i = 0; i < BuildClass.SessionUser.connectedUsers.size(); i++) {
+                String fistUser = BuildClass.SessionUser.connectedUsers.get(i)[0];
+                String secondUser = BuildClass.SessionUser.connectedUsers.get(i)[1];
 
                 if (fistUser.equals(client.getId()) || secondUser.equals(client.getId())) {
-                    connectedUsers.remove(i);
+                    BuildClass.SessionUser.connectedUsers.remove(i);
                     break;
                 }
             }
 
-            for (Session session : sessions) {
+            for (Session session : BuildClass.SessionUser.sessions) {
                 if (session.getId().equals(needSent)) {
                     session.getBasicRemote().sendText("{\"answer\":" + "\"" + "disconnect" + "\"" + "}");
                     break;
@@ -141,7 +136,7 @@ public class ChatServlet extends HttpServlet {
 
         if (command.equals("find_interlocutor")) {
             String needSent = getInterlocutor(client);
-            for (Session session : sessions) {
+            for (Session session : BuildClass.SessionUser.sessions) {
                 if (session.getId().equals(needSent)) {
                     session.getBasicRemote().sendText("{\"answer\":" + "\"" + "disconnect" + "\"" + "}");
                     break;
@@ -153,7 +148,7 @@ public class ChatServlet extends HttpServlet {
         if (command.equals("sent_message")) {
             String needSent = getInterlocutor(client);
 
-            for (Session session : sessions) {
+            for (Session session : BuildClass.SessionUser.sessions) {
                 if (session.getId().equals(needSent)) {
                     session.getBasicRemote().sendText("{\"answer\":" + "\"" + "message" + "\"" + ","
                             + "\"message\":" + "\"" + jsonObject.getString("message") + "\"" + "}");

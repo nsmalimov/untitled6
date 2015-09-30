@@ -19,7 +19,9 @@
 
     <script src="js/init_script.js"></script>
 
-    <script src="js/main.js"></script>
+    <script src="js/video.js"></script>
+    <script src="js/chat111.js"></script>
+
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="http://l2.io/ip.js?var=myip"></script>
 
@@ -36,8 +38,8 @@
 
             <div class="row">
                 <button id="startButton" class="button_main" onclick=initSocket()>Start chat</button>
-                <button id="callButton" class="button_main">Stop chat</button>
-                <button id="hangupButton" class="button_main">Find new interlocutor</button>
+                <button id="stopButton" class="button_main" onclick=hangup()>Stop chat</button>
+                <button id="newButton" class="button_main" onclick=newInterlocutor()>Find new interlocutor</button>
             </div>
 
             <div class="row">

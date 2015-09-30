@@ -13,10 +13,23 @@ var ws = null;
 
 ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
 
+$("#startButton").prop('disabled', true);
+$("#newButton").prop('disabled', false);
+$("#stopButton").prop('disabled', false);
+
 function initSocket()
 {
-    ws.send("start");
+    var sentJson = new Object();
+    sentJson.command = "0";
+    sentJson.name = $('#your_name').text().replace("Hello: ", "");
+
+    $("#hangupButton").prop('disabled', true);
+    $("#newButton").prop('disabled', true);
+    $("#startButton").prop('disabled', true);
+
+    ws.send(JSON.stringify(sentJson));
 }
+
 
 var PeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
 var IceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
@@ -24,14 +37,15 @@ var SessionDescription = window.mozRTCSessionDescription || window.RTCSessionDes
 navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 
 function socketCallback(event) {
-    if (event.data == "magic_overload") {
-        alert("Sorry, but this node is overloaded!");
-    }
-    if (event.data == "owner") {
+
+    var getData = JSON.parse(event.data);
+    //alert(getData["nameInterlocutor"]);
+    if (getData["answer"] == "owner") {
         initiator = false;
         initialize();
     }
-    if (event.data == "guest") {
+    if (getData["answer"] == "guest") {
+        $('#interlocutor_name').text("You connected with: " + getData["nameInterlocutor"]);
         initiator = true;
         initialize();
     }
@@ -64,23 +78,33 @@ function success(stream) {
 
     pc.onicecandidate = function(event) {
         if (event.candidate) {
-            //var sentJson = new Object();
-            //sentJson.candidate = event.candidate;
-            //sentJson.command = "0";
-            ws.send(JSON.stringify(event.candidate));
+
+            var sentJson = new Object();
+            sentJson.sentdata = JSON.stringify(event.candidate);
+            sentJson.command = "1";
+            //alert("111");
+            ws.send(JSON.stringify(sentJson));
         }
     };
 
     ws.onmessage = function (event) {
-        var signal = JSON.parse(event.data);
-        if (signal.sdp) {
-            if (initiator) {
-                receiveAnswer(signal);
-            } else {
-                receiveOffer(signal);
+        var getJson = JSON.parse(event.data);
+        var getCommand = getJson["answer"];
+
+        if (getCommand === "system"){
+            var signal = JSON.parse(getJson["data"]);
+            if (signal.sdp) {
+                if (initiator) {
+
+                    receiveAnswer(signal);
+                } else {
+                    $('#interlocutor_name').text("You connected with: " + getJson["interlocutorName"]);//interlocutorName
+                    receiveOffer(signal);
+                }
+            } else if (signal.candidate) {
+
+                pc.addIceCandidate(new IceCandidate(signal));
             }
-        } else if (signal.candidate) {
-            pc.addIceCandidate(new IceCandidate(signal));
         }
     };
 
@@ -105,7 +129,10 @@ function createOffer() {
         log('Success offer');
         pc.setLocalDescription(offer, function() {
             log('Sending to remote...');
-            ws.send(JSON.stringify(offer));
+            var sentJson = new Object();
+            sentJson.sentdata = JSON.stringify(offer);
+            sentJson.command = "1";
+            ws.send(JSON.stringify(sentJson));
         }, fail);
     }, fail);
 }
@@ -118,7 +145,10 @@ function receiveOffer(offer) {
             log('Created response');
             pc.setLocalDescription(answer, function() {
                 log('Sent response');
-                ws.send(JSON.stringify(answer));
+                var sentJson = new Object();
+                sentJson.sentdata = JSON.stringify(answer);
+                sentJson.command = "1";
+                ws.send(JSON.stringify(sentJson));
             }, fail);
         }, fail);
     }, fail);
@@ -138,10 +168,24 @@ function logStreaming(streaming) {
     $('#streaming').text(streaming ? '[streaming]' : '[..]');
 }
 
+function hangup() {
+    //trace('Ending call');
+    pc.close();
+
+    $("#stopButton").prop('disabled', true);
+    $("#newButton").prop('disabled', false);
+}
+
+function newInterlocutor() {
+
+}
+
 jQuery.fn.attachStream = function(stream) {
     this.each(function() {
         this.src = URL.createObjectURL(stream);
         this.play();
     });
 };
+
+
 

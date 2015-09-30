@@ -1,183 +1,193 @@
-var startButton = $('#startButton');
-var callButton = $('#callButton');
-var hangupButton = $('#hangupButton');
-
-var localVideo = $('#localVideo');
-var remoteVideo = $('#remoteVideo');
-
-var ws = new WebSocket("ws://" + "localhost:8080" + "/webrtc");
-
-var localStream;
-var pc1;
-var pc2;
-
-var offerOptions = {
-    offerToReceiveAudio: true,
-    offerToReceiveVideo: true
-};
-
-var configuration = {
-    "iceServers" : [ {
-        "url" : "stun:stun.l.google.com:19302"
-    } ]
-};
-
-function getName(pc) {
-    return (pc === pc1) ? 'pc1' : 'pc2';
+function initSocket()
+{
+    ws.send("start");
 }
 
-function getOtherPc(pc) {
-    return (pc === pc1) ? pc2 : pc1;
+var serverHostName = window.location.hostname;
+
+var portName = window.location.port;
+if (portName.length == 0) {
+    portName = "80";
 }
 
-function start() {
-    $("#startButton").prop('disabled', true);
+var ws = null;
 
-    navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true
-    })
-        .then(function(stream){
-            attachMediaStream(document.getElementById('localVideo'), stream);
-            localStream = stream;
-            $("#callButton").prop('disabled', false);
-        })
-        .catch(function(e) {
-            alert('getUserMedia() error: ' + e.name);
-        });
+ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/chatwork");
+
+function upDateChatBoxSent(name, message) {
+    $(".chat").append('<li class="right clearfix"><span class="chat-img pull-left"></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">' + name + '</strong></div><p>' + message + '</p></div></li>');
+    $('#btn-input').val('');
+    var newmsg_top = parseInt($('.panel-body')[0].scrollHeight);
+    $('.panel-body').scrollTop(newmsg_top - 100);
 }
 
-function call() {
+function upDateChatBoxGet(name, message) {
+    $(".chat").append('<li class="left clearfix"><span class="chat-img pull-left"></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">' + name + '</strong></div><p>' + message + '</p></div></li>');
+    var newmsg_top = parseInt($('.panel-body')[0].scrollHeight);
+    $('.panel-body').scrollTop(newmsg_top - 100);
+}
 
+function createJson(text) {
+    var json_create = new Object();
+    json_create.command = text;
+    return JSON.stringify(json_create);
+}
 
-    var localVideo = document.getElementById('localVideo');
-    var remoteVideo = document.getElementById('remoteVideo');
+function createJsonGetName() {
+    var json_create = new Object();
+    json_create.command = "2";
+    return JSON.stringify(json_create);
+}
 
+function upDateChatBoxSent(name, message) {
+    $(".chat").append('<li class="right clearfix"><span class="chat-img pull-left"></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">' + name + '</strong></div><p>' + message + '</p></div></li>');
+    $('#btn-input').val('');
+    var newmsg_top = parseInt($('.panel-body')[0].scrollHeight);
+    $('.panel-body').scrollTop(newmsg_top - 100);
+}
+
+function upDateChatBoxGet(name, message) {
+    $(".chat").append('<li class="left clearfix"><span class="chat-img pull-left"></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">' + name + '</strong></div><p>' + message + '</p></div></li>');
+    var newmsg_top = parseInt($('.panel-body')[0].scrollHeight);
+    $('.panel-body').scrollTop(newmsg_top - 100);
+}
+
+function readyFunc() {
+    $("#startButton").prop('disabled', false);
     $("#callButton").prop('disabled', true);
-    $("#hangupButton").prop('disabled', false);
+    $("#hangupButton").prop('disabled', true);
 
-    pc1 = new RTCPeerConnection(configuration);
+    //$("#startButton").click();
+    //имя пользователя другим post запросом
 
+    var serverHostName = window.location.hostname;
 
+    var serverProtocolName = window.location.protocol;
 
-    pc1.onicecandidate = function(e) {
-        if (e.candidate) {
-            getOtherPc(pc1).addIceCandidate(new RTCIceCandidate(e.candidate),
-                function() {
-                    onAddIceCandidateSuccess(pc1);
-                },
-                function(err) {
-                    onAddIceCandidateError(pc1, err);
-                }
-            );
-            //var jsonToSent = new Object();
-            //jsonToSent.type = 0;
-            //jsonToSent.candidate = JSON.stringify(e.candidate);
-            //ws.send(JSON.stringify(jsonToSent));
-            //alert(e.candidate.candidate);
-        }
+    var portName = window.location.port;
+
+    if (portName.length == 0) {
+        portName = "80";
+    }
+    var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
+
+    if (serverHostName != "localhost") {
+        serverPath += "/roulette"
+    }
+
+    getNameServer(serverPath);
+
+    //$("head").append('<script type="text/javascript" src="' + "js/main.js" + '"></script>');
+
+    var interlocutorName = "";
+
+    $('#btn-input').val('');
+    $('#text_input').val('');
+
+    var ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/chatwork");
+
+    ws.onopen = function (event) {
     };
-
-    pc2 = new RTCPeerConnection(configuration);
-
-    pc2.onaddstream = function(e) {
-        attachMediaStream(document.getElementById('remoteVideo'), e.stream);
-    };
-
-    pc1.addStream(localStream);
-
-    pc1.createOffer(onCreateOfferSuccess, onCreateSessionDescriptionError,
-        offerOptions);
-
-
-
-    ws.onopen = function (event) {};
 
     ws.onmessage = function (event) {
 
-        var signal = JSON.parse(event.data);
+        var jsonGet = JSON.parse(event.data);
 
-        pc2.setRemoteDescription(signal, function() {
-            onSetRemoteSuccess(pc2);
-        }, onSetSessionDescriptionError);
+        var answer = jsonGet["answer"];
 
-        pc2.createAnswer(onCreateAnswerSuccess, onCreateSessionDescriptionError);
+        if (answer == "not_free_users") {
+            $("#main_container").css("visibility", "hidden");
+            //$("#stop_chat").prop('disabled', true);
+            //$("#start_chat").prop('disabled', false);
+            //$("#find_new_interlocutor").prop('disabled', true);
+            //alert("Free users not found");
+        }
+
+        if (answer == "connected") {
+            interlocutorName = jsonGet["interlocutor"];
+            $("#interlocutor_name").text("You connected with: " + interlocutorName);
+            $("#main_container").css("visibility", "visible");
+        }
+
+        if (answer == "message") {
+            var clientName = $('#your_name').text().replace("Hello ", "");
+            upDateChatBoxGet(clientName, jsonGet["message"]);
+        }
+
+        if (answer == "disconnect") {
+            $("#stop_chat").prop('disabled', true);
+            $("#start_chat").prop('disabled', false);
+            $("#find_new_interlocutor").prop('disabled', true);
+        }
     };
 
-    ws.onclose = function (event) {};
+    ws.onclose = function (event) {
+    };
+
+    var newmsg_top = parseInt($('.panel-body')[0].scrollHeight);
+    $('.panel-body').scrollTop(newmsg_top - 100);
+
+    $("#start_chat").prop('disabled', false);
+    $("#stop_chat").prop('disabled', true);
+    $("#find_new_interlocutor").prop('disabled', true);
+
+    $('#startButton').click(function () {
+        start();
+    });
+
+    $('#callButton').click(function () {
+        call(ws);
+    });
+
+    $('#hangupButton').click(function () {
+        hangup();
+    });
+
+    $('#start_chat').click(function () {
+        var json_create = new Object();
+        json_create.name = $('#your_name').text().replace("Hello ", "");
+        json_create.command = "connect";
+        var json = JSON.stringify(json_create);
+        ws.send(json);
+
+        $("#stop_chat").prop('disabled', false);
+        $("#start_chat").prop('disabled', true);
+        $("#find_new_interlocutor").prop('disabled', false);
+    });
+
+    $('#stop_chat').click(function () {
+
+        var json_create = new Object();
+        json_create.name = $('#your_name').text().replace("Hello ", "");
+        json_create.command = "disconnect";
+        var json = JSON.stringify(json_create);
+        ws.send(json);
+
+        $("#stop_chat").prop('disabled', true);
+        $("#start_chat").prop('disabled', false);
+        $("#find_new_interlocutor").prop('disabled', true);
+    });
+
+    $('#find_new_interlocutor').click(function () {
+        $('#start_chat').click();
+        var json_create = new Object();
+        json_create.name = $('#your_name').text().replace("Hello ", "");
+        json_create.command = "find_interlocutor";
+        var json = JSON.stringify(json_create);
+        ws.send(json);
+    });
+
+    $('#btn-chat').click(function () {
+        var messageText = $('#text_input').val();
+        var json_create = new Object();
+        var clientName = $('#your_name').text().replace("Hello ", "");
+        json_create.name = clientName;
+        json_create.command = "sent_message";
+        json_create.message = messageText;
+        var json = JSON.stringify(json_create);
+        ws.send(json);
+
+        upDateChatBoxSent("You", messageText);
+    });
 
 }
-
-function onCreateOfferSuccess(desc) {
-
-    pc1.setLocalDescription(desc, function() {
-        onSetLocalSuccess(pc1);
-    }, onSetSessionDescriptionError);
-
-    ws.send(JSON.stringify(desc));
-
-}
-
-function onCreateSessionDescriptionError(error) {
-    alert('Failed to create session description: ' + error.toString());
-}
-
-function onSetLocalSuccess(pc) {
-    trace(getName(pc) + ' setLocalDescription complete');
-}
-
-function onSetRemoteSuccess(pc) {
-    trace(getName(pc) + ' setRemoteDescription complete');
-}
-
-function onSetSessionDescriptionError(error) {
-    //alert('Failed to set session description: ' + error.toString());
-}
-
-function onCreateAnswerSuccess(desc) {
-    pc2.setLocalDescription(desc, function() {
-        onSetLocalSuccess(pc2);
-    }, onSetSessionDescriptionError);
-
-
-    pc1.setRemoteDescription(desc, function() {
-        onSetRemoteSuccess(pc1);
-    }, onSetSessionDescriptionError);
-}
-
-function onAddIceCandidateSuccess(pc) {
-    trace(getName(pc) + ' addIceCandidate success');
-}
-
-function onAddIceCandidateError(pc, error) {
-    //alert(getName(pc) + ' failed to add ICE Candidate: ' + error.toString());
-}
-
-function hangup() {
-    trace('Ending call');
-    pc1.close();
-    pc2.close();
-    pc1 = null;
-    pc2 = null;
-
-    $("#hangupButton").prop('disabled', true);
-    $("#callButton").prop('disabled', false);
-}
-
-$("#startButton").prop('disabled', false);
-$("#callButton").prop('disabled', true);
-$("#hangupButton").prop('disabled', true);
-
-
-start();
-
-//function myFunction() {
-//    alert("111");
-//}
-
-//
-//document.getElementById('callButton').addEventListener('click', function() {
-//    alert("I am an alert box!");
-//});
-
-//call(ws);

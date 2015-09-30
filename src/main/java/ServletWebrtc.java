@@ -19,54 +19,30 @@ import java.util.concurrent.ConcurrentMap;
 import static java.util.Collections.emptySet;
 import java.io.StringReader;
 
+import BuildClass.SessionUser;
+
 @ServerEndpoint(value = "/webrtc")
 public class ServletWebrtc extends HttpServlet {
 
-    private static final Set<Session> sessions = Collections.synchronizedSet(new HashSet<Session>());
-    private static final Map userSessionId = new HashMap<String, String>();
-
-    private static final ArrayList<String> freeUsersArray = new ArrayList<String>();
-
-    private static final ArrayList<String[]> connectedUsers = new ArrayList<String[]>();
-
     @OnOpen
     public void onOpen(Session session) throws IOException, EncodeException {
-
-        sessions.add(session);
-
-        if (freeUsersArray.size() == 0)
-        {
-            session.getBasicRemote().sendText("owner");
-            freeUsersArray.add(session.getId());
-        }
-        else
-        {
-            session.getBasicRemote().sendText("guest");
-
-            String waitingUsersId = freeUsersArray.get(0);
-            String[] someArray = {session.getId(), waitingUsersId};
-            connectedUsers.add(someArray.clone());
-
-            freeUsersArray.remove(freeUsersArray.get(0));
-
-        }
 
     }
 
     @OnClose
     public void onClose(Session session) {
 
-        for (int i = 0; i < connectedUsers.size(); i++) {
-            String fistUser = connectedUsers.get(i)[0];
-            String secondUser = connectedUsers.get(i)[1];
+        for (int i = 0; i < BuildClass.SessionUser.connectedUsers.size(); i++) {
+            String fistUser = BuildClass.SessionUser.connectedUsers.get(i)[0];
+            String secondUser = BuildClass.SessionUser.connectedUsers.get(i)[1];
 
             if (fistUser.equals(session.getId()) || secondUser.equals(session.getId())) {
-                connectedUsers.remove(i);
+                BuildClass.SessionUser.connectedUsers.remove(i);
                 break;
             }
         }
 
-        sessions.remove(session);
+        BuildClass.SessionUser.sessions.remove(session);
 
     }
 
@@ -74,9 +50,47 @@ public class ServletWebrtc extends HttpServlet {
     public void onMessage(String message, Session client)
             throws IOException, EncodeException {
 
-        System.out.println(message);
 
-        for (Session session : sessions) {
+
+        JSONObject jsonObject = new JSONObject(message);
+
+        int command = Integer.parseInt(jsonObject.getString("command"));
+        //0 - start
+
+        switch (command)
+        {
+            case 0:
+                //start chat
+                SessionUser.addFreeUser(client, jsonObject.getString("name"));
+                System.out.println("user connect");
+                return;
+                //break;
+
+            case 1:
+                //recived ICE candidate
+                String data = jsonObject.getString("sentdata");
+                //System.out.println(data);
+                Session locutorSes = SessionUser.getInterlocutor(client);
+
+                String interlocutorName = SessionUser.userSessionId.get(locutorSes.getId()).toString();
+                System.out.println(interlocutorName);
+
+                JSONObject jsonToReturn = new JSONObject();
+                jsonToReturn.put("answer", "system");
+                jsonToReturn.put("data", data);
+                jsonToReturn.put("interlocutorName", interlocutorName);
+
+                locutorSes.getBasicRemote().sendText(jsonToReturn.toString());
+
+
+                System.out.println("ICE candidate get and sent");
+                return;
+            default:
+                System.out.println("default");
+                break;
+        }
+
+        for (Session session : BuildClass.SessionUser.sessions) {
             session.getBasicRemote().sendText(message);
         }
     }
