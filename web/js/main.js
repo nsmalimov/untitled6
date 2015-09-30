@@ -15,7 +15,7 @@ ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
 
 function initSocket()
 {
-    alert("111");
+    ws.send("start");
 }
 
 var PeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
@@ -52,7 +52,9 @@ function success(stream) {
 
     if (stream) {
         pc.addStream(stream);
+
         $('#local').attachStream(stream);
+
     }
 
     pc.onaddstream = function(event) {
@@ -62,6 +64,9 @@ function success(stream) {
 
     pc.onicecandidate = function(event) {
         if (event.candidate) {
+            //var sentJson = new Object();
+            //sentJson.candidate = event.candidate;
+            //sentJson.command = "0";
             ws.send(JSON.stringify(event.candidate));
         }
     };
@@ -91,6 +96,7 @@ function fail() {
     $('#traceback').text(Array.prototype.join.call(arguments, ' '));
     $('#traceback').attr('class', 'bg-danger');
     console.error.apply(console, arguments);
+    alert("fail");
 }
 
 function createOffer() {

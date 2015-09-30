@@ -74,6 +74,8 @@ public class ServletWebrtc extends HttpServlet {
     public void onMessage(String message, Session client)
             throws IOException, EncodeException {
 
+        System.out.println(message);
+
         for (Session session : sessions) {
             session.getBasicRemote().sendText(message);
         }
