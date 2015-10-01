@@ -7,21 +7,21 @@ import javax.websocket.Session;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * Created by Nurislam on 30.09.15.
- */
+
 public class SessionUser {
-    public static Set<Session> sessions = Collections.synchronizedSet(new HashSet<Session>());
 
-    public static ArrayList<String> freeUsersArray = new ArrayList<String>();
+    public static Map<String, Session> sessions = Collections.synchronizedMap(new HashMap<String, Session>());
 
-    public static ArrayList<String[]> connectedUsers = new ArrayList<String[]>();
+    public static List<String> freeUsersArray = Collections.synchronizedList(new ArrayList<String>());
 
-    public static Map userSessionId = new HashMap<String, String>();
+    public static Map<String, String> map1 = Collections.synchronizedMap(new HashMap<String, String>());
+    public static Map<String, String> map2 = Collections.synchronizedMap(new HashMap<String, String>());
+
+    public static Map<String, String> userSessionId = Collections.synchronizedMap(new HashMap<String, String>());
 
     public static void addFreeUser(Session session, String name) throws IOException, EncodeException
     {
-        sessions.add(session);
+        sessions.put(session.getId(), session);
         userSessionId.put(session.getId(), name);
 
         if (freeUsersArray.size() == 0)
@@ -37,10 +37,9 @@ public class SessionUser {
         {
             String waitingUsersId = freeUsersArray.get(0);
 
-            //TODO
             // можно ускорить через map
-            String[] someArray = {session.getId(), waitingUsersId};
-
+            map1.put(session.getId(), waitingUsersId);
+            map2.put(waitingUsersId, session.getId());
 
             JSONObject jsonToReturn = new JSONObject();
             jsonToReturn.put("answer", "guest");
@@ -48,40 +47,52 @@ public class SessionUser {
 
             session.getBasicRemote().sendText(jsonToReturn.toString());
 
-            connectedUsers.add(someArray.clone());
-
             freeUsersArray.remove(freeUsersArray.get(0));
-
         }
     }
 
     public static Session getInterlocutor(Session client) {
         String needSent = "";
 
-        //TODO
-        //упростить
-        for (int i = 0; i < connectedUsers.size(); i++) {
-
-            String firstUser = connectedUsers.get(i)[0];
-            String secondUser = connectedUsers.get(i)[1];
-
-            if (firstUser.equals(client.getId())) {
-                needSent = secondUser;
-                break;
-            }
-
-            if (secondUser.equals(client.getId())) {
-                needSent = firstUser;
-                break;
-            }
+        if (map1.containsKey(client.getId()))
+        {
+            needSent = map1.get(client.getId());
         }
 
-        for (Session ses: sessions)
-            if (ses.getId().equals(needSent))
-            {
-                return ses;
-            }
+        if (map2.containsKey(client.getId()))
+        {
+            needSent = map2.get(client.getId());
+        }
 
-        return null;
+        Session ses = sessions.get(needSent);
+
+        return ses;
+    }
+
+    public static void newInterlocutor(Session session)
+    {
+        closeConnect(session);
+    }
+
+    public static void closeConnect(Session session)
+    {
+        boolean check = false;
+        if (map1.containsKey(session.getId()))
+        {
+            map2.remove(map1.get(session.getId()));
+            map1.remove(session.getId());
+
+            freeUsersArray.add(session.getId());
+
+            check = true;
+        }
+
+        if (!check)
+        {
+            freeUsersArray.remove(session.getId());
+        }
+
+        sessions.remove(session.getId());
+        userSessionId.remove(session.getId());
     }
 }

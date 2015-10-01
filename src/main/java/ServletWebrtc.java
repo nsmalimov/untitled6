@@ -31,19 +31,8 @@ public class ServletWebrtc extends HttpServlet {
 
     @OnClose
     public void onClose(Session session) {
-
-        for (int i = 0; i < BuildClass.SessionUser.connectedUsers.size(); i++) {
-            String fistUser = BuildClass.SessionUser.connectedUsers.get(i)[0];
-            String secondUser = BuildClass.SessionUser.connectedUsers.get(i)[1];
-
-            if (fistUser.equals(session.getId()) || secondUser.equals(session.getId())) {
-                BuildClass.SessionUser.connectedUsers.remove(i);
-                break;
-            }
-        }
-
-        BuildClass.SessionUser.sessions.remove(session);
-
+        BuildClass.SessionUser.closeConnect(session);
+        System.out.println("close connect");
     }
 
     @OnMessage
@@ -64,34 +53,45 @@ public class ServletWebrtc extends HttpServlet {
                 SessionUser.addFreeUser(client, jsonObject.getString("name"));
                 System.out.println("user connect");
                 return;
-                //break;
+            //break;
 
             case 1:
                 //recived ICE candidate
                 String data = jsonObject.getString("sentdata");
+
+
                 //System.out.println(data);
                 Session locutorSes = SessionUser.getInterlocutor(client);
 
-                String interlocutorName = SessionUser.userSessionId.get(locutorSes.getId()).toString();
-                System.out.println(interlocutorName);
+                String interlocutorName = SessionUser.userSessionId.get(locutorSes.getId());
 
-                JSONObject jsonToReturn = new JSONObject();
-                jsonToReturn.put("answer", "system");
-                jsonToReturn.put("data", data);
-                jsonToReturn.put("interlocutorName", interlocutorName);
 
-                locutorSes.getBasicRemote().sendText(jsonToReturn.toString());
+                JSONObject jsonToReturn1 = new JSONObject();
+                jsonToReturn1.put("answer", "system");
+                jsonToReturn1.put("data", data);
+                jsonToReturn1.put("interlocutorName", interlocutorName);
+
+                locutorSes.getBasicRemote().sendText(jsonToReturn1.toString());
 
 
                 System.out.println("ICE candidate get and sent");
                 return;
+
+            case 2:
+                //new interlocutor
+                SessionUser.newInterlocutor(client);
+
+                JSONObject jsonToReturn2 = new JSONObject();
+                jsonToReturn2.put("answer", "stopped");
+
+                client.getBasicRemote().sendText(jsonToReturn2.toString());
+
+                System.out.println("new interlocutor");
+                return;
+
             default:
                 System.out.println("default");
                 break;
-        }
-
-        for (Session session : BuildClass.SessionUser.sessions) {
-            session.getBasicRemote().sendText(message);
         }
     }
 }
