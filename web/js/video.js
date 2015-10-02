@@ -13,21 +13,19 @@ var ws = null;
 
 ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
 
-$("#startButton").prop('disabled', true);
-$("#newButton").prop('disabled', false);
-$("#stopButton").prop('disabled', false);
-
 function initSocket()
 {
     var sentJson = new Object();
     sentJson.command = "0";
     sentJson.name = $('#your_name').text().replace("Hello: ", "");
 
-    $("#hangupButton").prop('disabled', true);
-    $("#newButton").prop('disabled', true);
+    $("#stopButton").prop('disabled', false);
+    $("#newButton").prop('disabled', false);
     $("#startButton").prop('disabled', true);
 
     ws.send(JSON.stringify(sentJson));
+
+    waitingWindowStart();
 }
 
 
@@ -82,7 +80,6 @@ function success(stream) {
             var sentJson = new Object();
             sentJson.sentdata = JSON.stringify(event.candidate);
             sentJson.command = "1";
-            //alert("111");
             ws.send(JSON.stringify(sentJson));
         }
     };
@@ -95,16 +92,25 @@ function success(stream) {
             var signal = JSON.parse(getJson["data"]);
             if (signal.sdp) {
                 if (initiator) {
-
                     receiveAnswer(signal);
+                    waitingWindowStop();
                 } else {
                     $('#interlocutor_name').text("You connected with: " + getJson["interlocutorName"]);//interlocutorName
+
                     receiveOffer(signal);
+                    waitingWindowStop();
                 }
             } else if (signal.candidate) {
 
                 pc.addIceCandidate(new IceCandidate(signal));
             }
+        }
+
+        if (getCommand === "message")
+        {
+            var textMessages = getJson["message"];
+            var interlocutorNameChat = $('#interlocutor_name').text().replace("You connected with: ", "");
+            upDateChatBoxGet(interlocutorNameChat, textMessages);
         }
     };
 
@@ -169,11 +175,11 @@ function logStreaming(streaming) {
 }
 
 function hangup() {
-    //trace('Ending call');
     pc.close();
 
     $("#stopButton").prop('disabled', true);
-    $("#newButton").prop('disabled', false);
+    $("#newButton").prop('disabled', true);
+    $("#startButton").prop('disabled', false);
 }
 
 function newInterlocutor() {
@@ -187,5 +193,29 @@ jQuery.fn.attachStream = function(stream) {
     });
 };
 
+function upDateChatBoxSent(name, message) {
+    $(".chat").append('<li class="right clearfix"><span class="chat-img pull-left"></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">' + name + '</strong></div><p>' + message + '</p></div></li>');
+    $('#text_input').val('');
+    var newmsg_top = parseInt($('.panel-body')[0].scrollHeight);
+    $('.panel-body').scrollTop(newmsg_top - 100);
+}
+
+function sentMessages() {
+    var messageText = $('#text_input').val();
+    var json_create = new Object();
+    var clientName = $('#your_name').text().replace("Hello: ", "");
+    json_create.command = "3";
+    json_create.message = messageText;
+    var json = JSON.stringify(json_create);
+    ws.send(json);
+
+    upDateChatBoxSent("You", messageText);
+}
+
+function upDateChatBoxGet(name, message) {
+    $(".chat").append('<li class="left clearfix"><span class="chat-img pull-left"></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">' + name + '</strong></div><p>' + message + '</p></div></li>');
+    var newmsg_top = parseInt($('.panel-body')[0].scrollHeight);
+    $('.panel-body').scrollTop(newmsg_top - 100);
+}
 
 

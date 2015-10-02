@@ -39,12 +39,9 @@ public class ServletWebrtc extends HttpServlet {
     public void onMessage(String message, Session client)
             throws IOException, EncodeException {
 
-
-
         JSONObject jsonObject = new JSONObject(message);
 
         int command = Integer.parseInt(jsonObject.getString("command"));
-        //0 - start
 
         switch (command)
         {
@@ -52,30 +49,25 @@ public class ServletWebrtc extends HttpServlet {
                 //start chat
                 SessionUser.addFreeUser(client, jsonObject.getString("name"));
                 System.out.println("user connect");
-                return;
-            //break;
+                break;
 
             case 1:
                 //recived ICE candidate
                 String data = jsonObject.getString("sentdata");
 
+                Session locutorSes1 = SessionUser.getInterlocutor(client);
 
-                //System.out.println(data);
-                Session locutorSes = SessionUser.getInterlocutor(client);
-
-                String interlocutorName = SessionUser.userSessionId.get(locutorSes.getId());
-
+                String interlocutorName1 = SessionUser.userSessionId.get(locutorSes1.getId());
 
                 JSONObject jsonToReturn1 = new JSONObject();
                 jsonToReturn1.put("answer", "system");
                 jsonToReturn1.put("data", data);
-                jsonToReturn1.put("interlocutorName", interlocutorName);
+                jsonToReturn1.put("interlocutorName", interlocutorName1);
 
-                locutorSes.getBasicRemote().sendText(jsonToReturn1.toString());
-
+                locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
 
                 System.out.println("ICE candidate get and sent");
-                return;
+                break;
 
             case 2:
                 //new interlocutor
@@ -87,8 +79,24 @@ public class ServletWebrtc extends HttpServlet {
                 client.getBasicRemote().sendText(jsonToReturn2.toString());
 
                 System.out.println("new interlocutor");
-                return;
+                break;
 
+            case 3:
+                //get and set messages
+
+                String messages = jsonObject.getString("message");
+
+                System.out.println(messages);
+
+                JSONObject jsonToReturn3 = new JSONObject();
+                jsonToReturn3.put("answer", "message");
+                jsonToReturn3.put("message", messages);
+
+                Session locutorSes2 = SessionUser.getInterlocutor(client);
+
+                locutorSes2.getBasicRemote().sendText(jsonToReturn3.toString());
+
+                break;
             default:
                 System.out.println("default");
                 break;

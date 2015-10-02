@@ -82,4 +82,7 @@ public class SQLiteClass {
     public static void CloseDB() throws ClassNotFoundException, SQLException {
         conn.close();
     }
+
+    //TODO
+    //извлечение и генерация ключей
 }
