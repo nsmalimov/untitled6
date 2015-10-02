@@ -30,9 +30,15 @@ public class ServletWebrtc extends HttpServlet {
     }
 
     @OnClose
-    public void onClose(Session session) {
-        BuildClass.SessionUser.closeConnect(session);
-        System.out.println("close connect");
+    public void onClose(Session session) throws IOException, EncodeException{
+        Session interlocutor = BuildClass.SessionUser.getInterlocutor(session);
+
+        JSONObject jsonToReturn1 = new JSONObject();
+        jsonToReturn1.put("answer", "stop_connect");
+
+        interlocutor.getBasicRemote().sendText(jsonToReturn1.toString());
+
+        BuildClass.SessionUser.closeConnect(session, false);
     }
 
     @OnMessage
@@ -71,14 +77,43 @@ public class ServletWebrtc extends HttpServlet {
 
             case 2:
                 //new interlocutor
-                SessionUser.newInterlocutor(client);
+
+                //присылает запрос на нового собеседника
+                //соединение с тем кто ожидает
 
                 JSONObject jsonToReturn2 = new JSONObject();
-                jsonToReturn2.put("answer", "stopped");
+                jsonToReturn2.put("answer", "stop_connect");
 
-                client.getBasicRemote().sendText(jsonToReturn2.toString());
+                String name = jsonObject.getString("name");
+
+                Session locutorSes4 = SessionUser.getInterlocutor(client);
+
+                //бывшему собеседнику отправить остановить соединение
+
+
+
+                //соеденить с новым
+                SessionUser.newInterlocutor(client, name);
+
+                Session locutorSes3 = SessionUser.getInterlocutor(client);
+
+                //сказать новому что он инициатор и createoffer
+
+                JSONObject jsonToReturn5 = new JSONObject();
+                jsonToReturn5.put("answer", "new_interloc");
+
+                //String name = jsonObject.getString("name");
+
+                client.getBasicRemote().sendText(jsonToReturn5.toString());
+
+                //System.out.println(locutorSes3.getId());
+
+
+                //client.getBasicRemote().sendText(jsonToReturn2.toString());
 
                 System.out.println("new interlocutor");
+
+                locutorSes4.getBasicRemote().sendText(jsonToReturn2.toString());
                 break;
 
             case 3:

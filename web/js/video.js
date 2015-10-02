@@ -64,9 +64,7 @@ function success(stream) {
 
     if (stream) {
         pc.addStream(stream);
-
         $('#local').attachStream(stream);
-
     }
 
     pc.onaddstream = function(event) {
@@ -112,6 +110,25 @@ function success(stream) {
             var interlocutorNameChat = $('#interlocutor_name').text().replace("You connected with: ", "");
             upDateChatBoxGet(interlocutorNameChat, textMessages);
         }
+
+        if (getCommand === "stop_connect")
+        {
+            newInterlocutor();
+        }
+
+        if (getCommand === "new_interloc")
+        {
+            //initialize();
+            pc.close();
+
+            //waitingWindowStart();
+
+            success(stream);
+            //pc = new PeerConnection(null);
+            createOffer();
+            initiator = false;
+            //alert("111");
+        }
     };
 
     if (initiator) {
@@ -126,7 +143,9 @@ function fail() {
     $('#traceback').text(Array.prototype.join.call(arguments, ' '));
     $('#traceback').attr('class', 'bg-danger');
     console.error.apply(console, arguments);
-    alert("fail");
+    //TODO
+    //ошибка
+    //alert("fail");
 }
 
 function createOffer() {
@@ -177,12 +196,27 @@ function logStreaming(streaming) {
 function hangup() {
     pc.close();
 
+    ws.close();
+
+    //$('#remote').src = URL.createObjectURL(null);
+
+    //alert("111");
+
     $("#stopButton").prop('disabled', true);
     $("#newButton").prop('disabled', true);
     $("#startButton").prop('disabled', false);
 }
 
 function newInterlocutor() {
+    var sentJson = new Object();
+    sentJson.command = "2";
+    sentJson.name = $('#your_name').text().replace("Hello: ", "");
+
+
+
+    ws.send(JSON.stringify(sentJson));
+
+    waitingWindowStart();
 
 }
 

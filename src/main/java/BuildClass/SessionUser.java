@@ -69,30 +69,39 @@ public class SessionUser {
         return ses;
     }
 
-    public static void newInterlocutor(Session session)
+    public static void newInterlocutor(Session session, String name) throws IOException, EncodeException
     {
-        closeConnect(session);
+        closeConnect(session, true);
+
+        addFreeUser(session, name);
     }
 
-    public static void closeConnect(Session session)
+    public static void closeConnect(Session session, boolean newInterloc)
     {
+        //Session interlocutor = getInterlocutor(session);
+
+        //System.out.println("close conn1111ect");
         boolean check = false;
         if (map1.containsKey(session.getId()))
         {
-            map2.remove(map1.get(session.getId()));
+            String interlocutor = map1.get(session.getId());
+            map2.remove(interlocutor);
             map1.remove(session.getId());
 
-            freeUsersArray.add(session.getId());
+            freeUsersArray.add(interlocutor);
 
             check = true;
         }
 
-        if (!check)
-        {
-            freeUsersArray.remove(session.getId());
+        if (!newInterloc) {
+            if (!check) {
+                freeUsersArray.remove(session.getId());
+            }
+
+            sessions.remove(session.getId());
+            userSessionId.remove(session.getId());
         }
 
-        sessions.remove(session.getId());
-        userSessionId.remove(session.getId());
+        //System.out.println("2222");
     }
 }
