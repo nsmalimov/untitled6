@@ -10,14 +10,23 @@ import java.util.*;
 
 public class SessionUser {
 
-    public static Map<String, Session> sessions = Collections.synchronizedMap(new HashMap<String, Session>());
+    public static Map<String, Session> sessions = new HashMap<String, Session>();
 
-    public static List<String> freeUsersArray = Collections.synchronizedList(new ArrayList<String>());
+    public static List<String> freeUsersArray = new ArrayList<String>();
 
-    public static Map<String, String> map1 = Collections.synchronizedMap(new HashMap<String, String>());
-    public static Map<String, String> map2 = Collections.synchronizedMap(new HashMap<String, String>());
+    public static Map<String, String> map1 = new HashMap<String, String>();
+    public static Map<String, String> map2 = new HashMap<String, String>();
 
-    public static Map<String, String> userSessionId = Collections.synchronizedMap(new HashMap<String, String>());
+    public static Map<String, String> userSessionId = new HashMap<String, String>();
+
+//    public static Map<String, Session> sessions = Collections.synchronizedMap(new HashMap<String, Session>());
+//
+//    public static List<String> freeUsersArray = Collections.synchronizedList(new ArrayList<String>());
+//
+//    public static Map<String, String> map1 = Collections.synchronizedMap(new HashMap<String, String>());
+//    public static Map<String, String> map2 = Collections.synchronizedMap(new HashMap<String, String>());
+//
+//    public static Map<String, String> userSessionId = Collections.synchronizedMap(new HashMap<String, String>());
 
     public static void printParams()
     {
@@ -65,7 +74,7 @@ public class SessionUser {
         }
     }
 
-    public static Session getInterlocutor(Session client) {
+    public static Session getInterlocutorSession(Session client) {
         String needSent = "";
 
         if (map1.containsKey(client.getId()))
@@ -83,11 +92,35 @@ public class SessionUser {
         return ses;
     }
 
+    public static String getInterlocutorName(Session client) {
+        String needSent = "";
+
+        if (map1.containsKey(client.getId()))
+        {
+            needSent = map1.get(client.getId());
+        }
+
+        if (map2.containsKey(client.getId()))
+        {
+            needSent = map2.get(client.getId());
+        }
+
+        //Session ses = sessions.get(needSent);
+
+        return needSent;
+    }
+
+
     public static int connectTwo(Session client) throws IOException, EncodeException {
      // 0 - if ok
      //   1 - else
 
-        if (freeUsersArray.size() == 1)
+        JSONObject jsonToReturn = new JSONObject();
+        jsonToReturn.put("answer", "new_window");
+
+        client.getBasicRemote().sendText(jsonToReturn.toString());
+
+        if (freeUsersArray.size() == 0)
             return 0;
 
         String waitingUsersId = freeUsersArray.get(0);
@@ -95,11 +128,6 @@ public class SessionUser {
         // можно ускорить через map
         map1.put(client.getId(), waitingUsersId);
         map2.put(waitingUsersId, client.getId());
-
-        JSONObject jsonToReturn = new JSONObject();
-        jsonToReturn.put("answer", "new_interloc");
-
-        client.getBasicRemote().sendText(jsonToReturn.toString());
 
         freeUsersArray.remove(freeUsersArray.get(0));
         freeUsersArray.remove(waitingUsersId);
@@ -118,7 +146,8 @@ public class SessionUser {
 
     public static void closeConnect(Session session) throws IOException, EncodeException {
 
-        Session interlocutor = getInterlocutor(session);
+        String interlocutorName = getInterlocutorName(session);
+        Session interlocutorSes = getInterlocutorSession(session);
 
         boolean checker = false;
 
@@ -134,15 +163,15 @@ public class SessionUser {
             checker = true;
         }
 
-        if (map1.containsKey(interlocutor.getId()))
+        if (map1.containsKey(interlocutorName))
         {
-            map1.remove(interlocutor.getId());
+            map1.remove(interlocutorName);
             checker = true;
         }
 
-        if (map2.containsKey(interlocutor.getId()))
+        if (map2.containsKey(interlocutorName))
         {
-            map2.remove(interlocutor.getId());
+            map2.remove(interlocutorName);
             checker = true;
         }
 
@@ -165,10 +194,18 @@ public class SessionUser {
             System.out.println(e);
         }
 
-        if (checker) {
-            freeUsersArray.add(interlocutor.getId());
+        //сказать что собеседник вышел => открыть окно подтверждения
+        JSONObject jsonToReturn = new JSONObject();
+        jsonToReturn.put("answer", "new_window");
 
-            int answer = connectTwo(interlocutor);
-        }
+
+        interlocutorSes.getBasicRemote().sendText(jsonToReturn.toString());
+
+        //if (checker) {
+        //    freeUsersArray.add(interlocutor.getId());
+
+            //установить новое соединение
+        //    int answer = connectTwo(interlocutor);
+        //}
     }
 }

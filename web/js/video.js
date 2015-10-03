@@ -116,13 +116,26 @@ function success(stream) {
             upDateChatBoxGet(interlocutorNameChat, textMessages);
         }
 
-        if (getCommand === "stop_connect")
+        if (getCommand === "new_window")
         {
-            newInterlocutor();
-            //alert("111");
+            $('#myModal2').modal('show');
         }
 
-        if (getCommand === "new_interloc")
+        if (getCommand === "wait")
+        {
+            alert("free not finded")
+            //waitingWindowStart();
+            //$('#myModal2').modal('show');
+        }
+
+//        if (getCommand === "stop_connect")
+//        {
+//            $('#myModal2').modal('show');
+//            //newInterlocutor();
+//            //alert("111");
+//        }
+
+        if (getCommand === "new_interlocutor")
         {
             //initialize();
             pc.close();
@@ -218,9 +231,10 @@ function newInterlocutor() {
     sentJson.command = "2";
     sentJson.name = $('#your_name').text().replace("Hello: ", "");
 
-    ws.send(JSON.stringify(sentJson));
+    $('#myModal2').modal('hide');
 
-    waitingWindowStart();
+
+    ws.send(JSON.stringify(sentJson));
 
 }
 
