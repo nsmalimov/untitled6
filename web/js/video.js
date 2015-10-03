@@ -9,6 +9,8 @@ if (portName.length == 0) {
     portName = "80";
 }
 
+var isVideoCall = 0;
+
 var ws = null;
 
 ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
@@ -64,7 +66,10 @@ function success(stream) {
 
     if (stream) {
         pc.addStream(stream);
-        $('#local').attachStream(stream);
+        if (isVideoCall != 1) {
+            $('#local').attachStream(stream);
+            isVideoCall = 1;
+        }
     }
 
     pc.onaddstream = function(event) {
@@ -114,6 +119,7 @@ function success(stream) {
         if (getCommand === "stop_connect")
         {
             newInterlocutor();
+            //alert("111");
         }
 
         if (getCommand === "new_interloc")
@@ -126,7 +132,7 @@ function success(stream) {
             success(stream);
             //pc = new PeerConnection(null);
             createOffer();
-            initiator = false;
+            //initiator = false;
             //alert("111");
         }
     };
@@ -211,8 +217,6 @@ function newInterlocutor() {
     var sentJson = new Object();
     sentJson.command = "2";
     sentJson.name = $('#your_name').text().replace("Hello: ", "");
-
-
 
     ws.send(JSON.stringify(sentJson));
 

@@ -19,6 +19,20 @@ public class SessionUser {
 
     public static Map<String, String> userSessionId = Collections.synchronizedMap(new HashMap<String, String>());
 
+    public static void printParams()
+    {
+        sessions.forEach((k,v)->System.out.println("Sessions " + "Key : " + k + " Value : " + v));
+
+        for (String s: freeUsersArray)
+            System.out.println("freeUsersArray:" + s);
+
+        map1.forEach((k,v)->System.out.println("Sessions " + "Key : " + k + " Value : " + v));
+        map2.forEach((k,v)->System.out.println("Sessions " + "Key : " + k + " Value : " + v));
+
+        userSessionId.forEach((k,v)->System.out.println("userSessionId " + "Key : " + k + " Value : " + v));
+
+    }
+
     public static void addFreeUser(Session session, String name) throws IOException, EncodeException
     {
         sessions.put(session.getId(), session);
@@ -69,39 +83,92 @@ public class SessionUser {
         return ses;
     }
 
+    public static int connectTwo(Session client) throws IOException, EncodeException {
+     // 0 - if ok
+     //   1 - else
+
+        if (freeUsersArray.size() == 1)
+            return 0;
+
+        String waitingUsersId = freeUsersArray.get(0);
+
+        // можно ускорить через map
+        map1.put(client.getId(), waitingUsersId);
+        map2.put(waitingUsersId, client.getId());
+
+        JSONObject jsonToReturn = new JSONObject();
+        jsonToReturn.put("answer", "new_interloc");
+
+        client.getBasicRemote().sendText(jsonToReturn.toString());
+
+        freeUsersArray.remove(freeUsersArray.get(0));
+        freeUsersArray.remove(waitingUsersId);
+
+        return 1;
+
+
+    }
+
     public static void newInterlocutor(Session session, String name) throws IOException, EncodeException
     {
-        closeConnect(session, true);
+        closeConnect(session);
 
         addFreeUser(session, name);
     }
 
-    public static void closeConnect(Session session, boolean newInterloc)
-    {
-        //Session interlocutor = getInterlocutor(session);
+    public static void closeConnect(Session session) throws IOException, EncodeException {
 
-        //System.out.println("close conn1111ect");
-        boolean check = false;
+        Session interlocutor = getInterlocutor(session);
+
+        boolean checker = false;
+
         if (map1.containsKey(session.getId()))
         {
-            String interlocutor = map1.get(session.getId());
-            map2.remove(interlocutor);
             map1.remove(session.getId());
-
-            freeUsersArray.add(interlocutor);
-
-            check = true;
+            checker = true;
         }
 
-        if (!newInterloc) {
-            if (!check) {
-                freeUsersArray.remove(session.getId());
-            }
+        if (map2.containsKey(session.getId()))
+        {
+            map2.remove(session.getId());
+            checker = true;
+        }
 
+        if (map1.containsKey(interlocutor.getId()))
+        {
+            map1.remove(interlocutor.getId());
+            checker = true;
+        }
+
+        if (map2.containsKey(interlocutor.getId()))
+        {
+            map2.remove(interlocutor.getId());
+            checker = true;
+        }
+
+        if (sessions.containsKey(session.getId()))
+        {
             sessions.remove(session.getId());
+        }
+
+        if (userSessionId.containsKey(session.getId()))
+        {
             userSessionId.remove(session.getId());
         }
 
-        //System.out.println("2222");
+
+        try {
+            freeUsersArray.remove(session.getId());
+        }
+        catch (Throwable e)
+        {
+            System.out.println(e);
+        }
+
+        if (checker) {
+            freeUsersArray.add(interlocutor.getId());
+
+            int answer = connectTwo(interlocutor);
+        }
     }
 }
