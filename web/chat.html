@@ -37,7 +37,7 @@
 <body>
 <div class="section">
     <div class="container">
-        <div class="col-md-5">
+        <div class="col-md-5" id="main_container">
 
             <div class="row">
                 <button id="startButton" class="button_main" onclick=initSocket()>Start chat</button>
@@ -49,7 +49,7 @@
                 <video id="local" autoplay muted></video>
             </div>
 
-            <div class="row">
+            <div class="row" id="remote_container">
                 <video id="remote" autoplay></video>
             </div>
 
@@ -87,7 +87,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header" style="text-align: center;">
@@ -98,13 +98,19 @@
                     <div class="form-group">
                         <p>Выберите себе ник:</p>
                         <input class="form-control" id="NameInput"
-                               placeholder="Enter your name">
+                               placeholder="Enter your nickname">
+                    </div>
+
+                    <div class="form-group">
+                        <p>Придумайте пароль:</p>
+                        <input type="password" class="form-control" id="PasswordInput"
+                               placeholder="Enter password">
                     </div>
 
                     <div class="form-group">
                         <p>Введите ключ:</p>
                         <input class="form-control" id="KeyInput"
-                               placeholder="Enter key number">
+                               placeholder="Enter key numberr">
                     </div>
                 </form>
             </div>

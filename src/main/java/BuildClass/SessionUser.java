@@ -204,7 +204,9 @@ public class SessionUser {
 
 
         //not in free users
-        interlocutorSes.getBasicRemote().sendText(jsonToReturn.toString());
+        if (checker) {
+            interlocutorSes.getBasicRemote().sendText(jsonToReturn.toString());
+        }
 
     }
 }

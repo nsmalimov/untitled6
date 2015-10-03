@@ -51,6 +51,7 @@ public class ServletWebrtc extends HttpServlet {
 
         int command = Integer.parseInt(jsonObject.getString("command"));
 
+        System.out.println(command);
         switch (command)
         {
             case 0:

@@ -18,6 +18,7 @@ ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
 function initSocket()
 {
     var sentJson = new Object();
+
     sentJson.command = "0";
     sentJson.name = $('#your_name').text().replace("Hello: ", "");
 
@@ -25,7 +26,11 @@ function initSocket()
     $("#newButton").prop('disabled', false);
     $("#startButton").prop('disabled', true);
 
+
+
     ws.send(JSON.stringify(sentJson));
+
+    //alert(JSON.stringify(sentJson));
 
     waitingWindowStart();
 }
@@ -39,7 +44,6 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || 
 function socketCallback(event) {
 
     var getData = JSON.parse(event.data);
-    //alert(getData["nameInterlocutor"]);
     if (getData["answer"] == "owner") {
         initiator = false;
         initialize();
@@ -119,7 +123,11 @@ function success(stream) {
         if (getCommand === "new_window")
         {
             pc.close();
+            $('#remote_container').remove();
+
+            $('#main_container').append("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
             $('#myModal2').modal('show');
+
         }
 
         if (getCommand === "wait_window")
@@ -203,15 +211,24 @@ function hangup() {
     pc.close();
 
     ws.close();
+
     waitingWindowStop();
 
-    //$('#remote').src = URL.createObjectURL(null);
+    $('#remote_container').remove();
 
-    //alert("111");
+    $('#main_container').append("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
 
     $("#stopButton").prop('disabled', true);
     $("#newButton").prop('disabled', true);
     $("#startButton").prop('disabled', false);
+
+    $('#startButton').click(function() {
+        $.ajax({
+                url: 'js/video.js',
+        success: initSocket()
+               });
+    });
+
 }
 
 function newInterlocutor() {
@@ -259,3 +276,7 @@ function upDateChatBoxGet(name, message) {
 }
 
 
+function scriptLoaded() {
+    alert("111");
+
+}
