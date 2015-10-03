@@ -118,35 +118,22 @@ function success(stream) {
 
         if (getCommand === "new_window")
         {
+            pc.close();
             $('#myModal2').modal('show');
         }
 
-        if (getCommand === "wait")
+        if (getCommand === "wait_window")
         {
-            alert("free not finded")
-            //waitingWindowStart();
-            //$('#myModal2').modal('show');
+            success(stream);
+            initiator = false;
+            //перейти в режим ожидания
         }
-
-//        if (getCommand === "stop_connect")
-//        {
-//            $('#myModal2').modal('show');
-//            //newInterlocutor();
-//            //alert("111");
-//        }
 
         if (getCommand === "new_interlocutor")
         {
-            //initialize();
             pc.close();
-
-            //waitingWindowStart();
-
             success(stream);
-            //pc = new PeerConnection(null);
             createOffer();
-            //initiator = false;
-            //alert("111");
         }
     };
 
@@ -216,6 +203,7 @@ function hangup() {
     pc.close();
 
     ws.close();
+    waitingWindowStop();
 
     //$('#remote').src = URL.createObjectURL(null);
 
@@ -233,7 +221,7 @@ function newInterlocutor() {
 
     $('#myModal2').modal('hide');
 
-
+    waitingWindowStart();
     ws.send(JSON.stringify(sentJson));
 
 }

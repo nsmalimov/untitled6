@@ -44,6 +44,7 @@ public class SessionUser {
 
     public static void addFreeUser(Session session, String name) throws IOException, EncodeException
     {
+        //System.out.println(name);
         sessions.put(session.getId(), session);
         userSessionId.put(session.getId(), name);
 
@@ -115,13 +116,15 @@ public class SessionUser {
      // 0 - if ok
      //   1 - else
 
-        JSONObject jsonToReturn = new JSONObject();
-        jsonToReturn.put("answer", "new_window");
+        //JSONObject jsonToReturn = new JSONObject();
+        //jsonToReturn.put("answer", "new_window");
 
-        client.getBasicRemote().sendText(jsonToReturn.toString());
+        //client.getBasicRemote().sendText(jsonToReturn.toString());
 
-        if (freeUsersArray.size() == 0)
+        if (freeUsersArray.size() == 0) {
+            freeUsersArray.add(client.getId());
             return 0;
+        }
 
         String waitingUsersId = freeUsersArray.get(0);
 
@@ -137,16 +140,17 @@ public class SessionUser {
 
     }
 
-    public static void newInterlocutor(Session session, String name) throws IOException, EncodeException
-    {
-        closeConnect(session);
-
-        addFreeUser(session, name);
-    }
+    //public static void newInterlocutor(Session session, String name) throws IOException, EncodeException
+    //{
+    //    closeConnect(session);
+//
+       // addFreeUser(session, name);
+    ////}
 
     public static void closeConnect(Session session) throws IOException, EncodeException {
 
         String interlocutorName = getInterlocutorName(session);
+
         Session interlocutorSes = getInterlocutorSession(session);
 
         boolean checker = false;
@@ -199,13 +203,8 @@ public class SessionUser {
         jsonToReturn.put("answer", "new_window");
 
 
+        //not in free users
         interlocutorSes.getBasicRemote().sendText(jsonToReturn.toString());
 
-        //if (checker) {
-        //    freeUsersArray.add(interlocutor.getId());
-
-            //установить новое соединение
-        //    int answer = connectTwo(interlocutor);
-        //}
     }
 }

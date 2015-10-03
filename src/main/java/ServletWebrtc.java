@@ -40,7 +40,7 @@ public class ServletWebrtc extends HttpServlet {
 
         BuildClass.SessionUser.closeConnect(session);
 
-        BuildClass.SessionUser.printParams();
+        //BuildClass.SessionUser.printParams();
     }
 
     @OnMessage
@@ -58,7 +58,7 @@ public class ServletWebrtc extends HttpServlet {
                 SessionUser.addFreeUser(client, jsonObject.getString("name"));
 
                 System.out.println("connect");
-                //BuildClass.SessionUser.printParams();
+                BuildClass.SessionUser.printParams();
                 //System.out.println("user connect");
                 break;
 
@@ -93,7 +93,7 @@ public class ServletWebrtc extends HttpServlet {
                 {
                     //в режим ожидания
                     JSONObject jsonToReturn2 = new JSONObject();
-                    jsonToReturn2.put("answer", "wait");
+                    jsonToReturn2.put("answer", "wait_window");
                     client.getBasicRemote().sendText(jsonToReturn2.toString());
                 }
                 else
@@ -101,6 +101,10 @@ public class ServletWebrtc extends HttpServlet {
                     //начать чат
                     JSONObject jsonToReturn2 = new JSONObject();
                     jsonToReturn2.put("answer", "new_interlocutor");
+
+                    String interlocutorName = SessionUser.getInterlocutorName(client);
+
+                    jsonToReturn2.put("interlocutorName", interlocutorName);
                     client.getBasicRemote().sendText(jsonToReturn2.toString());
                 }
 
