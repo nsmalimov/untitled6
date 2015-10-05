@@ -161,6 +161,10 @@ public class ServletWebrtc extends HttpServlet {
                 locutorSes2.getBasicRemote().sendText(jsonToReturn3.toString());
 
                 break;
+
+            case 4:
+                BuildClass.SessionUser.closeConnect(client);
+                break;
             default:
                 System.out.println("default");
                 break;

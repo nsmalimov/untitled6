@@ -9,6 +9,8 @@ if (portName.length == 0) {
     portName = "80";
 }
 
+var wasUsed = false;
+
 var isVideoCall = 0;
 
 var ws = null;
@@ -42,6 +44,11 @@ var SessionDescription = window.mozRTCSessionDescription || window.RTCSessionDes
 navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 
 function socketCallback(event) {
+
+    if (wasUsed)
+    {
+       initialize();
+    }
 
     var getData = JSON.parse(event.data);
     if (getData["answer"] == "owner") {
@@ -210,7 +217,7 @@ function logStreaming(streaming) {
 function hangup() {
     pc.close();
 
-    ws.close();
+    //ws.close();
 
     waitingWindowStop();
 
@@ -222,12 +229,21 @@ function hangup() {
     $("#newButton").prop('disabled', true);
     $("#startButton").prop('disabled', false);
 
-    $('#startButton').click(function() {
-        $.ajax({
-                url: 'js/video.js',
-        success: initSocket()
-               });
-    });
+    var sentJson = new Object();
+    //sentJson.sentdata = JSON.stringify(offer);
+    sentJson.command = "4";
+    ws.send(JSON.stringify(sentJson));
+
+    initiator = false;
+
+    wasUsed = true;
+
+    //$('#startButton').click(function() {
+    //    $.ajax({
+    //            url: 'js/video.js',
+    //    success: initSocket()
+    //           });
+    //});
 
 }
 
