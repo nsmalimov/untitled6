@@ -33,12 +33,20 @@ public class ServletWebrtc extends HttpServlet {
     public void onClose(Session session) throws IOException, EncodeException{
         //Session interlocutor = BuildClass.SessionUser.getInterlocutor(session);
 
+
         //JSONObject jsonToReturn1 = new JSONObject();
         //jsonToReturn1.put("answer", "stop_connect");
 
         //interlocutor.getBasicRemote().sendText(jsonToReturn1.toString());
 
         BuildClass.SessionUser.closeConnect(session);
+
+        System.out.println("close connect");
+
+        BuildClass.SessionUser.printParams();
+        //BuildClass.SessionUser.printParams();
+
+
 
         //BuildClass.SessionUser.printParams();
     }
@@ -51,7 +59,6 @@ public class ServletWebrtc extends HttpServlet {
 
         int command = Integer.parseInt(jsonObject.getString("command"));
 
-        System.out.println(command);
         switch (command)
         {
             case 0:
@@ -60,7 +67,6 @@ public class ServletWebrtc extends HttpServlet {
 
                 System.out.println("connect");
                 BuildClass.SessionUser.printParams();
-                //System.out.println("user connect");
                 break;
 
             case 1:
@@ -78,17 +84,14 @@ public class ServletWebrtc extends HttpServlet {
 
                 locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
 
-                //System.out.println("ICE candidate get and sent");
                 break;
 
-            case 2:
-                //new interlocutor
+            case 2: //new interlocutor
 
-                //присылает запрос на нового собеседника
-                //соединение с тем кто ожидает
-
-                //соеденить с пользователем
+                System.out.println(2);
                 int answer = SessionUser.connectTwo(client);
+
+                //System.out.println("answer " + answer);
 
                 if (answer == 0)
                 {
@@ -96,6 +99,7 @@ public class ServletWebrtc extends HttpServlet {
                     JSONObject jsonToReturn2 = new JSONObject();
                     jsonToReturn2.put("answer", "wait_window");
                     client.getBasicRemote().sendText(jsonToReturn2.toString());
+                    System.out.println("wait_command");
                 }
                 else
                 {
@@ -109,48 +113,13 @@ public class ServletWebrtc extends HttpServlet {
                     client.getBasicRemote().sendText(jsonToReturn2.toString());
                 }
 
+                BuildClass.SessionUser.printParams();
 
-//                JSONObject jsonToReturn2 = new JSONObject();
-//                jsonToReturn2.put("answer", "stop_connect");
-//
-//                String name = jsonObject.getString("name");
-//
-//                Session locutorSes4 = SessionUser.getInterlocutor(client);
-//
-//                //бывшему собеседнику отправить остановить соединение
-//
-//
-//
-//                //соеденить с новым
-//                SessionUser.newInterlocutor(client, name);
-//
-//                Session locutorSes3 = SessionUser.getInterlocutor(client);
-//
-//                //сказать новому что он инициатор и createoffer
-//
-//                JSONObject jsonToReturn5 = new JSONObject();
-//                jsonToReturn5.put("answer", "new_interloc");
-//
-//                //String name = jsonObject.getString("name");
-//
-//                client.getBasicRemote().sendText(jsonToReturn5.toString());
-//
-//                //System.out.println(locutorSes3.getId());
-//
-//
-//                //client.getBasicRemote().sendText(jsonToReturn2.toString());
-//
-//                //System.out.println("new interlocutor");
-//
-//                locutorSes4.getBasicRemote().sendText(jsonToReturn2.toString());
                 break;
 
-            case 3:
-                //get and set messages
+            case 3: //get and set messages
 
                 String messages = jsonObject.getString("message");
-
-                //System.out.println(messages);
 
                 JSONObject jsonToReturn3 = new JSONObject();
                 jsonToReturn3.put("answer", "message");
@@ -163,7 +132,12 @@ public class ServletWebrtc extends HttpServlet {
                 break;
 
             case 4:
+                System.out.println(4);
+                //полностью удалить пользователя
+
                 BuildClass.SessionUser.closeConnect(client);
+                BuildClass.SessionUser.printParams();
+
                 break;
             default:
                 System.out.println("default");

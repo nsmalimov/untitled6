@@ -30,10 +30,11 @@ public class SessionUser {
 
     public static void printParams()
     {
+        System.out.println("print on");
         sessions.forEach((k,v)->System.out.println("Sessions " + "Key : " + k + " Value : " + v));
 
         for (String s: freeUsersArray)
-            System.out.println("freeUsersArray:" + s);
+            System.out.println("freeUsersArray: " + s);
 
         map1.forEach((k,v)->System.out.println("Sessions " + "Key : " + k + " Value : " + v));
         map2.forEach((k,v)->System.out.println("Sessions " + "Key : " + k + " Value : " + v));
@@ -44,7 +45,6 @@ public class SessionUser {
 
     public static void addFreeUser(Session session, String name) throws IOException, EncodeException
     {
-        //System.out.println(name);
         sessions.put(session.getId(), session);
         userSessionId.put(session.getId(), name);
 
@@ -61,7 +61,6 @@ public class SessionUser {
         {
             String waitingUsersId = freeUsersArray.get(0);
 
-            // можно ускорить через map
             map1.put(session.getId(), waitingUsersId);
             map2.put(waitingUsersId, session.getId());
 
@@ -113,13 +112,6 @@ public class SessionUser {
 
 
     public static int connectTwo(Session client) throws IOException, EncodeException {
-     // 0 - if ok
-     //   1 - else
-
-        //JSONObject jsonToReturn = new JSONObject();
-        //jsonToReturn.put("answer", "new_window");
-
-        //client.getBasicRemote().sendText(jsonToReturn.toString());
 
         if (freeUsersArray.size() == 0) {
             freeUsersArray.add(client.getId());

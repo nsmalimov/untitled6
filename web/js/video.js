@@ -9,6 +9,7 @@ if (portName.length == 0) {
     portName = "80";
 }
 
+
 var wasUsed = false;
 
 var isVideoCall = 0;
@@ -19,6 +20,24 @@ ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
 
 function initSocket()
 {
+    //alert(wasUsed);
+    if (wasUsed){
+
+        initialize();
+        var sentJson = new Object();
+        sentJson.command = "0";
+        sentJson.name = $('#your_name').text().replace("Hello: ", "");
+
+        $("#stopButton").prop('disabled', false);
+        $("#newButton").prop('disabled', false);
+        $("#startButton").prop('disabled', true);
+
+        ws.send(JSON.stringify(sentJson));
+
+        waitingWindowStart();
+        return;
+    }
+
     var sentJson = new Object();
 
     sentJson.command = "0";
@@ -28,12 +47,7 @@ function initSocket()
     $("#newButton").prop('disabled', false);
     $("#startButton").prop('disabled', true);
 
-
-
     ws.send(JSON.stringify(sentJson));
-
-    //alert(JSON.stringify(sentJson));
-
     waitingWindowStart();
 }
 
@@ -45,10 +59,10 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || 
 
 function socketCallback(event) {
 
-    if (wasUsed)
-    {
-       initialize();
-    }
+    //if (wasUsed)
+    //{
+    //    createOffer();
+    //}
 
     var getData = JSON.parse(event.data);
     if (getData["answer"] == "owner") {
@@ -66,7 +80,7 @@ ws.onmessage = socketCallback;
 
 function initialize() {
     var constraints = {
-        audio: true,
+        audio: false,
         video: true
     };
     navigator.getUserMedia(constraints, success, fail);
@@ -102,6 +116,10 @@ function success(stream) {
         var getJson = JSON.parse(event.data);
         var getCommand = getJson["answer"];
 
+        alert(getCommand);
+
+        //alert(getCommand);
+
         if (getCommand === "system"){
             var signal = JSON.parse(getJson["data"]);
             if (signal.sdp) {
@@ -130,6 +148,7 @@ function success(stream) {
         if (getCommand === "new_window")
         {
             pc.close();
+            //$('#interlocutor_name').text("You connected with: ");
             $('#remote_container').remove();
 
             $('#main_container').append("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
@@ -139,9 +158,12 @@ function success(stream) {
 
         if (getCommand === "wait_window")
         {
-            success(stream);
-            initiator = false;
+
+            //return;
+            //success(stream);
+            //initiator = false;
             //перейти в режим ожидания
+            //alert("wait");
         }
 
         if (getCommand === "new_interlocutor")
@@ -157,7 +179,6 @@ function success(stream) {
     } else {
         log('Waiting for guest connection...');
     }
-    logStreaming(false);
 }
 
 function fail() {
@@ -210,14 +231,10 @@ function log() {
     console.log.apply(console, arguments);
 }
 
-function logStreaming(streaming) {
-    $('#streaming').text(streaming ? '[streaming]' : '[..]');
-}
-
 function hangup() {
     pc.close();
 
-    //ws.close();
+    //$('#interlocutor_name').text("You connected with: ");
 
     waitingWindowStop();
 
@@ -229,22 +246,14 @@ function hangup() {
     $("#newButton").prop('disabled', true);
     $("#startButton").prop('disabled', false);
 
+    //call closeConnect server
     var sentJson = new Object();
-    //sentJson.sentdata = JSON.stringify(offer);
     sentJson.command = "4";
     ws.send(JSON.stringify(sentJson));
 
     initiator = false;
 
     wasUsed = true;
-
-    //$('#startButton').click(function() {
-    //    $.ajax({
-    //            url: 'js/video.js',
-    //    success: initSocket()
-    //           });
-    //});
-
 }
 
 function newInterlocutor() {
@@ -289,10 +298,4 @@ function upDateChatBoxGet(name, message) {
     $(".chat").append('<li class="left clearfix"><span class="chat-img pull-left"></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">' + name + '</strong></div><p>' + message + '</p></div></li>');
     var newmsg_top = parseInt($('.panel-body')[0].scrollHeight);
     $('.panel-body').scrollTop(newmsg_top - 100);
-}
-
-
-function scriptLoaded() {
-    alert("111");
-
 }
