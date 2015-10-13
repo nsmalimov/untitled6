@@ -25,7 +25,7 @@ function initSocket()
         initialize();
         var sentJson = new Object();
         sentJson.command = "0";
-        sentJson.name = $('#your_name').text().replace("Hello: ", "");
+        sentJson.name = $('#your_name').text();
 
         $("#stopButton").prop('disabled', false);
         $("#newButton").prop('disabled', false);
@@ -40,7 +40,7 @@ function initSocket()
     var sentJson = new Object();
 
     sentJson.command = "0";
-    sentJson.name = $('#your_name').text().replace("Hello: ", "");
+    sentJson.name = $('#your_name').text();
 
     $("#stopButton").prop('disabled', false);
     $("#newButton").prop('disabled', false);
@@ -64,7 +64,7 @@ function socketCallback(event) {
         initialize();
     }
     if (getData["answer"] == "guest") {
-        $('#interlocutor_name').text("You connected with: " + getData["nameInterlocutor"]);
+        $('#interlocutor_name').text(getData["nameInterlocutor"]);
         initiator = true;
         initialize();
     }
@@ -110,6 +110,8 @@ function success(stream) {
         var getJson = JSON.parse(event.data);
         var getCommand = getJson["answer"];
 
+        //alert(getCommand);
+
         if (getCommand === "system"){
             var signal = JSON.parse(getJson["data"]);
             if (signal.sdp) {
@@ -117,7 +119,7 @@ function success(stream) {
                     receiveAnswer(signal);
                     waitingWindowStop();
                 } else {
-                    $('#interlocutor_name').text("You connected with: " + getJson["interlocutorName"]);//interlocutorName
+                    $('#interlocutor_name').text(getJson["interlocutorName"]);
 
                     receiveOffer(signal);
                     waitingWindowStop();
@@ -131,7 +133,7 @@ function success(stream) {
         if (getCommand === "message")
         {
             var textMessages = getJson["message"];
-            var interlocutorNameChat = $('#interlocutor_name').text().replace("You connected with: ", "");
+            var interlocutorNameChat = $('#interlocutor_name').text();
             upDateChatBoxGet(interlocutorNameChat, textMessages);
         }
 
@@ -158,6 +160,12 @@ function success(stream) {
             pc.close();
             success(stream);
             createOffer();
+        }
+
+        if (getCommand === "token")
+        {
+            //поставить ограничение на количество генерируемых ключей
+            $('#token_space').append("<p>" + getJson["token"] + "</p>");
         }
     };
 
@@ -241,7 +249,7 @@ function hangup() {
 function newInterlocutor() {
     var sentJson = new Object();
     sentJson.command = "2";
-    sentJson.name = $('#your_name').text().replace("Hello: ", "");
+    sentJson.name = $('#your_name').text();
 
     $('#myModal2').modal('hide');
 
@@ -270,7 +278,7 @@ function upDateChatBoxSent(name, message) {
 function sentMessages() {
     var messageText = $('#text_input').val();
     var json_create = new Object();
-    var clientName = $('#your_name').text().replace("Hello: ", "");
+    var clientName = $('#your_name').text();
     json_create.command = "3";
     json_create.message = messageText;
     var json = JSON.stringify(json_create);
@@ -283,4 +291,11 @@ function upDateChatBoxGet(name, message) {
     $(".chat").append('<li class="left clearfix"><span class="chat-img pull-left"></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">' + name + '</strong></div><p>' + message + '</p></div></li>');
     var newmsg_top = parseInt($('.panel-body')[0].scrollHeight);
     $('.panel-body').scrollTop(newmsg_top - 100);
+}
+
+function generateToken() {
+    var json_create = new Object();
+    json_create.command = "5";
+    var json = JSON.stringify(json_create);
+    ws.send(json);
 }

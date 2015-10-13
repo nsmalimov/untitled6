@@ -10,6 +10,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.*;
 
+//TODO
+//add finally
+
 public class SQLiteClass {
     public static Connection conn;
     public static Statement stat;
@@ -24,8 +27,10 @@ public class SQLiteClass {
 
     public static boolean checkKeyGenDb(String keyGen) throws ClassNotFoundException, SQLException {
         stat = conn.createStatement();
+
+        //если найдено значение неиспользованное
         ResultSet rs = stat.executeQuery("select id from keyGens where keyGen = '" + keyGen + "'" +
-                "and isUse != " + "'1'");
+                "and marker != " + "'registrated'");
         while (rs.next()) {
             rs.close();
             stat.close();
@@ -37,10 +42,11 @@ public class SQLiteClass {
         return false;
     }
 
+    //добавить пользователя в базу данных
     public static void addUserDatabase(String userName, String keyGen) throws ClassNotFoundException, SQLException {
         stat = conn.createStatement();
 
-        int n = stat.executeUpdate("UPDATE keyGens SET isUse = '1' WHERE keyGen = '" + keyGen + "'");
+        int n = stat.executeUpdate("UPDATE keyGens SET marker = 'registrated' WHERE keyGen = '" + keyGen + "'");
 
         try {
             PreparedStatement statement = conn.prepareStatement("INSERT INTO freeUsers (name,  userKeyGen) VALUES ( ?, ?)");
@@ -57,6 +63,7 @@ public class SQLiteClass {
         }
     }
 
+    //получить имя по ключу
     public static String getNameDb(String keyGen) throws ClassNotFoundException, SQLException,  NamingException
     {
         Conn();
@@ -79,7 +86,34 @@ public class SQLiteClass {
         return "";
     }
 
+    public static String generateKeygen() throws ClassNotFoundException, SQLException,  NamingException
+    {
+        Conn();
+
+        stat = conn.createStatement();
+        ResultSet rs = stat.executeQuery("select keyGen from keyGens where marker = " + "'not_used'");
+
+        while (rs.next()) {
+            String answer = rs.getString("keyGen");
+
+
+            int n = stat.executeUpdate("UPDATE keyGens SET marker = 'sent' WHERE keyGen =" + "'" + answer + "'");
+
+            rs.close();
+            stat.close();
+            CloseDB();
+            return answer;
+        }
+
+        rs.close();
+        stat.close();
+        CloseDB();
+
+        return "";
+    }
+
     public static void CloseDB() throws ClassNotFoundException, SQLException {
+        //conn.commit();
         conn.close();
     }
 

@@ -35,14 +35,14 @@ function serverConnectFunc(serverUrl, jsonData) {
 
                     if (userName === "no")
                     {
-                        $('#your_name').text("Hello: " + $("#NameInput").val());
+                        $('#your_name').text($("#NameInput").val());
                         userName = $("#NameInput").val();
                         //alert(userName);
                         //alert($('#your_name').val());
                     }
                     else
                     {
-                        $('#your_name').text("Hello: " + userName);
+                        $('#your_name').text(userName);
                     }
                     //$('#your_name').val(userName);
                    break;

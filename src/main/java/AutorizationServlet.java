@@ -63,8 +63,6 @@ public class AutorizationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //регистрация нового пользователя
 
-        //SQLiteClass.Conn();
-
         StringBuilder jb = new StringBuilder();
         String line = null;
 

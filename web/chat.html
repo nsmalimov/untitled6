@@ -35,31 +35,37 @@
     <script type="text/javascript" src="http://vk.com/js/api/share.js?92" charset="windows-1251"></script>
 
 
-
 </head>
 
 <body>
 <div class="section">
     <div class="container">
-            <div class="container">
-                <div class="navbar-header">
-                    <div class="row">
-                        <button id="startButton" class="button_main" onclick=initSocket()>Start chat</button>
-                        <button id="stopButton" class="button_main" disabled onclick=hangup()>Stop chat</button>
-                        <button id="newButton" class="button_main" disabled onclick=newInterlocutor()>Find new interlocutor</button>
-                    </div>
+        <div class="container">
+            <div class="navbar-header">
+                <div class="row">
+                    <button id="startButton" class="button_main" onclick=initSocket()>Start chat</button>
+                    <button id="stopButton" class="button_main" disabled onclick=hangup()>Stop chat</button>
+                    <button id="newButton" class="button_main" disabled onclick=newInterlocutor()>Find new
+                        interlocutor
+                    </button>
                 </div>
-                <div class="collapse navbar-collapse" id="navbar-ex-collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li class="active">
-                            <a type="button" class="btn btn-default" onclick=inviteFreind()>Invite freind</a>
-                        </li>
-                        <li>
-                            <a type="button" class="btn btn-default" onclick=myProfile()>My profile</a>
-                        </li>
-                    </ul>
-                </div>
+
+
+
             </div>
+
+
+            <div class="collapse navbar-collapse" id="navbar-ex-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="active">
+                        <a type="button" class="btn btn-default" onclick=inviteFreind()>Invite freind</a>
+                    </li>
+                    <li>
+                        <a type="button" class="btn btn-default" onclick=myProfile()>My profile</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <div class="col-md-5" id="main_container">
 
             <div class="row" id="remote_container">
@@ -99,7 +105,8 @@
     </div>
 </div>
 
-<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false">
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"
+     data-keyboard="false">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header" style="text-align: center;">
@@ -119,8 +126,11 @@
                                placeholder="Enter key numberr">
                     </div>
 
-                    <p><br>Внимание! Если вы видите это окно, хотя уже вводили ранее ключ, значит ваш браузер не поддерживает
-                    хранение ключей или данные были удалены. В этом случае, получите новый ключ, или сообщите об этом администратору.</p>
+                    <p><br>Внимание! Если вы видите это окно, хотя уже вводили ранее ключ, значит ваш браузер не
+                        поддерживает
+                        хранение ключей или данные были удалены. В этом случае, получите новый ключ, или сообщите об
+                        этом администратору.</p>
+
                     <div style="text-align: center;"><a href="URL">https://vk.com/spbu_roulette</a></div>
 
                 </form>
@@ -157,17 +167,28 @@
 <div class="modal fade" id="invite_friend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
+
             <div class="modal-header" style="text-align: center;">
-                <h4 class="modal-title">Пользователь прервал соединение</h4>
-                <h5 class="modal-title">Найти нового собеседника?</h5>
+                <p><br>Вы можете пригласить друзей в чат рулетку. Просто перешлите ключ
+                своему другу. Пожалуйста, не передавайте ключ не студентам или студентам других вузов.
+                В противном случае, ваш ключ будет тоже заблокирован
+                и использование системы станет невозможным.</p>
             </div>
+
+            <div class="modal-body" style="text-align: center;" id="token_space">
+
+                        <p>Some text</p>
+
+            </div>
+
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <a type="button" class="btn btn-primary" onclick=newInterlocutor()>Найти</a>
+                        <a type="button" class="btn btn-primary" onclick=generateToken()>Сгенерировать ключ</a>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
@@ -190,9 +211,11 @@
     </div>
 </div>
 
-<h4><span class="label label-info" id="your_name">Hello:</span></h4>
-
-<h4><span class="label label-success" id="interlocutor_name">You connected with:</span></h4>
-
 </body>
+
+<div class="container" id="added_cont" style="display: none;">
+    <p id="your_name"><p>
+    <p id="interlocutor_name"></p>
+</div>
+
 </html>

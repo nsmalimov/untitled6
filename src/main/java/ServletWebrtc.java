@@ -1,3 +1,4 @@
+import Databases.SQLiteClass;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -12,6 +13,10 @@ import java.io.IOException;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import javax.naming.NamingException;
 
 
 import java.util.*;
@@ -53,7 +58,7 @@ public class ServletWebrtc extends HttpServlet {
 
     @OnMessage
     public void onMessage(String message, Session client)
-            throws IOException, EncodeException {
+            throws IOException, EncodeException, IOException, EncodeException, SQLException, NamingException, ClassNotFoundException {
 
         JSONObject jsonObject = new JSONObject(message);
 
@@ -141,6 +146,24 @@ public class ServletWebrtc extends HttpServlet {
                 BuildClass.SessionUser.printParams();
 
                 break;
+
+            case 5:
+                //сгенерировать ключ и пометить как переданный
+
+                System.out.println(5);
+
+                String genKeygen = SQLiteClass.generateKeygen();
+
+                JSONObject jsonToReturn5 = new JSONObject();
+                jsonToReturn5.put("answer", "token");
+                jsonToReturn5.put("token", genKeygen);
+
+                System.out.println(jsonToReturn5.toString());
+
+                client.getBasicRemote().sendText(jsonToReturn5.toString());
+
+                break;
+
             default:
                 System.out.println("default");
                 break;
