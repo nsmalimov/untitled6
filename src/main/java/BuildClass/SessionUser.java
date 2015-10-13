@@ -19,6 +19,8 @@ public class SessionUser {
 
     public static Map<String, String> userSessionId = new HashMap<String, String>();
 
+    public static Map<String, String> waitUsers = new HashMap<String, String>();
+
 //    public static Map<String, Session> sessions = Collections.synchronizedMap(new HashMap<String, Session>());
 //
 //    public static List<String> freeUsersArray = Collections.synchronizedList(new ArrayList<String>());
@@ -65,7 +67,19 @@ public class SessionUser {
             map2.put(waitingUsersId, session.getId());
 
             JSONObject jsonToReturn = new JSONObject();
-            jsonToReturn.put("answer", "guest");
+
+            //String interlocutorName = getInterlocutorName(session);
+            //if (waitUsers.containsKey(waitingUsersId)){
+            //    jsonToReturn.put("answer", "owner");
+            //    System.out.println("owner");
+            //}
+            //else {
+                jsonToReturn.put("answer", "guest");
+                System.out.println("guest " + session.getId());
+            //}
+
+
+
             jsonToReturn.put("nameInterlocutor", userSessionId.get(waitingUsersId));
 
             session.getBasicRemote().sendText(jsonToReturn.toString());
@@ -115,6 +129,7 @@ public class SessionUser {
 
         if (freeUsersArray.size() == 0) {
             freeUsersArray.add(client.getId());
+            waitUsers.put(client.getId(), "000");
             return 0;
         }
 
@@ -128,8 +143,6 @@ public class SessionUser {
         freeUsersArray.remove(waitingUsersId);
 
         return 1;
-
-
     }
 
     //public static void newInterlocutor(Session session, String name) throws IOException, EncodeException

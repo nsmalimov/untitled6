@@ -89,6 +89,8 @@ function initialize() {
 function success(stream) {
     pc = new PeerConnection(null);
 
+    //alert(initiator);
+
     if (stream) {
         pc.addStream(stream);
         if (isVideoCall != 1) {
@@ -116,7 +118,7 @@ function success(stream) {
         var getJson = JSON.parse(event.data);
         var getCommand = getJson["answer"];
 
-        alert(getCommand);
+        //alert(getCommand);
 
         //alert(getCommand);
 
@@ -160,8 +162,8 @@ function success(stream) {
         {
 
             //return;
-            //success(stream);
-            //initiator = false;
+            success(stream);
+            initiator = false;
             //перейти в режим ожидания
             //alert("wait");
         }
@@ -264,6 +266,9 @@ function newInterlocutor() {
     $('#myModal2').modal('hide');
 
     waitingWindowStart();
+
+    initiator = false;
+
     ws.send(JSON.stringify(sentJson));
 
 }
