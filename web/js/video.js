@@ -8,6 +8,7 @@ if (portName.length == 0) {
     portName = "80";
 }
 
+var myName = "";
 
 var wasUsed = false;
 
