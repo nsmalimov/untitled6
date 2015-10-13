@@ -1,7 +1,6 @@
 var initiator;
 var pc;
 
-//var userName = $('#your_name').text().replace("Hello: ");
 var serverHostName = window.location.hostname;
 //
 var portName = window.location.port;
@@ -59,11 +58,6 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || 
 
 function socketCallback(event) {
 
-    //if (wasUsed)
-    //{
-    //    createOffer();
-    //}
-
     var getData = JSON.parse(event.data);
     if (getData["answer"] == "owner") {
         initiator = false;
@@ -75,7 +69,7 @@ function socketCallback(event) {
         initialize();
     }
 }
-// add handler
+
 ws.onmessage = socketCallback;
 
 function initialize() {
@@ -88,8 +82,6 @@ function initialize() {
 
 function success(stream) {
     pc = new PeerConnection(null);
-
-    //alert(initiator);
 
     if (stream) {
         pc.addStream(stream);
@@ -117,10 +109,6 @@ function success(stream) {
     ws.onmessage = function (event) {
         var getJson = JSON.parse(event.data);
         var getCommand = getJson["answer"];
-
-        //alert(getCommand);
-
-        //alert(getCommand);
 
         if (getCommand === "system"){
             var signal = JSON.parse(getJson["data"]);
@@ -150,7 +138,6 @@ function success(stream) {
         if (getCommand === "new_window")
         {
             pc.close();
-            //$('#interlocutor_name').text("You connected with: ");
             $('#remote_container').remove();
 
             $('#main_container').append("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
@@ -158,16 +145,14 @@ function success(stream) {
 
         }
 
+        //перейти в режим ожидания
         if (getCommand === "wait_window")
         {
-
-            //return;
             success(stream);
             initiator = false;
-            //перейти в режим ожидания
-            //alert("wait");
         }
 
+        //найден собеседник (ответить)
         if (getCommand === "new_interlocutor")
         {
             pc.close();
@@ -187,9 +172,6 @@ function fail() {
     $('#traceback').text(Array.prototype.join.call(arguments, ' '));
     $('#traceback').attr('class', 'bg-danger');
     console.error.apply(console, arguments);
-    //TODO
-    //ошибка
-    //alert("fail");
 }
 
 function createOffer() {
@@ -236,8 +218,6 @@ function log() {
 function hangup() {
     pc.close();
 
-    //$('#interlocutor_name').text("You connected with: ");
-
     waitingWindowStop();
 
     $('#remote_container').remove();
@@ -253,7 +233,7 @@ function hangup() {
     sentJson.command = "4";
     ws.send(JSON.stringify(sentJson));
 
-    initiator = false;
+    initiator = true;
 
     wasUsed = true;
 }
