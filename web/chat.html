@@ -123,7 +123,7 @@
                     <div class="form-group">
                         <p>Введите ключ:</p>
                         <input class="form-control" id="KeyInput"
-                               placeholder="Enter key numberr">
+                               placeholder="Enter key number">
                     </div>
 
                     <p><br>Внимание! Если вы видите это окно, хотя уже вводили ранее ключ, значит ваш браузер не
@@ -176,9 +176,6 @@
             </div>
 
             <div class="modal-body" style="text-align: center;" id="token_space">
-
-                        <p>Some text</p>
-
             </div>
 
             <div class="modal-footer">
@@ -197,13 +194,18 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header" style="text-align: center;">
-                <h4 class="modal-title">Пользователь прервал соединение</h4>
-                <h5 class="modal-title">Найти нового собеседника?</h5>
+                <p><br>Изменить имя</p>
             </div>
+
+            <div class="modal-body" style="text-align: center;">
+                <input class="form-control" id="NewKeyInput"
+                       placeholder="Enter your new nickname">
+            </div>
+
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <a type="button" class="btn btn-primary" onclick=newInterlocutor()>Найти</a>
+                        <a type="button" class="btn btn-primary" onclick=changeNickName()>Изменить</a>
                     </div>
                 </div>
             </div>

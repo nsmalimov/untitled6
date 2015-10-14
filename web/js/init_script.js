@@ -36,6 +36,10 @@ function serverConnectFunc(serverUrl, jsonData) {
                     if (userName === "no")
                     {
                         $('#your_name').text($("#NameInput").val());
+
+                        var nickname = $('#your_name').text();
+                        $("#NewKeyInput").val(nickname);
+
                         userName = $("#NameInput").val();
                         //alert(userName);
                         //alert($('#your_name').val());
@@ -43,6 +47,9 @@ function serverConnectFunc(serverUrl, jsonData) {
                     else
                     {
                         $('#your_name').text(userName);
+
+                        var nickname = $('#your_name').text();
+                        $("#NewKeyInput").val(nickname);
                     }
                     //$('#your_name').val(userName);
                    break;
@@ -154,12 +161,9 @@ function myProfile()
 }
 
 window.onload = function() {
-    //alert( 'Документ и все ресурсы загружены' );
+    //Документ и все ресурсы загружены
     autorizeFunc();
     $("#stopButton").prop('disabled', true);
     $("#newButton").prop('disabled', true);
     $("#startButton").prop('disabled', false);
-
-    //$("#btn-chat").prop('disabled', true);
-
 };

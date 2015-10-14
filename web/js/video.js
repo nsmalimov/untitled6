@@ -299,3 +299,10 @@ function generateToken() {
     var json = JSON.stringify(json_create);
     ws.send(json);
 }
+
+function changeNickName()
+{
+    var nickname = $('#your_name').text();
+    $("#NewKeyInput").val(nickname);
+
+}
