@@ -27,6 +27,7 @@ function initSocket()
         sentJson.name = $('#your_name').text();
 
         //componentPropetrOn();
+        $("#stopButton").prop('disabled', false);
 
         ws.send(JSON.stringify(sentJson));
 
@@ -40,6 +41,7 @@ function initSocket()
     sentJson.name = $('#your_name').text();
 
     //componentPropetrOn();
+    $("#stopButton").prop('disabled', false);
 
     ws.send(JSON.stringify(sentJson));
     waitingWindowStart();
@@ -146,7 +148,7 @@ function success(stream) {
             pc.close();
             $('#remote_container').remove();
 
-            $('#main_container').append("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
+            $('#main_container').prepend("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
             $('#myModal2').modal('show');
 
         }
@@ -235,7 +237,7 @@ function hangup() {
 
     $('#remote_container').remove();
 
-    $('#main_container').append("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
+    $('#main_container').prepend("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
 
     componentPropetrOff();
 

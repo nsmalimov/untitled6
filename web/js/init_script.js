@@ -135,6 +135,12 @@ function createJsonAutorization() {
 }
 
 function autorizeFunc() {
+    $("#btn-chat").prop('disabled', true);
+
+    $('#text_input').prop('disabled', true);
+
+    $('#text_input').val("");
+
     var jsonData = createJsonAutorization();
     serverConnectFunc(serverPath, jsonData);
 }
@@ -208,12 +214,6 @@ function componentPropetrOff()
     $("#stopButton").prop('disabled', true);
     $("#newButton").prop('disabled', true);
     $("#startButton").prop('disabled', false);
-
-    $("#btn-chat").prop('disabled', true);
-
-    $('#text_input').prop('disabled', true);
-
-    $('#text_input').val("");
 
     $('#myModal2').modal('hide');
 }
