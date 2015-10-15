@@ -41,8 +41,6 @@ function serverConnectFunc(serverUrl, jsonData) {
                         $("#NewKeyInput").val(nickname);
 
                         userName = $("#NameInput").val();
-                        //alert(userName);
-                        //alert($('#your_name').val());
                     }
                     else
                     {
@@ -51,7 +49,6 @@ function serverConnectFunc(serverUrl, jsonData) {
                         var nickname = $('#your_name').text();
                         $("#NewKeyInput").val(nickname);
                     }
-                    //$('#your_name').val(userName);
                    break;
 
                 case "cookies":
@@ -72,7 +69,6 @@ function serverConnectFunc(serverUrl, jsonData) {
                     break;
 
             }
-            //alert(event["answer"]);
         },
         error: function (xhr, status, error) {
             alert(error);
@@ -90,10 +86,50 @@ function createJsonRegistration() {
     return JSON.stringify(json_create);
 }
 
+function getURL(){
+    return $.ajax({
+        type: "GET",
+        url: "http://jsonip.com?callback=?",
+        cache: false,
+        async: false
+    }).responseText;
+}
+
+function getCoordinates(userIp){
+    return $.ajax({
+        type: "GET",
+        url: "http://www.telize.com/geoip/" + userIp,
+        cache: false,
+        async: false
+    }).responseText;
+}
+
 function createJsonAutorization() {
+
     var json_create = new Object();
+
     json_create.command = "0";
-    json_create.ip = myip;
+
+    var latitude_var = null;
+    var longitude_var = null;
+    var userIp = getURL();
+    userIp = userIp.slice(2, userIp.length-1);
+    userIp = JSON.parse(userIp)["ip"];
+
+    var coordString = getCoordinates(userIp);
+
+    var coordJson = JSON.parse(coordString);
+
+    if (coordJson["isp"] === "Saint-Petersburg State University")
+    {
+        json_create.latitude_var = "0";
+        json_create.longitude_var = "0";
+    }
+    else
+    {
+        json_create.latitude_var = coordJson["latitude"];
+        json_create.longitude_var = coordJson["longitude"];
+    }
 
     return JSON.stringify(json_create);
 }
@@ -116,6 +152,8 @@ function sentRegistrationData(){
     serverConnectFunc(serverPath, jsonData);
 }
 
+//TODO
+//сделать прозрачным экран ожидания
 function waitingWindowStart()
 {
     var loader = $("#element").introLoader({
@@ -166,4 +204,17 @@ window.onload = function() {
     $("#stopButton").prop('disabled', true);
     $("#newButton").prop('disabled', true);
     $("#startButton").prop('disabled', false);
+
+    $("#btn-chat").prop('disabled', true);
+
+    $('#text_input').prop('disabled', true);
+
+    $('#text_input').val("");
+
+    $('#text_input').keydown(function (e){
+        if(e.keyCode == 13){
+            sentMessages();
+        }
+    })
+
 };

@@ -8,6 +8,10 @@ if (portName.length == 0) {
     portName = "80";
 }
 
+function componentPropetr()
+{
+
+}
 
 var wasUsed = false;
 
@@ -31,6 +35,8 @@ function initSocket()
         $("#newButton").prop('disabled', false);
         $("#startButton").prop('disabled', true);
 
+        $("#btn-chat").prop('disabled', false);
+
         ws.send(JSON.stringify(sentJson));
 
         waitingWindowStart();
@@ -45,6 +51,8 @@ function initSocket()
     $("#stopButton").prop('disabled', false);
     $("#newButton").prop('disabled', false);
     $("#startButton").prop('disabled', true);
+
+    $("#btn-chat").prop('disabled', false);
 
     ws.send(JSON.stringify(sentJson));
     waitingWindowStart();
@@ -67,6 +75,13 @@ function socketCallback(event) {
         $('#interlocutor_name').text(getData["nameInterlocutor"]);
         initiator = true;
         initialize();
+    }
+
+    if (getData["answer"] === "token")
+    {
+        //поставить ограничение на количество генерируемых ключей
+        //alert(getJson["token"]);
+        $('#token_space').append("<p>" + getData["token"] + "</p>");
     }
 }
 
@@ -165,6 +180,7 @@ function success(stream) {
         if (getCommand === "token")
         {
             //поставить ограничение на количество генерируемых ключей
+            //alert(getJson["token"]);
             $('#token_space').append("<p>" + getJson["token"] + "</p>");
         }
     };
@@ -235,6 +251,8 @@ function hangup() {
     $("#stopButton").prop('disabled', true);
     $("#newButton").prop('disabled', true);
     $("#startButton").prop('disabled', false);
+
+    $("#btn-chat").prop('disabled', true);
 
     //call closeConnect server
     var sentJson = new Object();

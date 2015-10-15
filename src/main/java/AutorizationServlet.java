@@ -17,7 +17,7 @@ import java.util.Iterator;
 public class AutorizationServlet extends HttpServlet {
 
     //TODO проверка по ip
-    public static boolean checkIp(String ip) {
+    public static boolean checkIp(String latitude, String longitude) {
         return true;
     }
 
@@ -91,10 +91,15 @@ public class AutorizationServlet extends HttpServlet {
             switch (command) {
                 case 0:  //авторизация
 
-                    String ip = (String) jsonObject.get("ip");
+                    //String ip = (String) jsonObject.get("ip");
+
+                    String latitude = jsonObject.getString("latitude_var"); //широта
+                    String longitude = jsonObject.getString("longitude_var"); //долгота
+
+                    System.out.println(latitude + " " + longitude);
 
 
-                    boolean checkIp = checkIp(ip);
+                    boolean checkIp = checkIp(latitude, longitude);
                     String checkCookies = checkCookies(request); //userName
 
                     if (checkIp && !checkCookies.equals("")) {
