@@ -135,15 +135,7 @@ function createJsonAutorization() {
 }
 
 function autorizeFunc() {
-
-    $("#stopButton").prop('disabled', true);
-    $("#newButton").prop('disabled', true);
-    $("#startButton").prop('disabled', false);
-
-    $('#myModal2').modal('hide');
-
     var jsonData = createJsonAutorization();
-
     serverConnectFunc(serverPath, jsonData);
 }
 
@@ -165,8 +157,6 @@ function waitingWindowStart()
                 style: 'dark',
                 stop: false
                 //fixed: false
-
-
             }
         },
 
@@ -179,6 +169,10 @@ function waitingWindowStart()
             color: '#FFFFFF' // #rgb or #rrggbb or array of colors
         }
     });
+
+    componentPropetrOff();
+
+    $("#startButton").prop('disabled', true);
 }
 
 function waitingWindowStop()
@@ -198,9 +192,19 @@ function myProfile()
     $('#my_profile').modal('show');
 }
 
-window.onload = function() {
-    //Документ и все ресурсы загружены
-    autorizeFunc();
+function componentPropetrOn()
+{
+    $("#stopButton").prop('disabled', false);
+    $("#newButton").prop('disabled', false);
+    $("#startButton").prop('disabled', true);
+
+    $("#btn-chat").prop('disabled', false);
+
+    $('#text_input').prop('disabled', false);
+}
+
+function componentPropetrOff()
+{
     $("#stopButton").prop('disabled', true);
     $("#newButton").prop('disabled', true);
     $("#startButton").prop('disabled', false);
@@ -210,6 +214,14 @@ window.onload = function() {
     $('#text_input').prop('disabled', true);
 
     $('#text_input').val("");
+
+    $('#myModal2').modal('hide');
+}
+
+window.onload = function() {
+    //Документ и все ресурсы загружены
+    autorizeFunc();
+    componentPropetrOff();
 
     $('#text_input').keydown(function (e){
         if(e.keyCode == 13){

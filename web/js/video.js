@@ -8,11 +8,6 @@ if (portName.length == 0) {
     portName = "80";
 }
 
-function componentPropetr()
-{
-
-}
-
 var wasUsed = false;
 
 var isVideoCall = 0;
@@ -31,11 +26,7 @@ function initSocket()
         sentJson.command = "0";
         sentJson.name = $('#your_name').text();
 
-        $("#stopButton").prop('disabled', false);
-        $("#newButton").prop('disabled', false);
-        $("#startButton").prop('disabled', true);
-
-        $("#btn-chat").prop('disabled', false);
+        //componentPropetrOn();
 
         ws.send(JSON.stringify(sentJson));
 
@@ -48,11 +39,7 @@ function initSocket()
     sentJson.command = "0";
     sentJson.name = $('#your_name').text();
 
-    $("#stopButton").prop('disabled', false);
-    $("#newButton").prop('disabled', false);
-    $("#startButton").prop('disabled', true);
-
-    $("#btn-chat").prop('disabled', false);
+    //componentPropetrOn();
 
     ws.send(JSON.stringify(sentJson));
     waitingWindowStart();
@@ -80,7 +67,6 @@ function socketCallback(event) {
     if (getData["answer"] === "token")
     {
         //поставить ограничение на количество генерируемых ключей
-        //alert(getJson["token"]);
         $('#token_space').append("<p>" + getData["token"] + "</p>");
     }
 }
@@ -128,6 +114,9 @@ function success(stream) {
         //alert(getCommand);
 
         if (getCommand === "system"){
+
+            componentPropetrOn();
+
             var signal = JSON.parse(getJson["data"]);
             if (signal.sdp) {
                 if (initiator) {
@@ -248,11 +237,7 @@ function hangup() {
 
     $('#main_container').append("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
 
-    $("#stopButton").prop('disabled', true);
-    $("#newButton").prop('disabled', true);
-    $("#startButton").prop('disabled', false);
-
-    $("#btn-chat").prop('disabled', true);
+    componentPropetrOff();
 
     //call closeConnect server
     var sentJson = new Object();
