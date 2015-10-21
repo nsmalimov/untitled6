@@ -48,6 +48,8 @@ public class SQLiteClass {
 
         int n = stat.executeUpdate("UPDATE keyGens SET marker = 'registrated' WHERE keyGen = '" + keyGen + "'");
 
+        stat.close();
+
         try {
             PreparedStatement statement = conn.prepareStatement("INSERT INTO freeUsers (name,  userKeyGen) VALUES ( ?, ?)");
             statement.setString(1, userName);

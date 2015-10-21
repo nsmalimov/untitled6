@@ -232,6 +232,42 @@ video#localVideo {
     margin: 0 20px 20px 0;
 }
 
+
+/*dima css*/
+
+#remote_container #remote {
+	margin: 10px auto;
+	width: 90%;
+	display: block;
+}
+
+
+#local {
+	margin: 10px auto;
+	width: 90%;
+	display: block;
+}
+
+.navbar-right li {
+	margin: 0 5px;
+	display: inline-block;
+}
+
+.navbar-header {
+	border: 1px solid red;
+	float: none;
+}
+
+
+@media screen and (max-width: 768px) {
+	#remote_container #remote {width:70%;}
+	#local {width:70%;}
+}
+
+
+/*dima css end*/
+
+
 @media screen and (max-width: 400px) {
     video {
         height: 90px;

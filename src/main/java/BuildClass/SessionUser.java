@@ -25,28 +25,33 @@ public class SessionUser {
 
     public static Map<String, String> waitUsers = new HashMap<String, String>();
 
-//    public static Map<String, Session> sessions = Collections.synchronizedMap(new HashMap<String, Session>());
-//
-//    public static List<String> freeUsersArray = Collections.synchronizedList(new ArrayList<String>());
-//
-//    public static Map<String, String> map1 = Collections.synchronizedMap(new HashMap<String, String>());
-//    public static Map<String, String> map2 = Collections.synchronizedMap(new HashMap<String, String>());
-//
-//    public static Map<String, String> userSessionId = Collections.synchronizedMap(new HashMap<String, String>());
-
     public static void printParams()
     {
         System.out.println("print on");
-        sessions.forEach((k,v)->System.out.println("Sessions " + "Key : " + k + " Value : " + v));
+
+        for (Map.Entry<String,Session> entry : sessions.entrySet()) {
+
+            System.out.println("Sessions " + "Key : " + entry.getKey() + " Value : " + entry.getValue());
+        }
 
         for (String s: freeUsersArray)
             System.out.println("freeUsersArray: " + s);
 
-        map1.forEach((k,v)->System.out.println("Sessions " + "Key : " + k + " Value : " + v));
-        map2.forEach((k,v)->System.out.println("Sessions " + "Key : " + k + " Value : " + v));
+        for (Map.Entry<String, String> entry : map1.entrySet()) {
 
-        userSessionId.forEach((k,v)->System.out.println("userSessionId " + "Key : " + k + " Value : " + v));
+            System.out.println("Sessions " + "Key : " + entry.getKey() + " Value : " + entry.getValue());
+        }
 
+        for (Map.Entry<String, String> entry : map2.entrySet()) {
+
+            System.out.println("Sessions " + "Key : " + entry.getKey() + " Value : " + entry.getValue());
+        }
+
+
+        for (Map.Entry<String, String> entry : userSessionId.entrySet()) {
+
+            System.out.println("userSessionId " + "Key : " + entry.getKey() + " Value : " + entry.getValue());
+        }
     }
 
     public static void addFreeUser(Session session, String name) throws IOException, EncodeException
@@ -72,17 +77,8 @@ public class SessionUser {
 
             JSONObject jsonToReturn = new JSONObject();
 
-            //String interlocutorName = getInterlocutorName(session);
-            //if (waitUsers.containsKey(waitingUsersId)){
-            //    jsonToReturn.put("answer", "owner");
-            //    System.out.println("owner");
-            //}
-            //else {
-                jsonToReturn.put("answer", "guest");
-                System.out.println("guest " + session.getId());
-            //}
-
-
+            jsonToReturn.put("answer", "guest");
+            System.out.println("guest " + session.getId());
 
             jsonToReturn.put("nameInterlocutor", userSessionId.get(waitingUsersId));
 
@@ -123,8 +119,6 @@ public class SessionUser {
             needSent = map2.get(client.getId());
         }
 
-        //Session ses = sessions.get(needSent);
-
         return needSent;
     }
 
@@ -148,13 +142,6 @@ public class SessionUser {
 
         return 1;
     }
-
-    //public static void newInterlocutor(Session session, String name) throws IOException, EncodeException
-    //{
-    //    closeConnect(session);
-//
-       // addFreeUser(session, name);
-    ////}
 
     public static void closeConnect(Session session) throws IOException, EncodeException {
 

@@ -54,7 +54,7 @@ function serverConnectFunc(serverUrl, jsonData) {
                 case "cookies":
                     $('#myModal1').modal('show');
 
-                    //rewrite
+                    //TODO rewrite
                     $("#NameInput").val("Руслан");
                     $("#KeyInput").val("9YQH-E8CI-N2XJ-2YV");
 
@@ -220,6 +220,13 @@ function componentPropetrOff()
 
 window.onload = function() {
     //Документ и все ресурсы загружены
+
+    $('#myModal1').keydown(function (e){
+        if(e.keyCode == 13){
+            sentRegistrationData();
+        }
+    });
+
     autorizeFunc();
     componentPropetrOff();
 
@@ -227,6 +234,6 @@ window.onload = function() {
         if(e.keyCode == 13){
             sentMessages();
         }
-    })
+    });
 
 };

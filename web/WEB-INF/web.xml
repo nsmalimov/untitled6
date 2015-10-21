@@ -17,16 +17,6 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>ControlClass</servlet-name>
-        <servlet-class>ControlClass</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>ControlClass</servlet-name>
-        <url-pattern>/chat</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
         <servlet-name>MainServlet</servlet-name>
         <servlet-class>MainServlet</servlet-class>
     </servlet>

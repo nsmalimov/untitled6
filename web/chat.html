@@ -38,35 +38,46 @@
 </head>
 
 <body>
+	<div id="loader-wrapper">
+    <div id="loader"></div>
+ 
+    <div class="loader-section section-left"></div>
+    <div class="loader-section section-right"></div>
+ 
+</div>
+	
+	
 <div class="section">
     <div class="container">
-        <div class="container">
-            <div class="navbar-header">
-                <div class="row">
-                    <button id="startButton" class="button_main" onclick=initSocket()>Start chat</button>
-                    <button id="stopButton" class="button_main" disabled onclick=hangup()>Stop chat</button>
-                    <button id="newButton" class="button_main" disabled onclick=newInterlocutor()>Find new
-                        interlocutor
-                    </button>
-                </div>
-
-
-
+        <div class="container-fluid">
+			<div class="row">
+		
+	
+					<div class = "col-md-6 col-sm-6 col-xs-6">
+						<button id="startButton" class="button_main" onclick=initSocket()>Start chat</button>
+						<button id="stopButton" class="button_main" disabled onclick=hangup()>Stop chat</button>
+						<button id="newButton" class="button_main" disabled onclick=newInterlocutor()>Find new
+							interlocutor
+						</button>
+					</div>
+                
+					<div class = "col-md-6 col-sm-6 col-xs-6">
+						<ul class="nav navbar-nav navbar-right">
+							<li class="active">
+								<a type="button" class="btn btn-default" onclick=inviteFreind()>Invite freind</a>
+							</li>
+							<li>
+								<a type="button" class="btn btn-default" onclick=myProfile()>My profile</a>
+							</li>
+						</ul>
+					</div>
+                
             </div>
 
 
-            <div class="collapse navbar-collapse" id="navbar-ex-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="active">
-                        <a type="button" class="btn btn-default" onclick=inviteFreind()>Invite freind</a>
-                    </li>
-                    <li>
-                        <a type="button" class="btn btn-default" onclick=myProfile()>My profile</a>
-                    </li>
-                </ul>
-            </div>
         </div>
-        <div class="col-md-5" id="main_container">
+        
+        <div class="col-md-5 col-sm-5" id="main_container">
 
             <div class="row" id="remote_container">
                 <video id="remote" autoplay></video>
@@ -78,7 +89,7 @@
 
         </div>
 
-        <div class="col-md-7">
+        <div class="col-md-7 col-sm-7">
 
             <p id="videoKey"></p>
 

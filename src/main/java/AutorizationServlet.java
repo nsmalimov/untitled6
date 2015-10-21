@@ -36,27 +36,21 @@ public class AutorizationServlet extends HttpServlet {
     }
 
     public static String checkCookies(HttpServletRequest request) throws ClassNotFoundException, SQLException, NamingException{
-        //Cookie cookie = null;
         Cookie[] cookies = null;
         cookies = request.getCookies();
 
         String userName = "";
 
         if (cookies != null) {
-
-            //Cookie[] cookies = request.getCookies();
-            //String keyGenGetUser = null;
             for(Cookie cookie : cookies){
                 if("userKey".equals(cookie.getName())){
+                    //проверка что такой ключ есть в базе
                     userName = SQLiteClass.getNameDb(cookie.getValue());
                     break;
                 }
             }
-
             return userName;
-
         }
-
         return "";
     }
 
@@ -75,14 +69,9 @@ public class AutorizationServlet extends HttpServlet {
         }
 
 
-        //System.out.println(jb.toString());
-
         try {
             JSONObject jsonObject = new JSONObject(jb.toString());
 
-            Iterator it = jsonObject.keys();
-
-            //response.setHeader("Content-Type", "text/plain");
             response.setContentType("text/html;charset=UTF-8");
             PrintWriter out = response.getWriter();
 
@@ -91,15 +80,14 @@ public class AutorizationServlet extends HttpServlet {
             switch (command) {
                 case 0:  //авторизация
 
-                    //String ip = (String) jsonObject.get("ip");
-
                     String latitude = jsonObject.getString("latitude_var"); //широта
                     String longitude = jsonObject.getString("longitude_var"); //долгота
 
                     System.out.println(latitude + " " + longitude);
 
-
                     boolean checkIp = checkIp(latitude, longitude);
+
+                    //пришли ли куки
                     String checkCookies = checkCookies(request); //userName
 
                     if (checkIp && !checkCookies.equals("")) {
@@ -122,31 +110,19 @@ public class AutorizationServlet extends HttpServlet {
                         jsonToReturn.put("answer", "cookies");
                         out.println(jsonToReturn.toString());
                     }
-                    //System.out.println(jb.toString());
 
                     break;
 
-                case 1: //регистрация
+                case 1: //регистрация нового пользователя
+                    //сюда же приходят те, кто удалил куки
 
                     String name = (String) jsonObject.get("name");
                     String keyGen = (String) jsonObject.get("keyGen");
 
-                    boolean checkUser = false;
-
-                    //проверка ключа и запись юзера в базу данных
-                    String username = SQLiteClass.getNameDb(keyGen);
-
-                    //проверка есть такой пользователь в базе
-                    if (username.equals("")) {
-                        checkUser = checkKeyGen(name, keyGen);
-                    }
-                    else {
-                        checkUser = true;
-                        name = username;
-                    }
+                    boolean isOk = checkKeyGen(name, keyGen);
 
                     //если всё нормально, то отправить куки
-                    if (checkUser) {
+                    if (isOk) {
                         JSONObject jsonToReturn = new JSONObject();
                         jsonToReturn.put("answer", "ok");
                         jsonToReturn.put("name", name);
