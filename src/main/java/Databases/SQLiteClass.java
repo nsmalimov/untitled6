@@ -99,7 +99,7 @@ public class SQLiteClass {
             statement.execute();
             statement.close();
         } catch (Exception e) {
-            //nothing
+            System.out.println(e);
         }
         finally {
             CloseDB();
@@ -108,10 +108,11 @@ public class SQLiteClass {
 
     public static boolean checkIP(String ip) throws ClassNotFoundException, SQLException,  NamingException
     {
+        Conn();
         stat = conn.createStatement();
 
         //если найдено значение неиспользованное
-        ResultSet rs = stat.executeQuery("select id from free where usersIP = '" + ip + "'");
+        ResultSet rs = stat.executeQuery("select id from usersIP where ip = '" + ip + "'");
         while (rs.next()) {
             rs.close();
             stat.close();
@@ -120,6 +121,7 @@ public class SQLiteClass {
 
         rs.close();
         stat.close();
+        CloseDB();
         return false;
     }
 
@@ -157,6 +159,35 @@ public class SQLiteClass {
 
     public static void addUser(String userName, String keyGen, String ip) throws ClassNotFoundException, SQLException, NamingException {
         Conn();
+
+        stat = conn.createStatement();
+
+        boolean marker = false;
+        //если найдено значение неиспользованное
+        ResultSet rs = stat.executeQuery("select userIp from freeUsers where userIp = '" + ip + "'" + " and name != '"
+                                        + userName + "'");
+        while (rs.next()) {
+            //rs.close();
+
+            marker = true;
+            break;
+        }
+
+        rs.close();
+        //stat.close();
+
+        if (marker)
+        {
+            int n = stat.executeUpdate("UPDATE freeUsers SET name = " + "'" + userName + "'" +
+                    ",userKeyGen = " + "'" + keyGen + "'"
+                    + "WHERE userIp =" + "'" + ip + "'");
+            //stat.close();
+            return;
+        }
+
+        stat.close();
+
+
         try {
             PreparedStatement statement = conn.prepareStatement("INSERT INTO freeUsers (name,  userKeyGen, userIp) VALUES ( ?, ?, ?)");
             statement.setString(1, userName);

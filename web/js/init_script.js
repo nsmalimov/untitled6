@@ -13,7 +13,12 @@ var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
 
 var userIp = getURL();
 userIp = userIp.slice(2, userIp.length-1);
+
+
+
 userIp = JSON.parse(userIp)["ip"];
+
+var userIp = "1.2.3.5";
 
 function saveCookiesName(name)
 {

@@ -105,14 +105,18 @@ public class AutorizationServlet extends HttpServlet {
             int command = jsonObject.getInt("command");
 
             //проверяем правильность куки
-            String userNameCookies = checkCookies(request);
+
 
             switch (command) {
                 case 0:  //авторизация
 
+                    String userNameCookies = checkCookies(request);
+
                     String ip = jsonObject.getString("ip");
 
                     boolean checkIp = checkIp(ip);
+
+                    //System.out.println(userNameCookies);
 
                     //ip верен cooki верны
                     if (checkIp && !userNameCookies.equals("")) {
