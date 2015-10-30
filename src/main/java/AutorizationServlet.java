@@ -13,12 +13,35 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.UUID;
 
 public class AutorizationServlet extends HttpServlet {
 
     //TODO проверка по ip
-    public static boolean checkIp(String latitude, String longitude) {
-        return true;
+    public static boolean checkIp(String ip) throws ClassNotFoundException, SQLException,  NamingException
+    {
+        //проверка ругулярными выражениями
+        GoodIP gIpClass = new GoodIP();
+
+        String[] goodIP = gIpClass.ipAddresses;
+
+        String[] splitIP = ip.split(".");
+
+        StringBuilder neIP = new StringBuilder();
+
+        for (String c: splitIP)
+                neIP.append(c);
+
+        String newIP = neIP.toString();
+
+        for (String c: goodIP)
+        {
+            if (newIP.equals(c))
+                return true;
+        }
+
+        return (SQLiteClass.checkIP(ip));
+
     }
 
     public static boolean checkKeyGen(String name, String key) throws ClassNotFoundException, SQLException, NamingException {
@@ -44,9 +67,10 @@ public class AutorizationServlet extends HttpServlet {
         if (cookies != null) {
             for(Cookie cookie : cookies){
                 if("userKey".equals(cookie.getName())){
-                    //проверка что такой ключ есть в базе
+
                     userName = SQLiteClass.getNameDb(cookie.getValue());
-                    break;
+
+                    return userName;
                 }
             }
             return userName;
@@ -77,65 +101,96 @@ public class AutorizationServlet extends HttpServlet {
 
             int command = jsonObject.getInt("command");
 
+            //проверяем правильность куки
+            String userNameCookies = checkCookies(request);
+
             switch (command) {
                 case 0:  //авторизация
 
-                    String latitude = jsonObject.getString("latitude_var"); //широта
-                    String longitude = jsonObject.getString("longitude_var"); //долгота
+                    String ip = jsonObject.getString("ip");
 
-                    System.out.println(latitude + " " + longitude);
+                    boolean checkIp = checkIp(ip);
 
-                    boolean checkIp = checkIp(latitude, longitude);
-
-                    //пришли ли куки
-                    String checkCookies = checkCookies(request); //userName
-
-                    if (checkIp && !checkCookies.equals("")) {
+                    //ip верен cooki верны
+                    if (checkIp && !userNameCookies.equals("")) {
                         JSONObject jsonToReturn = new JSONObject();
                         jsonToReturn.put("answer", "ok");
-
-                        //имя из куки
-                        jsonToReturn.put("name", checkCookies);
+                        jsonToReturn.put("name", userNameCookies);
                         out.println(jsonToReturn.toString());
                     }
 
-                    if (!checkIp) {
+                    //ip верен cooki не верны или отсутствуют
+                    if (checkIp && userNameCookies.equals(""))
+                    {
+                        JSONObject jsonToReturn = new JSONObject();
+                        jsonToReturn.put("answer", "name");
+                        out.println(jsonToReturn.toString());
+                    }
+
+                    //ip не правильный, но куки пришли
+                    //нужно куки проверить
+                    //динамический ip?
+                    if (!checkIp && !userNameCookies.equals(""))
+                    {
+                        //добавить ip в базу данных
+                        SQLiteClass.addUserIP(ip);
+
+                        JSONObject jsonToReturn = new JSONObject();
+                        jsonToReturn.put("answer", "ok");
+                        jsonToReturn.put("name", userNameCookies);
+                        out.println(jsonToReturn.toString());
+                    }
+
+                    //отправить форму регистрации
+                    if (!checkIp && userNameCookies.equals(""))
+                    {
                         JSONObject jsonToReturn = new JSONObject();
                         jsonToReturn.put("answer", "ip");
                         out.println(jsonToReturn.toString());
                     }
 
-                    if (checkCookies.equals("")) {
-                        JSONObject jsonToReturn = new JSONObject();
-                        jsonToReturn.put("answer", "cookies");
-                        out.println(jsonToReturn.toString());
-                    }
+                    break;
+
+                case 2: //имя
+                    String name = jsonObject.getString("ip");
+
+                    String uuid = UUID.randomUUID().toString();
+
+                    SQLiteClass.addUser(name, uuid); //simple add user
+
+                    JSONObject jsonToReturn = new JSONObject();
+                    jsonToReturn.put("answer", "ok");
+                    jsonToReturn.put("name", name);
+                    out.println(jsonToReturn.toString());
+
+                    Cookie userKeyCook = new Cookie("userKey", uuid);
+                    userKeyCook.setMaxAge(60 * 60 * 24 * 5);
+                    response.addCookie(userKeyCook);
 
                     break;
 
-                case 1: //регистрация нового пользователя
-                    //сюда же приходят те, кто удалил куки
+                case 1: //по имени и ключу
 
-                    String name = (String) jsonObject.get("name");
+                    String userName = (String) jsonObject.get("name");
                     String keyGen = (String) jsonObject.get("keyGen");
 
-                    boolean isOk = checkKeyGen(name, keyGen);
+                    boolean isOk = checkKeyGen(userName, keyGen);
 
                     //если всё нормально, то отправить куки
                     if (isOk) {
-                        JSONObject jsonToReturn = new JSONObject();
-                        jsonToReturn.put("answer", "ok");
-                        jsonToReturn.put("name", name);
-                        out.println(jsonToReturn.toString());
+                        JSONObject jsonToReturn1 = new JSONObject();
+                        jsonToReturn1.put("answer", "ok");
+                        jsonToReturn1.put("name", userName);
+                        out.println(jsonToReturn1.toString());
 
-                        Cookie userKeyCook = new Cookie("userKey", keyGen);
-                        userKeyCook.setMaxAge(60 * 60 * 24 * 5);
-                        response.addCookie(userKeyCook);
+                        Cookie userKeyCook1 = new Cookie("userKey", keyGen);
+                        userKeyCook1.setMaxAge(60 * 60 * 24 * 5);
+                        response.addCookie(userKeyCook1);
                     } else {
                         //ошибка или не правильный ключ
-                        JSONObject jsonToReturn = new JSONObject();
-                        jsonToReturn.put("answer", "wrong");
-                        out.println(jsonToReturn.toString());
+                        JSONObject jsonToReturn1 = new JSONObject();
+                        jsonToReturn1.put("answer", "wrong");
+                        out.println(jsonToReturn1.toString());
                     }
                     break;
                 default:

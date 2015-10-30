@@ -11,6 +11,37 @@ if (portName.length == 0) {
 }
 var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
 
+
+var connect_marker = 0;
+
+function getCookieName() {
+    var ca = document.cookie.split(';');
+    var userName = "";
+
+    for(var i=0; i<ca.length; i++) {
+        var ca_split = ca[i].split("=");
+
+        if (ca_split[0] === "userName")
+        {
+            return ca_split[1];
+        }
+    }
+
+    if (userName === "")
+    {
+        return "";
+    }
+    else
+    {
+        return userName;
+    }
+}
+
+function saveCookiesName(name)
+{
+    document.cookie = "userName=" + name + ";";
+}
+
 function serverConnectFunc(serverUrl, jsonData) {
     $.ajax({
         url: serverUrl + "/autorization",
@@ -23,35 +54,32 @@ function serverConnectFunc(serverUrl, jsonData) {
 
         success: function (event) {
             //парсинг ответов сервера
-
-
             switch (event["answer"])
             {
                 case "ok":
-                   $('#myModal1').modal('hide');
+                    $('#your_name').text(userName);
+                    $('#myModal1').modal('hide');
+                    break;
 
-                   userName = event["name"];
+                case "name":
+                    $('#myModal1').modal('show');
+                    $("#keyInputerClass1").hide();
+                    $("#keyInputerClass2").hide();
+                    $("#keyInputerClass3").hide();
 
+                    //TODO rewrite
+                    $("#NameInput").val("Руслан");
 
-                    if (userName === "no")
-                    {
-                        $('#your_name').text($("#NameInput").val());
+                    $("#registerButton").hide();
 
-                        var nickname = $('#your_name').text();
-                        $("#NewKeyInput").val(nickname);
+                    $("#nameButton").click(function() {
 
-                        userName = $("#NameInput").val();
-                    }
-                    else
-                    {
-                        $('#your_name').text(userName);
+                        //отправить имя на регистрацию
+                        $('#myModal1').modal('hide');
+                    });
+                    break;
 
-                        var nickname = $('#your_name').text();
-                        $("#NewKeyInput").val(nickname);
-                    }
-                   break;
-
-                case "cookies":
+                case "ip":
                     $('#myModal1').modal('show');
 
                     //TODO rewrite
@@ -63,11 +91,6 @@ function serverConnectFunc(serverUrl, jsonData) {
                 case "wrong":
                     alert("Key not correct or already used");
                     break;
-
-                case "ip":
-                    alert("Bad ip address");
-                    break;
-
             }
         },
         error: function (xhr, status, error) {
@@ -122,13 +145,11 @@ function createJsonAutorization() {
 
     if (coordJson["isp"] === "Saint-Petersburg State University")
     {
-        json_create.latitude_var = "0";
-        json_create.longitude_var = "0";
+        json_create.ip = "0";
     }
     else
     {
-        json_create.latitude_var = coordJson["latitude"];
-        json_create.longitude_var = coordJson["longitude"];
+        json_create.ip = userIp;
     }
 
     return JSON.stringify(json_create);
@@ -209,6 +230,23 @@ function componentPropetrOn()
     $('#text_input').prop('disabled', false);
 }
 
+function loadjscssfile(filename, filetype){
+    if (filetype=="js"){ //if filename is a external JavaScript file
+        var fileref=document.createElement('script');
+        fileref.setAttribute("type","text/javascript");
+        fileref.setAttribute("src", filename);
+    }
+    else if (filetype=="css"){ //if filename is an external CSS file
+        var fileref=document.createElement("link");
+        fileref.setAttribute("rel", "stylesheet");
+        fileref.setAttribute("type", "text/css");
+        fileref.setAttribute("href", filename);
+    }
+    if (typeof fileref!="undefined")
+        document.getElementsByTagName("head")[0].appendChild(fileref)
+}
+
+
 function componentPropetrOff()
 {
     $("#stopButton").prop('disabled', true);
@@ -228,7 +266,13 @@ window.onload = function() {
     });
 
     autorizeFunc();
+
     componentPropetrOff();
+
+    if (connect_marker != 0)
+    {
+        loadjscssfile("video.js", "js")
+    }
 
     $('#text_input').keydown(function (e){
         if(e.keyCode == 13){

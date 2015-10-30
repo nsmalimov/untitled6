@@ -27,8 +27,6 @@
     <script src="js/window_loader/spin.min.js"></script>
     <script src="js/window_loader/jquery.introLoader.js"></script>
 
-
-    <script src="js/video.js"></script>
     <script src="js/init_script.js"></script>
     <script src="js/webrtc-adapter.js"></script>
 
@@ -131,26 +129,31 @@
                                placeholder="Enter your nickname">
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="keyInputerClass1">
                         <p>Введите ключ:</p>
                         <input class="form-control" id="KeyInput"
                                placeholder="Enter key number">
                     </div>
 
-                    <p><br>Внимание! Если вы видите это окно, хотя уже вводили ранее ключ, значит ваш браузер не
+                    <p id="keyInputerClass2"><br>Внимание! Если вы видите это окно, хотя уже вводили ранее ключ, значит ваш браузер не
                         поддерживает
                         хранение ключей или данные были удалены. В этом случае, получите новый ключ, или сообщите об
                         этом администратору.</p>
 
-                    <div style="text-align: center;"><a href="URL">https://vk.com/spbu_roulette</a></div>
+                    <div style="text-align: center;" id="keyInputerClass3"><a href="URL">https://vk.com/spbu_roulette</a></div>
 
                 </form>
             </div>
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <a type="button" class="btn btn-primary" onclick=sentRegistrationData()>Войти</a>
+                        <a type="button" class="btn btn-primary" id="registerButton" onclick=sentRegistrationData()>Войти</a>
                     </div>
+
+                    <div class="col-md-12 text-center">
+                        <a type="button" class="btn btn-primary" id="nameButton">Войти</a>
+                    </div>
+
                 </div>
             </div>
         </div>
