@@ -11,31 +11,9 @@ if (portName.length == 0) {
 }
 var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
 
-
-var connect_marker = 0;
-
-function getCookieName() {
-    var ca = document.cookie.split(';');
-    var userName = "";
-
-    for(var i=0; i<ca.length; i++) {
-        var ca_split = ca[i].split("=");
-
-        if (ca_split[0] === "userName")
-        {
-            return ca_split[1];
-        }
-    }
-
-    if (userName === "")
-    {
-        return "";
-    }
-    else
-    {
-        return userName;
-    }
-}
+var userIp = getURL();
+userIp = userIp.slice(2, userIp.length-1);
+userIp = JSON.parse(userIp)["ip"];
 
 function saveCookiesName(name)
 {
@@ -59,6 +37,7 @@ function serverConnectFunc(serverUrl, jsonData) {
                 case "ok":
                     $('#your_name').text(userName);
                     $('#myModal1').modal('hide');
+                    $("head").append('<script type="text/javascript" src="js/video.js"></script>');
                     break;
 
                 case "name":
@@ -72,15 +51,12 @@ function serverConnectFunc(serverUrl, jsonData) {
 
                     $("#registerButton").hide();
 
-                    $("#nameButton").click(function() {
-
-                        //отправить имя на регистрацию
-                        $('#myModal1').modal('hide');
-                    });
                     break;
 
                 case "ip":
                     $('#myModal1').modal('show');
+
+                    $("#nameButton").hide();
 
                     //TODO rewrite
                     $("#NameInput").val("Руслан");
@@ -105,6 +81,7 @@ function createJsonRegistration() {
 
     json_create.keyGen = $("#KeyInput").val();
     json_create.command = "1";
+    json_create.ip = userIp;
 
     return JSON.stringify(json_create);
 }
@@ -135,9 +112,6 @@ function createJsonAutorization() {
 
     var latitude_var = null;
     var longitude_var = null;
-    var userIp = getURL();
-    userIp = userIp.slice(2, userIp.length-1);
-    userIp = JSON.parse(userIp)["ip"];
 
     var coordString = getCoordinates(userIp);
 
@@ -230,23 +204,6 @@ function componentPropetrOn()
     $('#text_input').prop('disabled', false);
 }
 
-function loadjscssfile(filename, filetype){
-    if (filetype=="js"){ //if filename is a external JavaScript file
-        var fileref=document.createElement('script');
-        fileref.setAttribute("type","text/javascript");
-        fileref.setAttribute("src", filename);
-    }
-    else if (filetype=="css"){ //if filename is an external CSS file
-        var fileref=document.createElement("link");
-        fileref.setAttribute("rel", "stylesheet");
-        fileref.setAttribute("type", "text/css");
-        fileref.setAttribute("href", filename);
-    }
-    if (typeof fileref!="undefined")
-        document.getElementsByTagName("head")[0].appendChild(fileref)
-}
-
-
 function componentPropetrOff()
 {
     $("#stopButton").prop('disabled', true);
@@ -254,6 +211,16 @@ function componentPropetrOff()
     $("#startButton").prop('disabled', false);
 
     $('#myModal2').modal('hide');
+}
+
+function sentName()
+{
+    var jsonData = new Object();
+    jsonData.command = 2;
+    jsonData.name = $("#NameInput").val();
+    jsonData.ip = userIp;
+
+    serverConnectFunc(serverPath, JSON.stringify(jsonData));
 }
 
 window.onload = function() {
@@ -268,11 +235,6 @@ window.onload = function() {
     autorizeFunc();
 
     componentPropetrOff();
-
-    if (connect_marker != 0)
-    {
-        loadjscssfile("video.js", "js")
-    }
 
     $('#text_input').keydown(function (e){
         if(e.keyCode == 13){

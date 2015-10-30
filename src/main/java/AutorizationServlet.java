@@ -21,6 +21,9 @@ public class AutorizationServlet extends HttpServlet {
     public static boolean checkIp(String ip) throws ClassNotFoundException, SQLException,  NamingException
     {
         //проверка ругулярными выражениями
+        if (ip.equals("0"))
+            return true;
+
         GoodIP gIpClass = new GoodIP();
 
         String[] goodIP = gIpClass.ipAddresses;
@@ -44,14 +47,14 @@ public class AutorizationServlet extends HttpServlet {
 
     }
 
-    public static boolean checkKeyGen(String name, String key) throws ClassNotFoundException, SQLException, NamingException {
+    public static boolean checkKeyGen(String name, String key, String ip) throws ClassNotFoundException, SQLException, NamingException {
         SQLiteClass.Conn();
         boolean answer = SQLiteClass.checkKeyGenDb(key);
 
         if (answer)
         {
             //запись в базу данных
-            SQLiteClass.addUserDatabase(name, key);
+            SQLiteClass.addUserDatabase(name, key, ip);
         }
 
         SQLiteClass.CloseDB();
@@ -135,6 +138,8 @@ public class AutorizationServlet extends HttpServlet {
                         //добавить ip в базу данных
                         SQLiteClass.addUserIP(ip);
 
+                        //обновить ip?
+
                         JSONObject jsonToReturn = new JSONObject();
                         jsonToReturn.put("answer", "ok");
                         jsonToReturn.put("name", userNameCookies);
@@ -152,11 +157,13 @@ public class AutorizationServlet extends HttpServlet {
                     break;
 
                 case 2: //имя
-                    String name = jsonObject.getString("ip");
+                    String name = jsonObject.getString("name");
+
+                    String userIp = jsonObject.getString("ip");
 
                     String uuid = UUID.randomUUID().toString();
 
-                    SQLiteClass.addUser(name, uuid); //simple add user
+                    SQLiteClass.addUser(name, uuid, userIp); //simple add user
 
                     JSONObject jsonToReturn = new JSONObject();
                     jsonToReturn.put("answer", "ok");
@@ -174,7 +181,9 @@ public class AutorizationServlet extends HttpServlet {
                     String userName = (String) jsonObject.get("name");
                     String keyGen = (String) jsonObject.get("keyGen");
 
-                    boolean isOk = checkKeyGen(userName, keyGen);
+                    String userIP = (String) jsonObject.get("ip");
+
+                    boolean isOk = checkKeyGen(userName, keyGen, userIP);
 
                     //если всё нормально, то отправить куки
                     if (isOk) {

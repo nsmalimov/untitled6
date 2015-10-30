@@ -43,7 +43,7 @@ public class SQLiteClass {
     }
 
     //добавить пользователя в базу данных
-    public static void addUserDatabase(String userName, String keyGen) throws ClassNotFoundException, SQLException, NamingException {
+    public static void addUserDatabase(String userName, String keyGen, String ip) throws ClassNotFoundException, SQLException, NamingException {
         stat = conn.createStatement();
 
         int n = stat.executeUpdate("UPDATE keyGens SET marker = 'registrated' WHERE keyGen = '" + keyGen + "'");
@@ -52,9 +52,10 @@ public class SQLiteClass {
 
         Conn();
         try {
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO freeUsers (name,  userKeyGen) VALUES ( ?, ?)");
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO freeUsers (name,  userKeyGen, userIp) VALUES ( ?, ?, ?)");
             statement.setString(1, userName);
             statement.setString(2, keyGen);
+            statement.setString(3, ip);
 
             statement.execute();
             statement.close();
@@ -154,12 +155,13 @@ public class SQLiteClass {
         conn.close();
     }
 
-    public static void addUser(String userName, String keyGen) throws ClassNotFoundException, SQLException, NamingException {
+    public static void addUser(String userName, String keyGen, String ip) throws ClassNotFoundException, SQLException, NamingException {
         Conn();
         try {
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO freeUsers (name,  userKeyGen) VALUES ( ?, ?)");
+            PreparedStatement statement = conn.prepareStatement("INSERT INTO freeUsers (name,  userKeyGen, userIp) VALUES ( ?, ?, ?)");
             statement.setString(1, userName);
             statement.setString(2, keyGen);
+            statement.setString(3, ip);
 
             statement.execute();
             statement.close();
