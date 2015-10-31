@@ -236,16 +236,16 @@ video#localVideo {
 /*dima css*/
 
 #remote_container #remote {
-	margin: 10px auto;
-	width: 90%;
-	display: block;
+    margin: 10px auto;
+    width: 84.6%;
+    display: block;
 }
 
 
 #local {
-	margin: 10px auto;
-	width: 90%;
-	display: block;
+    margin: 10px auto;
+    width: 84.6%;
+    display: block;
 }
 
 .navbar-right li {
@@ -287,3 +287,7 @@ video#localVideo {
 }
 
 .btn.newclass {width:25%; display:block; margin: 0 auto;}
+
+.button_main {
+    margin: 0px 0px 0px 22px;
+}
