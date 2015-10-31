@@ -8,7 +8,7 @@ if (portName.length == 0) {
     portName = "80";
 }
 
-var wasUsed = false;
+var wasUsed = true;
 
 var isVideoCall = 0;
 
@@ -62,24 +62,6 @@ var IceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
 var SessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
 navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 
-//function socketCallback(event) {
-//
-//    var getData = JSON.parse(event.data);
-//    if (getData["answer"] == "owner") {
-//        initiator = false;
-//        //initialize();
-//    }
-//    if (getData["answer"] == "guest") {
-//        $('#interlocutor_name').text(getData["nameInterlocutor"]);
-//        initiator = true;
-//        //initialize();
-//    }
-//
-
-//}
-
-//ws.onmessage = socketCallback;
-
 function initialize() {
     var constraints = {
         audio: false,
@@ -92,8 +74,6 @@ function success(stream) {
     pc = new PeerConnection(null);
 
     if (wasUsed){
-
-        //initialize();
         var sentJson1 = new Object();
         sentJson1.command = "0";
         sentJson1.name = $('#your_name').text();
@@ -104,19 +84,18 @@ function success(stream) {
         ws.send(JSON.stringify(sentJson1));
 
         waitingWindowStart();
-        //return;
     }
     else {
-        var sentJson = new Object();
-
-        sentJson.command = "0";
-        sentJson.name = $('#your_name').text();
-
-        //componentPropetrOn();
-        $("#stopButton").attr("disabled", false);
-
-        ws.send(JSON.stringify(sentJson));
-        waitingWindowStart();
+        //var sentJson = new Object();
+        //
+        //sentJson.command = "0";
+        //sentJson.name = $('#your_name').text();
+        //
+        ////componentPropetrOn();
+        //$("#stopButton").attr("disabled", false);
+        //
+        //ws.send(JSON.stringify(sentJson));
+        //waitingWindowStart();
     }
 
     if (stream) {
@@ -204,15 +183,18 @@ function success(stream) {
             $('#remote_container').remove();
 
             $('#main_container').prepend("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
-            $('#myModal2').modal('show');
 
+            componentPropetrOff();
+            $('#myModal2').modal('show');
         }
 
         //перейти в режим ожидания
         if (getCommand === "wait_window")
         {
             success(stream);
+            waitingWindowStart();
             initiator = false;
+
         }
 
         //найден собеседник (ответить)
@@ -341,9 +323,28 @@ function newInterlocutor() {
     waitingWindowStart();
 
     initiator = false;
+    wasUsed = false;
 
     ws.send(JSON.stringify(sentJson));
+}
 
+
+
+function newInterlocutorButton() {
+
+    var sentJson = new Object();
+    sentJson.command = "7";
+    ws.send(JSON.stringify(sentJson));
+
+    initiator = false;
+    wasUsed = true;
+
+    pc.close();
+    $('#remote_container').remove();
+
+    $('#main_container').prepend("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
+
+    componentPropetrOff();
 }
 
 jQuery.fn.attachStream = function(stream) {

@@ -189,6 +189,12 @@ function componentPropetrOff()
     $("#newButton").prop('disabled', true);
     $("#startButton").prop('disabled', false);
 
+    $("#btn-chat").prop('disabled', true);
+
+    $("ul").empty();
+
+    $('#text_input').val('');
+
     $('#myModal2').modal('hide');
 }
 

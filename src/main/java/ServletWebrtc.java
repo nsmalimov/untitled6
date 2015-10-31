@@ -36,24 +36,11 @@ public class ServletWebrtc extends HttpServlet {
 
     @OnClose
     public void onClose(Session session) throws IOException, EncodeException{
-        //Session interlocutor = BuildClass.SessionUser.getInterlocutor(session);
-
-
-        //JSONObject jsonToReturn1 = new JSONObject();
-        //jsonToReturn1.put("answer", "stop_connect");
-
-        //interlocutor.getBasicRemote().sendText(jsonToReturn1.toString());
-
         BuildClass.SessionUser.closeConnect(session);
 
         System.out.println("close connect");
 
         BuildClass.SessionUser.printParams();
-        //BuildClass.SessionUser.printParams();
-
-
-
-        //BuildClass.SessionUser.printParams();
     }
 
     @OnMessage
@@ -62,11 +49,9 @@ public class ServletWebrtc extends HttpServlet {
 
         JSONObject jsonObject = new JSONObject(message);
 
+        System.out.println(message);
+
         int command = Integer.parseInt(jsonObject.getString("command"));
-
-        //System.out.println(message);
-
-        //System.out.println(jsonObject.getString("name"));
 
         switch (command)
         {
@@ -171,7 +156,7 @@ public class ServletWebrtc extends HttpServlet {
                 String ip = jsonObject.getString("ip");
                 String newName = jsonObject.getString("new_name");
 
-                System.out.println(newName);
+                //System.out.println(newName);
 
                  try {
                     SQLiteClass.updateName(newName, ip);
@@ -201,6 +186,23 @@ public class ServletWebrtc extends HttpServlet {
                 }
 
                 //System.out.println(jsonToReturn6.toString());
+
+                break;
+
+            case 7:
+                JSONObject jsonToReturn8 = new JSONObject();
+                jsonToReturn8.put("answer", "new_window");
+
+                Session locutorSes8 = SessionUser.getInterlocutorSession(client);
+
+                locutorSes8.getBasicRemote().sendText(jsonToReturn8.toString());
+
+                SessionUser.simpleClose(client);
+
+                JSONObject jsonToReturn9 = new JSONObject();
+                jsonToReturn9.put("answer", "wait_window");
+
+                client.getBasicRemote().sendText(jsonToReturn9.toString());
 
                 break;
 

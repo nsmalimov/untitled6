@@ -203,6 +203,41 @@ public class SessionUser {
         if (checker) {
             interlocutorSes.getBasicRemote().sendText(jsonToReturn.toString());
         }
+    }
+
+    public static void simpleClose(Session session) throws IOException, EncodeException {
+
+        String interlocutorName = getInterlocutorName(session);
+
+        if (map1.containsKey(session.getId()))
+        {
+            map1.remove(session.getId());
+        }
+
+        if (map2.containsKey(session.getId()))
+        {
+            map2.remove(session.getId());
+        }
+
+        if (map1.containsKey(interlocutorName))
+        {
+            map1.remove(interlocutorName);
+        }
+
+        if (map2.containsKey(interlocutorName))
+        {
+            map2.remove(interlocutorName);
+        }
+
+        if (sessions.containsKey(session.getId()))
+        {
+            sessions.remove(session.getId());
+        }
+
+        if (userSessionId.containsKey(session.getId()))
+        {
+            userSessionId.remove(session.getId());
+        }
 
     }
 }
