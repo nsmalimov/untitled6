@@ -18,6 +18,38 @@ ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
 
 var count_tocken = 0;
 
+ws.onmessage = function(event)
+{
+    var getData = JSON.parse(event.data);
+    if (getData["answer"] === "token")
+    {
+        //поставить ограничение на количество генерируемых ключей
+        if (getData["token"] == "")
+        {
+            $('#token_space').append("<p>" + "Ключей нет, обратитесь к администратору" + "</p>");
+            $('#tokenButton').hide();
+        }
+        else
+        {
+            $('#token_space').append("<p>" + getData["token"] + "</p>");
+        }
+        count_tocken  = count_tocken + 1;
+
+        if (count_tocken > 7)
+        {
+            $('#tokenButton').attr("disabled", true);
+        }
+    }
+
+    if (getData["answer"] === "changed")
+    {
+        $('#my_profile').modal('hide');
+
+        $("#NameInput").val(getData["NewName"]);
+
+        alert("Name was changed");
+    }
+};
 function initSocket()
 {
     //alert(wasUsed);
@@ -43,30 +75,7 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || 
 //        //initialize();
 //    }
 //
-//    if (getData["answer"] === "token")
-//    {
-//        //поставить ограничение на количество генерируемых ключей
-//        $('#token_space').append("<p>" + getData["token"] + "</p>");
-//
-//        if (getData["token"] == "")
-//        {
-//            $('#token_space').append("<p>" + "Ключей нет, обратитесь к администратору" + "</p>");
-//            $('#tokenButton').hide();
-//        }
-//
-//        count_tocken  = count_tocken + 1;
-//
-//        if (count_tocken == 7)
-//        {
-//            $('#tokenButton').attr("disabled", true);
-//        }
-//    }
-//
-//    if (getData["answer"] === "changed")
-//    {
-//        $('#my_profile').modal('hide');
-//        alert("Name was changed");
-//    }
+
 //}
 
 //ws.onmessage = socketCallback;
@@ -213,6 +222,42 @@ function success(stream) {
             success(stream);
             createOffer();
         }
+
+        if (getJson["answer"] === "token")
+        {
+            //поставить ограничение на количество генерируемых ключей
+
+
+            if (getJson["token"] == "")
+            {
+                $('#token_space').append("<p>" + "Ключей нет, обратитесь к администратору" + "</p>");
+                $('#tokenButton').hide();
+            }
+            else
+            {
+                $('#token_space').append("<p>" + getJson["token"] + "</p>");
+            }
+
+            count_tocken  = count_tocken + 1;
+
+            if (count_tocken > 7)
+            {
+                $('#tokenButton').attr("disabled", true);
+            }
+        }
+
+        if (getJson["answer"] === "changed")
+        {
+            $('#my_profile').modal('hide');
+            $("#NameInput").val(getJson["NewName"]);
+            alert("Name was changed");
+        }
+
+        if (getJson["answer"] === "changed_interlocutor_name")
+        {
+            $('#interlocutor_name').text(getJson["interlocutorName"]);
+            log(getJson["interlocutorName"]);
+        }
     };
 }
 
@@ -344,7 +389,7 @@ function changeNickName()
 {
     var json_create = new Object();
     json_create.command = "6";
-    json_create.new_name = $('#your_name').text();
+    json_create.new_name = $('#NewKeyInput').val();
     json_create.ip = userIp;
 
     var json = JSON.stringify(json_create);

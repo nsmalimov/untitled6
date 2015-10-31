@@ -166,9 +166,12 @@ public class ServletWebrtc extends HttpServlet {
 
                 break;
 
+            //изменить имя на лету
             case 6: //change name
                 String ip = jsonObject.getString("ip");
                 String newName = jsonObject.getString("new_name");
+
+                System.out.println(newName);
 
                  try {
                     SQLiteClass.updateName(newName, ip);
@@ -180,8 +183,22 @@ public class ServletWebrtc extends HttpServlet {
 
                 JSONObject jsonToReturn6 = new JSONObject();
                 jsonToReturn6.put("answer", "changed");
+                jsonToReturn6.put("NewName", newName);
+
+                SessionUser.userSessionId.put(client.getId(), newName);
 
                 client.getBasicRemote().sendText(jsonToReturn6.toString());
+
+                Session locutorSes3 = SessionUser.getInterlocutorSession(client);
+
+                if (!locutorSes3.equals("")) {
+
+                    JSONObject jsonToReturn7 = new JSONObject();
+                    jsonToReturn7.put("answer", "changed_interlocutor_name");
+                    jsonToReturn7.put("interlocutorName", newName);
+
+                    locutorSes3.getBasicRemote().sendText(jsonToReturn7.toString());
+                }
 
                 //System.out.println(jsonToReturn6.toString());
 

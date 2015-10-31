@@ -211,6 +211,24 @@ window.onload = function() {
         }
     });
 
+    $('#myModal2').keydown(function (e){
+        if(e.keyCode == 13){
+            sentRegistrationData();
+        }
+    });
+
+    $('#invite_friend').keydown(function (e){
+        if(e.keyCode == 13){
+            sentRegistrationData();
+        }
+    });
+
+    $('#my_profile').keydown(function (e){
+        if(e.keyCode == 13){
+            sentRegistrationData();
+        }
+    });
+
     autorizeFunc();
 
     componentPropetrOff();
