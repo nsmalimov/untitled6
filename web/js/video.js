@@ -21,32 +21,7 @@ var count_tocken = 0;
 function initSocket()
 {
     //alert(wasUsed);
-    if (wasUsed){
-
-        initialize();
-        var sentJson = new Object();
-        sentJson.command = "0";
-        sentJson.name = $('#your_name').text();
-
-        //componentPropetrOn();
-        $("#stopButton").prop('disabled', false);
-
-        ws.send(JSON.stringify(sentJson));
-
-        waitingWindowStart();
-        return;
-    }
-
-    var sentJson = new Object();
-
-    sentJson.command = "0";
-    sentJson.name = $('#your_name').text();
-
-    //componentPropetrOn();
-    $("#stopButton").prop('disabled', false);
-
-    ws.send(JSON.stringify(sentJson));
-    waitingWindowStart();
+    initialize();
 }
 
 
@@ -55,46 +30,46 @@ var IceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
 var SessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
 navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 
-function socketCallback(event) {
+//function socketCallback(event) {
+//
+//    var getData = JSON.parse(event.data);
+//    if (getData["answer"] == "owner") {
+//        initiator = false;
+//        //initialize();
+//    }
+//    if (getData["answer"] == "guest") {
+//        $('#interlocutor_name').text(getData["nameInterlocutor"]);
+//        initiator = true;
+//        //initialize();
+//    }
+//
+//    if (getData["answer"] === "token")
+//    {
+//        //поставить ограничение на количество генерируемых ключей
+//        $('#token_space').append("<p>" + getData["token"] + "</p>");
+//
+//        if (getData["token"] == "")
+//        {
+//            $('#token_space').append("<p>" + "Ключей нет, обратитесь к администратору" + "</p>");
+//            $('#tokenButton').hide();
+//        }
+//
+//        count_tocken  = count_tocken + 1;
+//
+//        if (count_tocken == 7)
+//        {
+//            $('#tokenButton').attr("disabled", true);
+//        }
+//    }
+//
+//    if (getData["answer"] === "changed")
+//    {
+//        $('#my_profile').modal('hide');
+//        alert("Name was changed");
+//    }
+//}
 
-    var getData = JSON.parse(event.data);
-    if (getData["answer"] == "owner") {
-        initiator = false;
-        initialize();
-    }
-    if (getData["answer"] == "guest") {
-        $('#interlocutor_name').text(getData["nameInterlocutor"]);
-        initiator = true;
-        initialize();
-    }
-
-    if (getData["answer"] === "token")
-    {
-        //поставить ограничение на количество генерируемых ключей
-        $('#token_space').append("<p>" + getData["token"] + "</p>");
-
-        if (getData["token"] == "")
-        {
-            $('#token_space').append("<p>" + "Ключей нет, обратитесь к администратору" + "</p>");
-            $('#tokenButton').hide();
-        }
-
-        count_tocken  = count_tocken + 1;
-
-        if (count_tocken == 7)
-        {
-            $('#tokenButton').attr("disabled", true);
-        }
-    }
-
-    if (getData["answer"] === "changed")
-    {
-        $('#my_profile').modal('hide');
-        alert("Name was changed");
-    }
-}
-
-ws.onmessage = socketCallback;
+//ws.onmessage = socketCallback;
 
 function initialize() {
     var constraints = {
@@ -107,6 +82,34 @@ function initialize() {
 function success(stream) {
     pc = new PeerConnection(null);
 
+    if (wasUsed){
+
+        //initialize();
+        var sentJson1 = new Object();
+        sentJson1.command = "0";
+        sentJson1.name = $('#your_name').text();
+
+        //componentPropetrOn();
+        $("#stopButton").attr("disabled", false);
+
+        ws.send(JSON.stringify(sentJson1));
+
+        waitingWindowStart();
+        //return;
+    }
+    else {
+        var sentJson = new Object();
+
+        sentJson.command = "0";
+        sentJson.name = $('#your_name').text();
+
+        //componentPropetrOn();
+        $("#stopButton").attr("disabled", false);
+
+        ws.send(JSON.stringify(sentJson));
+        waitingWindowStart();
+    }
+
     if (stream) {
         pc.addStream(stream);
         if (isVideoCall != 1) {
@@ -117,7 +120,7 @@ function success(stream) {
 
     pc.onaddstream = function(event) {
         $('#remote').attachStream(event.stream);
-        logStreaming(true);
+        //logStreaming(true);
     };
 
     pc.onicecandidate = function(event) {
@@ -134,12 +137,29 @@ function success(stream) {
         var getJson = JSON.parse(event.data);
         var getCommand = getJson["answer"];
 
-        //console.log("значение", getCommand);
+        log(getCommand);
 
-        //console.log("some info");
-        //alert(getCommand);
-        //alert(getCommand);
+        if (getCommand == "owner") {
+            initiator = false;
 
+            if (initiator) {
+                createOffer();
+            } else {
+                log('Waiting for guest connection...');
+            }
+            //initialize();
+        }
+        if (getCommand == "guest") {
+            $('#interlocutor_name').text(getJson["nameInterlocutor"]);
+            initiator = true;
+
+            if (initiator) {
+                createOffer();
+            } else {
+                log('Waiting for guest connection...');
+            }
+            //initialize();
+        }
 
         if (getCommand === "system"){
 
@@ -194,18 +214,14 @@ function success(stream) {
             createOffer();
         }
     };
-
-    if (initiator) {
-        createOffer();
-    } else {
-        log('Waiting for guest connection...');
-    }
 }
 
 function fail() {
-    $('#traceback').text(Array.prototype.join.call(arguments, ' '));
-    $('#traceback').attr('class', 'bg-danger');
-    console.error.apply(console, arguments);
+    //обработка отсутствия камеры
+    //hangup();
+    //$('#traceback').text(Array.prototype.join.call(arguments, ' '));
+    //$('#traceback').attr('class', 'bg-danger');
+    //console.error.apply(console, arguments);
 }
 
 function createOffer() {

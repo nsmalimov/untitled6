@@ -158,7 +158,7 @@ function waitingWindowStop()
 {
     $('#demo-content').hide();
     var loader = $('#element').data('introLoader');
-    loader.stop();
+    //loader.stop();
 }
 
 function inviteFreind()
