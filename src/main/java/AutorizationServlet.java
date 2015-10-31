@@ -81,6 +81,26 @@ public class AutorizationServlet extends HttpServlet {
         return "";
     }
 
+    public static String getUserKey(HttpServletRequest request) throws ClassNotFoundException, SQLException, NamingException{
+        Cookie[] cookies = null;
+        cookies = request.getCookies();
+
+        String userName = "";
+
+        if (cookies != null) {
+            for(Cookie cookie : cookies){
+                if("userKey".equals(cookie.getName())){
+
+                    userName = SQLiteClass.getNameDb(cookie.getValue());
+
+                    return cookie.getValue();
+                }
+            }
+            return userName;
+        }
+        return "";
+    }
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //регистрация нового пользователя
 
@@ -141,6 +161,8 @@ public class AutorizationServlet extends HttpServlet {
                     {
                         //добавить ip в базу данных
                         SQLiteClass.addUserIP(ip);
+
+                        SQLiteClass.updateIP(getUserKey(request), ip);
 
                         //обновить ip?
 

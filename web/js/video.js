@@ -16,6 +16,8 @@ var ws = null;
 
 ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
 
+var count_tocken = 0;
+
 function initSocket()
 {
     //alert(wasUsed);
@@ -70,6 +72,25 @@ function socketCallback(event) {
     {
         //поставить ограничение на количество генерируемых ключей
         $('#token_space').append("<p>" + getData["token"] + "</p>");
+
+        if (getData["token"] == "")
+        {
+            $('#token_space').append("<p>" + "Ключей нет, обратитесь к администратору" + "</p>");
+            $('#tokenButton').hide();
+        }
+
+        count_tocken  = count_tocken + 1;
+
+        if (count_tocken == 7)
+        {
+            $('#tokenButton').attr("disabled", true);
+        }
+    }
+
+    if (getData["answer"] === "changed")
+    {
+        $('#my_profile').modal('hide');
+        alert("Name was changed");
     }
 }
 
@@ -113,7 +134,12 @@ function success(stream) {
         var getJson = JSON.parse(event.data);
         var getCommand = getJson["answer"];
 
+        //console.log("значение", getCommand);
+
+        //console.log("some info");
         //alert(getCommand);
+        //alert(getCommand);
+
 
         if (getCommand === "system"){
 
@@ -166,13 +192,6 @@ function success(stream) {
             pc.close();
             success(stream);
             createOffer();
-        }
-
-        if (getCommand === "token")
-        {
-            //поставить ограничение на количество генерируемых ключей
-            //alert(getJson["token"]);
-            $('#token_space').append("<p>" + getJson["token"] + "</p>");
         }
     };
 
@@ -307,7 +326,11 @@ function generateToken() {
 
 function changeNickName()
 {
-    var nickname = $('#your_name').text();
-    $("#NewKeyInput").val(nickname);
+    var json_create = new Object();
+    json_create.command = "6";
+    json_create.new_name = $('#your_name').text();
+    json_create.ip = userIp;
 
+    var json = JSON.stringify(json_create);
+    ws.send(json);
 }

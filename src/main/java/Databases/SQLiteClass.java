@@ -204,6 +204,43 @@ public class SQLiteClass {
         }
     }
 
+    public static void updateIP(String KeyGen, String IP) throws ClassNotFoundException, SQLException, NamingException {
+        Conn();
+
+        stat = conn.createStatement();
+
+        ResultSet rs = stat.executeQuery("select ip from freeUsers where keyGen = " + "'" + KeyGen + "'");
+
+        String ipGet = "";
+
+        while (rs.next()) {
+            ipGet = rs.getString("ip");
+        }
+
+        int n = stat.executeUpdate("UPDATE freeUsers SET ip = " + "'" + IP + "'" +
+                 "WHERE keyGen =" + "'" + KeyGen + "'");
+
+        int n1 = stat.executeUpdate("DELETE FROM usersIP WHERE ip = '" + ipGet + "'");
+
+        stat.close();
+
+        CloseDB();
+    }
+
+    public static void updateName(String newName, String IP) throws ClassNotFoundException, SQLException, NamingException {
+        Conn();
+
+        stat = conn.createStatement();
+
+        int n = stat.executeUpdate("UPDATE freeUsers SET name = " + "'" + newName + "'" +
+                "WHERE userIp =" + "'" + IP + "'");
+
+        stat.close();
+
+        CloseDB();
+    }
+
+
     //TODO
     //извлечение и генерация ключей
 }

@@ -14,16 +14,7 @@ var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
 var userIp = getURL();
 userIp = userIp.slice(2, userIp.length-1);
 
-
-
 userIp = JSON.parse(userIp)["ip"];
-
-var userIp = "1.2.3.5";
-
-function saveCookiesName(name)
-{
-    document.cookie = "userName=" + name + ";";
-}
 
 function serverConnectFunc(serverUrl, jsonData) {
     $.ajax({
@@ -40,7 +31,10 @@ function serverConnectFunc(serverUrl, jsonData) {
             switch (event["answer"])
             {
                 case "ok":
+                    userName = event['name'];
+                    $("#NewKeyInput").val(userName);
                     $('#your_name').text(userName);
+
                     $('#myModal1').modal('hide');
                     $("head").append('<script type="text/javascript" src="js/video.js"></script>');
                     break;

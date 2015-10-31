@@ -64,6 +64,8 @@ public class ServletWebrtc extends HttpServlet {
 
         int command = Integer.parseInt(jsonObject.getString("command"));
 
+        //System.out.println(message);
+
         //System.out.println(jsonObject.getString("name"));
 
         switch (command)
@@ -161,6 +163,27 @@ public class ServletWebrtc extends HttpServlet {
                 System.out.println(jsonToReturn5.toString());
 
                 client.getBasicRemote().sendText(jsonToReturn5.toString());
+
+                break;
+
+            case 6: //change name
+                String ip = jsonObject.getString("ip");
+                String newName = jsonObject.getString("new_name");
+
+                 try {
+                    SQLiteClass.updateName(newName, ip);
+                 }
+                 catch (Exception e)
+                 {
+                     System.out.println(e);
+                 }
+
+                JSONObject jsonToReturn6 = new JSONObject();
+                jsonToReturn6.put("answer", "changed");
+
+                client.getBasicRemote().sendText(jsonToReturn6.toString());
+
+                //System.out.println(jsonToReturn6.toString());
 
                 break;
 
