@@ -148,28 +148,7 @@ function sentRegistrationData(){
 //сделать прозрачным экран ожидания
 function waitingWindowStart()
 {
-    var loader = $("#element").introLoader({
-        animation: {
-            name: 'simpleLoader',
-            options: {
-                effect:'slideUp',
-                ease: "easeInOutCirc",
-                style: 'dark',
-                stop: false
-                //fixed: false
-            }
-        },
-
-        spinJs: {
-            lines: 13, // The number of lines to draw
-            length: 20, // The length of each line
-            width: 10, // The line thickness
-            radius: 30, // The radius of the inner circle
-            corners: 1, // Corner roundness (0..1)
-            color: '#FFFFFF' // #rgb or #rrggbb or array of colors
-        }
-    });
-
+    $('#demo-content').show();
     componentPropetrOff();
 
     $("#startButton").prop('disabled', true);
@@ -177,6 +156,7 @@ function waitingWindowStart()
 
 function waitingWindowStop()
 {
+    $('#demo-content').hide();
     var loader = $('#element').data('introLoader');
     loader.stop();
 }
@@ -240,5 +220,7 @@ window.onload = function() {
             sentMessages();
         }
     });
+
+    $('#demo-content').hide();
 
 };

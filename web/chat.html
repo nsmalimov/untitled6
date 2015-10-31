@@ -32,49 +32,41 @@
 
     <script type="text/javascript" src="http://vk.com/js/api/share.js?92" charset="windows-1251"></script>
 
-
+    <link rel="stylesheet" href="css/main.css">
 </head>
 
-<body>
-	<div id="loader-wrapper">
-    <div id="loader"></div>
- 
-    <div class="loader-section section-left"></div>
-    <div class="loader-section section-right"></div>
- 
-</div>
-	
-	
+<body id="body">
+
 <div class="section">
     <div class="container">
         <div class="container-fluid">
-			<div class="row">
-		
-	
-					<div class = "col-md-6 col-sm-6 col-xs-6">
-						<button id="startButton" class="button_main" onclick=initSocket()>Start chat</button>
-						<button id="stopButton" class="button_main" disabled onclick=hangup()>Stop chat</button>
-						<button id="newButton" class="button_main" disabled onclick=newInterlocutor()>Find new
-							interlocutor
-						</button>
-					</div>
-                
-					<div class = "col-md-6 col-sm-6 col-xs-6">
-						<ul class="nav navbar-nav navbar-right">
-							<li class="active">
-								<a type="button" class="btn btn-default" onclick=inviteFreind()>Invite freind</a>
-							</li>
-							<li>
-								<a type="button" class="btn btn-default" onclick=myProfile()>My profile</a>
-							</li>
-						</ul>
-					</div>
-                
+            <div class="row">
+
+
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <button id="startButton" class="button_main" onclick=initSocket()>Start chat</button>
+                    <button id="stopButton" class="button_main" disabled onclick=hangup()>Stop chat</button>
+                    <button id="newButton" class="button_main" disabled onclick=newInterlocutor()>Find new
+                        interlocutor
+                    </button>
+                </div>
+
+                <div class="col-md-6 col-sm-6 col-xs-6">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="active">
+                            <a type="button" class="btn btn-default" onclick=inviteFreind()>Invite freind</a>
+                        </li>
+                        <li>
+                            <a type="button" class="btn btn-default" onclick=myProfile()>My profile</a>
+                        </li>
+                    </ul>
+                </div>
+
             </div>
 
 
         </div>
-        
+
         <div class="col-md-5 col-sm-5" id="main_container">
 
             <div class="row" id="remote_container">
@@ -135,10 +127,13 @@
                                placeholder="Enter key number">
                     </div>
 
-                    <p id="keyInputerClass2"><br>Внимание! Если вы видите это окно, значит вашего ip нет в базе данных студенческого городка.
-                        Поэтому, введите, пожалуйста ключ. Получить его можно у администратора, по приглашению знакомого или в группе в ВК.</p>
+                    <p id="keyInputerClass2"><br>Внимание! Если вы видите это окно, значит вашего ip нет в базе данных
+                        студенческого городка.
+                        Поэтому, введите, пожалуйста ключ. Получить его можно у администратора, по приглашению знакомого
+                        или в группе в ВК.</p>
 
-                    <div style="text-align: center;" id="keyInputerClass3"><a href="URL">https://vk.com/spbu_roulette</a></div>
+                    <div style="text-align: center;" id="keyInputerClass3"><a
+                            href="URL">https://vk.com/spbu_roulette</a></div>
 
                 </form>
             </div>
@@ -193,7 +188,8 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <a type="button" class="btn btn-primary" id="tokenButton" onclick=generateToken()>Сгенерировать ключ</a>
+                        <a type="button" class="btn btn-primary" id="tokenButton" onclick=generateToken()>Сгенерировать
+                            ключ</a>
                     </div>
                 </div>
             </div>
@@ -225,15 +221,25 @@
     </div>
 </div>
 
+<div id="demo-content">
+    <div id="loader-wrapper">
+        <div id="loader"></div>
+    </div>
+</div>
+
 </body>
 
 <div class="container" id="added_cont" style="display: none;">
-    <p id="your_name"><p>
+    <p id="your_name">
+
+    <p>
+
     <p id="interlocutor_name"></p>
 </div>
 
 <div class="container">
     <div id="element" style="width:300px; height:300px; margin:auto auto auto auto;"></div>
 </div>
+
 
 </html>
