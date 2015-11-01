@@ -7,7 +7,7 @@ import sqlite3
 
 def insert_to_db(generated_array):
 	try:
-        conn = sqlite3.connect('/Users/Nurislam/Downloads/chat_java_web/ChatDatabase')
+        conn = sqlite3.connect('/Users/Nurislam/Downloads/untitled6/ChatDatabase')
     
     		cur = conn.cursor()    
 
@@ -35,7 +35,7 @@ def generate_fund(N):
 
 generated_array = []
 
-for i in xrange(100):	
+for i in xrange(300):	
     generated_array.append(generate_fund(4))
 
 
