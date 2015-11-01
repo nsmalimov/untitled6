@@ -10,7 +10,7 @@ if (portName.length == 0) {
     portName = "80";
 }
 
-var local = false;
+var local = true;
 
 if (local) {
     var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
@@ -206,7 +206,7 @@ function componentPropetrOff()
 
     $("#btn-chat").prop('disabled', true);
 
-    $("ul").empty();
+    $(".chat").empty();
 
     $('#text_input').val('');
 

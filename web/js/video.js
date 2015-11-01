@@ -14,7 +14,7 @@ var isVideoCall = 0;
 
 var ws = null;
 
-var local = false;
+var local = true;
 
 if (local) {
     ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");

@@ -12,6 +12,7 @@
           <element id="library" level="project" name="json-20141113" />
         </element>
       </element>
+      <element id="javaee-facet-classes" facet="chat_java_web/web/Web" />
     </root>
   </artifact>
 </component>
