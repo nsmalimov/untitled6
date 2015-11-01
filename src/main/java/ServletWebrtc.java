@@ -10,6 +10,7 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 
+import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.json.JSONObject;
 
 import javax.json.Json;
@@ -27,8 +28,8 @@ import java.io.StringReader;
 
 import BuildClass.SessionUser;
 
-@ServerEndpoint(value = "/webrtc")
-public class ServletWebrtc extends HttpServlet {
+@ServerEndpoint(value = "/untitled/webrtc")
+public class ServletWebrtc {
 
     @OnOpen
     public void onOpen(Session session) throws IOException, EncodeException {

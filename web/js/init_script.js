@@ -10,7 +10,7 @@ if (portName.length == 0) {
     portName = "80";
 }
 
-var local = true;
+var local = false;
 
 if (local) {
     var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;

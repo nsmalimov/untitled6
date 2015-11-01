@@ -23,7 +23,7 @@ public class SQLiteClass {
 
         //полный путь к базе данных
 
-        boolean local = true;
+        boolean local = false;
 
         if (local) {
             conn = DriverManager.getConnection("jdbc:sqlite:/Users/Nurislam/Downloads/untitled6/web/ChatDatabase");
@@ -171,6 +171,15 @@ public class SQLiteClass {
         Conn();
 
         stat = conn.createStatement();
+
+        ResultSet rs1 = stat.executeQuery("select userIp from freeUsers where userIp = '" + ip + "'" + " and name = '"
+                + userName + "'");
+        while (rs1.next()) {
+            //rs.close();
+
+            return "added";
+        }
+
 
         boolean marker = false;
         //если найдено значение неиспользованное
