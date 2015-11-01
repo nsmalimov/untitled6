@@ -23,7 +23,7 @@ public class SQLiteClass {
 
         //полный путь к базе данных
 
-        boolean local = true;
+        boolean local = false;
 
         if (local) {
             conn = DriverManager.getConnection("jdbc:sqlite:/Users/Nurislam/Downloads/untitled6/ChatDatabase");

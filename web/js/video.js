@@ -14,7 +14,17 @@ var isVideoCall = 0;
 
 var ws = null;
 
-ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
+var local = false;
+
+if (local) {
+    ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
+}
+else
+{
+    ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/untitled" + "/webrtc");
+}
+
+
 
 var count_tocken = 0;
 

@@ -9,7 +9,18 @@ var portName = window.location.port;
 if (portName.length == 0) {
     portName = "80";
 }
-var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
+
+var local = false;
+
+if (local) {
+    var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
+}
+else
+{
+    var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName + "/untitled";
+}
+
+//alert(serverPath);
 
 var userIp = getURL();
 userIp = userIp.slice(2, userIp.length-1);
@@ -69,7 +80,7 @@ function serverConnectFunc(serverUrl, jsonData) {
             }
         },
         error: function (xhr, status, error) {
-            alert(error);
+            alert("error post " + error);
         }
     });
 }
