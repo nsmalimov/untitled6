@@ -2,9 +2,13 @@
   <artifact type="war" name="untitled">
     <output-path>$PROJECT_DIR$/out/artifacts/untitled</output-path>
     <root id="archive" name="untitled.war">
-      <element id="artifact" artifact-name="untitled6:war exploded" />
+      <element id="javaee-facet-resources" facet="chat_java_web/web/Web" />
       <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="chat_java_web" />
+        </element>
         <element id="directory" name="lib">
+          <element id="library" level="project" name="sqlite-jdbc-3.7.2" />
           <element id="library" level="project" name="json-20141113" />
         </element>
       </element>

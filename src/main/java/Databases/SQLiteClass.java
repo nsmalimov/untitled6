@@ -30,7 +30,7 @@ public class SQLiteClass {
         }
         else
         {
-            conn = DriverManager.getConnection("jdbc:sqlite:/home/roulette/ChatDatabase");
+            conn = DriverManager.getConnection("jdbc:sqlite:/var/lib/tomcat7/webapps/untitled/ChatDatabase");
         }
 
     }
@@ -167,7 +167,7 @@ public class SQLiteClass {
         conn.close();
     }
 
-    public static void addUser(String userName, String keyGen, String ip) throws ClassNotFoundException, SQLException, NamingException {
+    public static String addUser(String userName, String keyGen, String ip) throws ClassNotFoundException, SQLException, NamingException {
         Conn();
 
         stat = conn.createStatement();
@@ -192,7 +192,7 @@ public class SQLiteClass {
                     ",userKeyGen = " + "'" + keyGen + "'"
                     + "WHERE userIp =" + "'" + ip + "'");
             //stat.close();
-            return;
+            return "added";
         }
 
         stat.close();
@@ -206,8 +206,10 @@ public class SQLiteClass {
 
             statement.execute();
             statement.close();
+
+            return "added";
         } catch (Exception e) {
-            //nothing
+            return e.toString();
         }
         finally {
             CloseDB();

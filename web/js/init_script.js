@@ -63,6 +63,10 @@ function serverConnectFunc(serverUrl, jsonData) {
 
                     break;
 
+                case "error":
+                    alert(event["name"]);
+                    break;
+
                 case "ip":
                     $('#myModal1').modal('show');
 

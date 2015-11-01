@@ -189,12 +189,22 @@ public class AutorizationServlet extends HttpServlet {
 
                     String uuid = UUID.randomUUID().toString();
 
-                    SQLiteClass.addUser(name, uuid, userIp); //simple add user
+                    String answer = SQLiteClass.addUser(name, uuid, userIp); //simple add user
 
-                    JSONObject jsonToReturn = new JSONObject();
-                    jsonToReturn.put("answer", "ok");
-                    jsonToReturn.put("name", name);
-                    out.println(jsonToReturn.toString());
+                    if (!answer.equals("added"))
+                    {
+                        JSONObject jsonToReturn = new JSONObject();
+                        jsonToReturn.put("answer", "error");
+                        jsonToReturn.put("name", answer);
+                        out.println(jsonToReturn.toString());
+                    }
+                    else
+                    {
+                        JSONObject jsonToReturn = new JSONObject();
+                        jsonToReturn.put("answer", "ok");
+                        jsonToReturn.put("name", name);
+                        out.println(jsonToReturn.toString());
+                    }
 
                     Cookie userKeyCook = new Cookie("userKey", uuid);
                     userKeyCook.setMaxAge(60 * 60 * 24 * 5);
