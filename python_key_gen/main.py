@@ -7,12 +7,12 @@ import sqlite3
 
 def insert_to_db(generated_array):
 	try:
-        conn = sqlite3.connect('/Users/Nurislam/Downloads/untitled6/ChatDatabase')
+        	conn = sqlite3.connect('/Users/Nurislam/Downloads/untitled6/ChatDatabase')
     
     		cur = conn.cursor()    
 
     		for i in generated_array:
-    			cur.execute("INSERT INTO keyGens(keyGen, isUse) VALUES (?, ?)", [i, 0])   
+    			cur.execute("INSERT INTO keyGens(keyGen, marker) VALUES (?, ?)", [i, "sent"])   
     			#print cur.fetchall() 
 
     		conn.commit()	          
@@ -35,7 +35,7 @@ def generate_fund(N):
 
 generated_array = []
 
-for i in xrange(300):	
+for i in xrange(30):	
     generated_array.append(generate_fund(4))
 
 

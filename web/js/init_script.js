@@ -239,8 +239,15 @@ window.onload = function() {
 
     componentPropetrOff();
 
-    $('#text_input').keydown(function (e){
-        if(e.keyCode == 13){
+    //$('#text_input').keydown(function (e){
+    //    if(e.keyCode == 13){
+    //        sentMessages();
+    //    }
+    //});
+
+    $("#text_input").keydown(function(e){
+        if (e.keyCode == 13 && !e.shiftKey)
+        {
             sentMessages();
         }
     });

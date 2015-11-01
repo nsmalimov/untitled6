@@ -22,7 +22,17 @@ public class SQLiteClass {
         Class.forName("org.sqlite.JDBC");
 
         //полный путь к базе данных
-        conn = DriverManager.getConnection("jdbc:sqlite:/Users/Nurislam/Downloads/untitled6/ChatDatabase");
+
+        boolean local = true;
+
+        if (local) {
+            conn = DriverManager.getConnection("jdbc:sqlite:/Users/Nurislam/Downloads/untitled6/ChatDatabase");
+        }
+        else
+        {
+            conn = DriverManager.getConnection("jdbc:sqlite:/home/roulette/ChatDatabase");
+        }
+
     }
 
     public static boolean checkKeyGenDb(String keyGen) throws ClassNotFoundException, SQLException {
@@ -99,7 +109,7 @@ public class SQLiteClass {
             statement.execute();
             statement.close();
         } catch (Exception e) {
-            System.out.println(e);
+            //System.out.println(e);
         }
         finally {
             CloseDB();

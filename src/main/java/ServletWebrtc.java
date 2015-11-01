@@ -1,5 +1,4 @@
 import Databases.SQLiteClass;
-import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
 import javax.websocket.EncodeException;
@@ -10,6 +9,8 @@ import javax.websocket.OnError;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+
+import org.json.JSONObject;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -38,9 +39,9 @@ public class ServletWebrtc extends HttpServlet {
     public void onClose(Session session) throws IOException, EncodeException{
         BuildClass.SessionUser.closeConnect(session);
 
-        System.out.println("close connect");
+        //System.out.println("close connect");
 
-        BuildClass.SessionUser.printParams();
+        //BuildClass.SessionUser.printParams();
     }
 
     @OnMessage
@@ -49,7 +50,7 @@ public class ServletWebrtc extends HttpServlet {
 
         JSONObject jsonObject = new JSONObject(message);
 
-        System.out.println(message);
+        //System.out.println(message);
 
         int command = Integer.parseInt(jsonObject.getString("command"));
 
@@ -59,8 +60,8 @@ public class ServletWebrtc extends HttpServlet {
                 //start chat
                 SessionUser.addFreeUser(client, jsonObject.getString("name"));
 
-                System.out.println("connect");
-                BuildClass.SessionUser.printParams();
+                //System.out.println("connect");
+                //BuildClass.SessionUser.printParams();
                 break;
 
             case 1:
@@ -82,7 +83,7 @@ public class ServletWebrtc extends HttpServlet {
 
             case 2: //new interlocutor
 
-                System.out.println(2);
+                //System.out.println(2);
                 int answer = SessionUser.connectTwo(client);
 
                 //System.out.println("answer " + answer);
@@ -93,7 +94,7 @@ public class ServletWebrtc extends HttpServlet {
                     JSONObject jsonToReturn2 = new JSONObject();
                     jsonToReturn2.put("answer", "wait_window");
                     client.getBasicRemote().sendText(jsonToReturn2.toString());
-                    System.out.println("wait_command");
+                    //System.out.println("wait_command");
                 }
                 else
                 {
@@ -107,7 +108,7 @@ public class ServletWebrtc extends HttpServlet {
                     client.getBasicRemote().sendText(jsonToReturn2.toString());
                 }
 
-                BuildClass.SessionUser.printParams();
+                //BuildClass.SessionUser.printParams();
 
                 break;
 
@@ -126,18 +127,18 @@ public class ServletWebrtc extends HttpServlet {
                 break;
 
             case 4:
-                System.out.println(4);
+                //System.out.println(4);
                 //полностью удалить пользователя
 
                 BuildClass.SessionUser.closeConnect(client);
-                BuildClass.SessionUser.printParams();
+                //BuildClass.SessionUser.printParams();
 
                 break;
 
             case 5:
                 //сгенерировать ключ и пометить как переданный
 
-                System.out.println(5);
+                //System.out.println(5);
 
                 String genKeygen = SQLiteClass.generateKeygen();
 
@@ -145,7 +146,7 @@ public class ServletWebrtc extends HttpServlet {
                 jsonToReturn5.put("answer", "token");
                 jsonToReturn5.put("token", genKeygen);
 
-                System.out.println(jsonToReturn5.toString());
+                //System.out.println(jsonToReturn5.toString());
 
                 client.getBasicRemote().sendText(jsonToReturn5.toString());
 
@@ -163,7 +164,7 @@ public class ServletWebrtc extends HttpServlet {
                  }
                  catch (Exception e)
                  {
-                     System.out.println(e);
+                     //System.out.println(e);
                  }
 
                 JSONObject jsonToReturn6 = new JSONObject();
@@ -207,7 +208,7 @@ public class ServletWebrtc extends HttpServlet {
                 break;
 
             default:
-                System.out.println("default");
+                //System.out.println("default");
                 break;
         }
     }

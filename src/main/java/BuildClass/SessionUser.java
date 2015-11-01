@@ -78,7 +78,7 @@ public class SessionUser {
             JSONObject jsonToReturn = new JSONObject();
 
             jsonToReturn.put("answer", "guest");
-            System.out.println("guest " + session.getId());
+            //System.out.println("guest " + session.getId());
 
             jsonToReturn.put("nameInterlocutor", userSessionId.get(waitingUsersId));
 
@@ -191,7 +191,7 @@ public class SessionUser {
         }
         catch (Throwable e)
         {
-            System.out.println(e);
+            //System.out.println(e);
         }
 
         //сказать что собеседник вышел => открыть окно подтверждения

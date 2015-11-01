@@ -355,7 +355,10 @@ jQuery.fn.attachStream = function(stream) {
 };
 
 function upDateChatBoxSent(name, message) {
-    $(".chat").append('<li class="right clearfix"><span class="chat-img pull-left"></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">' + name + '</strong></div><p>' + message + '</p></div></li>');
+
+    var newMes = message.replace(/\r?\n/g, '<br />');
+
+    $(".chat").append('<li class="right clearfix"><span class="chat-img pull-left"></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">' + name + '</strong></div><p>' + newMes + '</p></div></li>');
     $('#text_input').val('');
     var newmsg_top = parseInt($('.panel-body')[0].scrollHeight);
     $('.panel-body').scrollTop(newmsg_top - 100);
@@ -374,7 +377,8 @@ function sentMessages() {
 }
 
 function upDateChatBoxGet(name, message) {
-    $(".chat").append('<li class="left clearfix"><span class="chat-img pull-left"></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">' + name + '</strong></div><p>' + message + '</p></div></li>');
+    var newMes = message.replace(/\r?\n/g, '<br />');
+    $(".chat").append('<li class="left clearfix"><span class="chat-img pull-left"></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">' + name + '</strong></div><p>' + newMes + '</p></div></li>');
     var newmsg_top = parseInt($('.panel-body')[0].scrollHeight);
     $('.panel-body').scrollTop(newmsg_top - 100);
 }
