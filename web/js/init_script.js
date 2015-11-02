@@ -10,17 +10,9 @@ if (portName.length == 0) {
     portName = "80";
 }
 
-var local = false;
+var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
 
-if (local) {
-    var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
-}
-else
-{
-    var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName + "/untitled";
-}
-
-//alert(serverPath);
+alert(serverPath);
 
 var userIp = getURL();
 userIp = userIp.slice(2, userIp.length-1);

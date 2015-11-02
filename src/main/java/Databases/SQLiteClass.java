@@ -23,14 +23,14 @@ public class SQLiteClass {
 
         //полный путь к базе данных
 
-        boolean local = false;
+        boolean local = true;
 
         if (local) {
             conn = DriverManager.getConnection("jdbc:sqlite:/Users/Nurislam/Downloads/untitled6/web/ChatDatabase");
         }
         else
         {
-            conn = DriverManager.getConnection("jdbc:sqlite:/var/lib/tomcat7/webapps/untitled/ChatDatabase");
+            conn = DriverManager.getConnection("jdbc:sqlite:/var/lib/tomcat7/webapps/ChatDatabase");
         }
 
     }
