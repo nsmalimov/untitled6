@@ -64,6 +64,8 @@ public class ServletWebrtc {
 
         int command = Integer.parseInt(jsonObject.getString("command"));
 
+        SQLiteClass.Conn();
+
         //System.out.println(message);
 
         //System.out.println(jsonObject.getString("name"));
@@ -76,6 +78,7 @@ public class ServletWebrtc {
 
                 System.out.println("connect");
                 BuildClass.SessionUser.printParams();
+                SQLiteClass.CloseDB();
                 break;
 
             case 1:
@@ -92,7 +95,7 @@ public class ServletWebrtc {
                 jsonToReturn1.put("interlocutorName", interlocutorName1);
 
                 locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
-
+                SQLiteClass.CloseDB();
                 break;
 
             case 2: //new interlocutor
@@ -123,7 +126,7 @@ public class ServletWebrtc {
                 }
 
                 BuildClass.SessionUser.printParams();
-
+                SQLiteClass.CloseDB();
                 break;
 
             case 3: //get and set messages
@@ -137,7 +140,7 @@ public class ServletWebrtc {
                 Session locutorSes2 = SessionUser.getInterlocutorSession(client);
 
                 locutorSes2.getBasicRemote().sendText(jsonToReturn3.toString());
-
+                SQLiteClass.CloseDB();
                 break;
 
             case 4:
@@ -146,7 +149,7 @@ public class ServletWebrtc {
 
                 BuildClass.SessionUser.closeConnect(client);
                 BuildClass.SessionUser.printParams();
-
+                SQLiteClass.CloseDB();
                 break;
 
             case 5:
@@ -163,7 +166,7 @@ public class ServletWebrtc {
                 System.out.println(jsonToReturn5.toString());
 
                 client.getBasicRemote().sendText(jsonToReturn5.toString());
-
+                SQLiteClass.CloseDB();
                 break;
 
             case 6: //change name
@@ -184,12 +187,15 @@ public class ServletWebrtc {
                 client.getBasicRemote().sendText(jsonToReturn6.toString());
 
                 //System.out.println(jsonToReturn6.toString());
-
+                SQLiteClass.CloseDB();
                 break;
 
             default:
                 System.out.println("default");
+                SQLiteClass.CloseDB();
                 break;
+
+
         }
     }
 }

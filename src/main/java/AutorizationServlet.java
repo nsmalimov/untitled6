@@ -43,11 +43,14 @@ public class AutorizationServlet extends HttpServlet {
                 return true;
         }
 
-        return (SQLiteClass.checkIP(ip));
-
+        SQLiteClass.Conn();;
+        boolean checkIp = SQLiteClass.checkIP(ip);
+        SQLiteClass.CloseDB();
+        return checkIp;
     }
 
     public static boolean checkKeyGen(String name, String key, String ip) throws ClassNotFoundException, SQLException, NamingException {
+        SQLiteClass.Conn();
         boolean answer = SQLiteClass.checkKeyGenDb(key);
 
         if (answer)
@@ -56,10 +59,12 @@ public class AutorizationServlet extends HttpServlet {
             SQLiteClass.addUserDatabase(name, key, ip);
         }
 
+        SQLiteClass.CloseDB();
         return answer;
     }
 
     public static String checkCookies(HttpServletRequest request) throws ClassNotFoundException, SQLException, NamingException{
+        SQLiteClass.Conn();
         Cookie[] cookies = null;
         cookies = request.getCookies();
 
@@ -74,8 +79,10 @@ public class AutorizationServlet extends HttpServlet {
                     return userName;
                 }
             }
+            SQLiteClass.CloseDB();
             return userName;
         }
+        SQLiteClass.CloseDB();
         return "";
     }
 
@@ -100,8 +107,8 @@ public class AutorizationServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //регистрация нового пользователя
 
+        //регистрация нового пользователя
         StringBuilder jb = new StringBuilder();
         String line = null;
 
@@ -115,6 +122,8 @@ public class AutorizationServlet extends HttpServlet {
 
 
         try {
+
+            SQLiteClass.Conn();
             JSONObject jsonObject = new JSONObject(jb.toString());
 
             response.setContentType("text/html;charset=UTF-8");
@@ -180,6 +189,7 @@ public class AutorizationServlet extends HttpServlet {
                         out.println(jsonToReturn.toString());
                     }
 
+                    SQLiteClass.CloseDB();
                     break;
 
                 case 2: //имя
@@ -210,6 +220,7 @@ public class AutorizationServlet extends HttpServlet {
                     userKeyCook.setMaxAge(60 * 60 * 24 * 5);
                     response.addCookie(userKeyCook);
 
+                    SQLiteClass.CloseDB();
                     break;
 
                 case 1: //по имени и ключу
@@ -237,10 +248,14 @@ public class AutorizationServlet extends HttpServlet {
                         jsonToReturn1.put("answer", "wrong");
                         out.println(jsonToReturn1.toString());
                     }
+
+                    SQLiteClass.CloseDB();
                     break;
                 default:
                     System.out.println("default switch");
+                    SQLiteClass.CloseDB();
                     break;
+
             }
         } catch (Exception e) {
             System.out.println(e);
