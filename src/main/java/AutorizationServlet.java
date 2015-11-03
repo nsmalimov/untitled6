@@ -24,25 +24,6 @@ public class AutorizationServlet extends HttpServlet {
         if (ip.equals("0"))
             return true;
 
-        GoodIP gIpClass = new GoodIP();
-
-        String[] goodIP = gIpClass.ipAddresses;
-
-        String[] splitIP = ip.split(".");
-
-        StringBuilder neIP = new StringBuilder();
-
-        for (String c: splitIP)
-                neIP.append(c);
-
-        String newIP = neIP.toString();
-
-        for (String c: goodIP)
-        {
-            if (newIP.equals(c))
-                return true;
-        }
-
         SQLiteClass.Conn();;
         boolean checkIp = SQLiteClass.checkIP(ip);
         SQLiteClass.CloseDB();

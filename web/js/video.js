@@ -14,7 +14,14 @@ var isVideoCall = 0;
 
 var ws = null;
 
-ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
+if (serverHostName === 'videochatspbu.ru'){
+    ws = new WebSocket("ws://" + "95.213.199.90" + ":" + "8080" + "/webrtc");
+}
+
+else
+{
+    ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
+}
 
 var count_tocken = 0;
 
