@@ -23,32 +23,7 @@
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="sqlite-jdbc-3.7.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty.websocket:javax-websocket-server-impl:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-annotations:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-plus:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-jndi:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-webapp:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-xml:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.annotation:javax.annotation-api:1.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm:5.0.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm-commons:5.0.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm-tree:5.0.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty.websocket:javax-websocket-client-impl:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty.websocket:websocket-client:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-util:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-io:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty.websocket:websocket-server:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty.websocket:websocket-common:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty.websocket:websocket-api:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty.websocket:websocket-servlet:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-servlet:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-security:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-server:9.2.7.v20150116" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-http:9.2.7.v20150116" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.websocket:javax.websocket-api:1.0" level="project" />
-    <orderEntry type="library" name="Maven: javax.mail:mail:1.4" level="project" />
-    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
     <orderEntry type="library" name="json-20141113" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:3.0-alpha-1" level="project" />
     <orderEntry type="library" name="Maven: javaee:javaee-api:5" level="project" />
@@ -76,9 +51,9 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-security:9.2.7.v20150116" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-server:9.2.7.v20150116" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.eclipse.jetty:jetty-http:9.2.7.v20150116" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.websocket:javax.websocket-api:1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.json:javax.json-api:1.0" level="project" />
     <orderEntry type="library" name="Maven: javax.mail:mail:1.4" level="project" />
     <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
-    <orderEntry type="library" name="Maven: javax.websocket:javax.websocket-api:1.1" level="project" />
   </component>
 </module>

@@ -23,80 +23,97 @@ public class SQLiteClass {
 
         //полный путь к базе данных
 
-        boolean local = true;
+        boolean local = false;
 
         if (local) {
             conn = DriverManager.getConnection("jdbc:sqlite:/Users/Nurislam/Downloads/untitled6/web/ChatDatabase");
-        }
-        else
-        {
-            conn = DriverManager.getConnection("jdbc:sqlite:/var/lib/tomcat7/webapps/ChatDatabase");
+        } else {
+            conn = DriverManager.getConnection("jdbc:sqlite:/home/apache-tomcat-7.0.64/webapps/ChatDatabase");
         }
 
     }
 
-    public static boolean checkKeyGenDb(String keyGen) throws ClassNotFoundException, SQLException {
-        stat = conn.createStatement();
+    public static boolean checkKeyGenDb(String keyGen) throws ClassNotFoundException, SQLException, NamingException {
+        Conn();
+        try {
+            stat = conn.createStatement();
 
-        //если найдено значение неиспользованное
-        ResultSet rs = stat.executeQuery("select id from keyGens where keyGen = '" + keyGen + "'" +
-                "and marker != " + "'registrated'");
-        while (rs.next()) {
+            //если найдено значение неиспользованное
+            ResultSet rs = stat.executeQuery("select id from keyGens where keyGen = '" + keyGen + "'" +
+                    "and marker != " + "'registrated'");
+            while (rs.next()) {
+                rs.close();
+                stat.close();
+                return true;
+            }
+
             rs.close();
             stat.close();
-            return true;
+        } catch (Exception e) {
+            //nothing
+        } finally {
+            CloseDB();
         }
 
-        rs.close();
-        stat.close();
         return false;
     }
 
     //добавить пользователя в базу данных
     public static void addUserDatabase(String userName, String keyGen, String ip) throws ClassNotFoundException, SQLException, NamingException {
-        stat = conn.createStatement();
-
-        int n = stat.executeUpdate("UPDATE keyGens SET marker = 'registrated' WHERE keyGen = '" + keyGen + "'");
-
-        stat.close();
-
         Conn();
-        try {
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO freeUsers (name,  userKeyGen, userIp) VALUES ( ?, ?, ?)");
-            statement.setString(1, userName);
-            statement.setString(2, keyGen);
-            statement.setString(3, ip);
 
-            statement.execute();
-            statement.close();
+        try {
+            stat = conn.createStatement();
+
+            int n = stat.executeUpdate("UPDATE keyGens SET marker = 'registrated' WHERE keyGen = '" + keyGen + "'");
+
+            stat.close();
+
+            Conn();
+            try {
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO freeUsers (name,  userKeyGen, userIp) VALUES ( ?, ?, ?)");
+                statement.setString(1, userName);
+                statement.setString(2, keyGen);
+                statement.setString(3, ip);
+
+                statement.execute();
+                statement.close();
+            } catch (Exception e) {
+                //nothing
+            } finally {
+                CloseDB();
+            }
         } catch (Exception e) {
             //nothing
-        }
-        finally {
+        } finally {
             CloseDB();
         }
+
     }
 
     //получить имя по ключу
-    public static String getNameDb(String keyGen) throws ClassNotFoundException, SQLException, NamingException
-    {
+    public static String getNameDb(String keyGen) throws ClassNotFoundException, SQLException, NamingException {
         Conn();
 
-        stat = conn.createStatement();
-        ResultSet rs = stat.executeQuery("select name from freeUsers where userKeyGen = '" + keyGen + "'");
+        try {
 
-        while (rs.next()) {
-            String answer = rs.getString("name");
+            stat = conn.createStatement();
+            ResultSet rs = stat.executeQuery("select name from freeUsers where userKeyGen = '" + keyGen + "'");
+
+            while (rs.next()) {
+                String answer = rs.getString("name");
+                rs.close();
+                stat.close();
+                CloseDB();
+                return answer;
+            }
+
             rs.close();
             stat.close();
+        } catch (Exception e) {
+        } finally {
             CloseDB();
-            return answer;
         }
-
-        rs.close();
-        stat.close();
-        CloseDB();
-
         return "";
     }
 
@@ -110,54 +127,59 @@ public class SQLiteClass {
             statement.close();
         } catch (Exception e) {
             //System.out.println(e);
-        }
-        finally {
+        } finally {
             CloseDB();
         }
     }
 
-    public static boolean checkIP(String ip) throws ClassNotFoundException, SQLException,  NamingException
-    {
+    public static boolean checkIP(String ip) throws ClassNotFoundException, SQLException, NamingException {
         Conn();
-        stat = conn.createStatement();
+        try {
+            stat = conn.createStatement();
 
-        //если найдено значение неиспользованное
-        ResultSet rs = stat.executeQuery("select id from usersIP where ip = '" + ip + "'");
-        while (rs.next()) {
+            //если найдено значение неиспользованное
+            ResultSet rs = stat.executeQuery("select id from usersIP where ip = '" + ip + "'");
+            while (rs.next()) {
+                rs.close();
+                stat.close();
+                return true;
+            }
+
             rs.close();
             stat.close();
-            return true;
+        } catch (Exception e) {
+        } finally {
+            CloseDB();
         }
-
-        rs.close();
-        stat.close();
-        CloseDB();
         return false;
     }
 
 
-    public static String generateKeygen() throws ClassNotFoundException, SQLException,  NamingException
-    {
+    public static String generateKeygen() throws ClassNotFoundException, SQLException, NamingException {
         Conn();
 
-        stat = conn.createStatement();
-        ResultSet rs = stat.executeQuery("select keyGen from keyGens where marker = " + "'not_used'");
+        try {
+            stat = conn.createStatement();
+            ResultSet rs = stat.executeQuery("select keyGen from keyGens where marker = " + "'not_used'");
 
-        while (rs.next()) {
-            String answer = rs.getString("keyGen");
+            while (rs.next()) {
+                String answer = rs.getString("keyGen");
 
 
-            int n = stat.executeUpdate("UPDATE keyGens SET marker = 'sent' WHERE keyGen =" + "'" + answer + "'");
+                int n = stat.executeUpdate("UPDATE keyGens SET marker = 'sent' WHERE keyGen =" + "'" + answer + "'");
+
+                rs.close();
+                stat.close();
+                CloseDB();
+                return answer;
+            }
 
             rs.close();
             stat.close();
+        } catch (Exception e) {
+        } finally {
             CloseDB();
-            return answer;
         }
-
-        rs.close();
-        stat.close();
-        CloseDB();
 
         return "";
     }
@@ -170,95 +192,110 @@ public class SQLiteClass {
     public static String addUser(String userName, String keyGen, String ip) throws ClassNotFoundException, SQLException, NamingException {
         Conn();
 
-        stat = conn.createStatement();
-
-        ResultSet rs1 = stat.executeQuery("select userIp from freeUsers where userIp = '" + ip + "'" + " and name = '"
-                + userName + "'");
-        while (rs1.next()) {
-            //rs.close();
-
-            return "added";
-        }
-
-
-        boolean marker = false;
-        //если найдено значение неиспользованное
-        ResultSet rs = stat.executeQuery("select userIp from freeUsers where userIp = '" + ip + "'" + " and name != '"
-                                        + userName + "'");
-        while (rs.next()) {
-            //rs.close();
-
-            marker = true;
-            break;
-        }
-
-        rs.close();
-        //stat.close();
-
-        if (marker)
-        {
-            int n = stat.executeUpdate("UPDATE freeUsers SET name = " + "'" + userName + "'" +
-                    ",userKeyGen = " + "'" + keyGen + "'"
-                    + "WHERE userIp =" + "'" + ip + "'");
-            //stat.close();
-            return "added";
-        }
-
-        stat.close();
-
-
         try {
-            PreparedStatement statement = conn.prepareStatement("INSERT INTO freeUsers (name,  userKeyGen, userIp) VALUES ( ?, ?, ?)");
-            statement.setString(1, userName);
-            statement.setString(2, keyGen);
-            statement.setString(3, ip);
+            stat = conn.createStatement();
 
-            statement.execute();
-            statement.close();
+            ResultSet rs1 = stat.executeQuery("select userIp from freeUsers where userIp = '" + ip + "'" + " and name = '"
+                    + userName + "'");
+            while (rs1.next()) {
+                //rs.close();
 
-            return "added";
+                return "added";
+            }
+
+
+            boolean marker = false;
+            //если найдено значение неиспользованное
+            ResultSet rs = stat.executeQuery("select userIp from freeUsers where userIp = '" + ip + "'" + " and name != '"
+                    + userName + "'");
+            while (rs.next()) {
+                //rs.close();
+
+                marker = true;
+                break;
+            }
+
+            rs.close();
+            //stat.close();
+
+            if (marker) {
+                int n = stat.executeUpdate("UPDATE freeUsers SET name = " + "'" + userName + "'" +
+                        ",userKeyGen = " + "'" + keyGen + "'"
+                        + "WHERE userIp =" + "'" + ip + "'");
+                //stat.close();
+                return "added";
+            }
+
+            stat.close();
+
+
+            try {
+                PreparedStatement statement = conn.prepareStatement("INSERT INTO freeUsers (name,  userKeyGen, userIp) VALUES ( ?, ?, ?)");
+                statement.setString(1, userName);
+                statement.setString(2, keyGen);
+                statement.setString(3, ip);
+
+                statement.execute();
+                statement.close();
+
+                return "added";
+            } catch (Exception e) {
+                return e.toString();
+            } finally {
+                CloseDB();
+            }
+
         } catch (Exception e) {
-            return e.toString();
-        }
-        finally {
+            //nothing
+        } finally {
             CloseDB();
         }
+        return "added";
     }
 
     public static void updateIP(String KeyGen, String IP) throws ClassNotFoundException, SQLException, NamingException {
         Conn();
 
-        stat = conn.createStatement();
+        try {
+            stat = conn.createStatement();
 
-        ResultSet rs = stat.executeQuery("select ip from freeUsers where keyGen = " + "'" + KeyGen + "'");
+            ResultSet rs = stat.executeQuery("select ip from freeUsers where keyGen = " + "'" + KeyGen + "'");
 
-        String ipGet = "";
+            String ipGet = "";
 
-        while (rs.next()) {
-            ipGet = rs.getString("ip");
+            while (rs.next()) {
+                ipGet = rs.getString("ip");
+            }
+
+            int n = stat.executeUpdate("UPDATE freeUsers SET ip = " + "'" + IP + "'" +
+                    "WHERE keyGen =" + "'" + KeyGen + "'");
+
+            int n1 = stat.executeUpdate("DELETE FROM usersIP WHERE ip = '" + ipGet + "'");
+
+            stat.close();
+
+            CloseDB();
+        } catch (Exception e) {
+        } finally {
+            CloseDB();
         }
-
-        int n = stat.executeUpdate("UPDATE freeUsers SET ip = " + "'" + IP + "'" +
-                 "WHERE keyGen =" + "'" + KeyGen + "'");
-
-        int n1 = stat.executeUpdate("DELETE FROM usersIP WHERE ip = '" + ipGet + "'");
-
-        stat.close();
-
-        CloseDB();
     }
 
     public static void updateName(String newName, String IP) throws ClassNotFoundException, SQLException, NamingException {
         Conn();
 
-        stat = conn.createStatement();
+        try {
+            stat = conn.createStatement();
 
-        int n = stat.executeUpdate("UPDATE freeUsers SET name = " + "'" + newName + "'" +
-                "WHERE userIp =" + "'" + IP + "'");
+            int n = stat.executeUpdate("UPDATE freeUsers SET name = " + "'" + newName + "'" +
+                    "WHERE userIp =" + "'" + IP + "'");
 
-        stat.close();
+            stat.close();
 
-        CloseDB();
+        } catch (Exception e) {
+        } finally {
+            CloseDB();
+        }
     }
 
 

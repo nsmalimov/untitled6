@@ -48,7 +48,6 @@ public class AutorizationServlet extends HttpServlet {
     }
 
     public static boolean checkKeyGen(String name, String key, String ip) throws ClassNotFoundException, SQLException, NamingException {
-        SQLiteClass.Conn();
         boolean answer = SQLiteClass.checkKeyGenDb(key);
 
         if (answer)
@@ -57,7 +56,6 @@ public class AutorizationServlet extends HttpServlet {
             SQLiteClass.addUserDatabase(name, key, ip);
         }
 
-        SQLiteClass.CloseDB();
         return answer;
     }
 
@@ -135,6 +133,8 @@ public class AutorizationServlet extends HttpServlet {
                     String ip = jsonObject.getString("ip");
 
                     boolean checkIp = checkIp(ip);
+
+                    //String userNameCookies = "Руслан";
 
                     //System.out.println(userNameCookies);
 

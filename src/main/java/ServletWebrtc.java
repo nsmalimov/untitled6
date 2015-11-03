@@ -27,7 +27,7 @@ import java.io.StringReader;
 import BuildClass.SessionUser;
 
 @ServerEndpoint(value = "/webrtc")
-public class ServletWebrtc extends HttpServlet {
+public class ServletWebrtc {
 
     @OnOpen
     public void onOpen(Session session) throws IOException, EncodeException {

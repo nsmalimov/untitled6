@@ -12,7 +12,7 @@ if (portName.length == 0) {
 
 var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
 
-alert(serverPath);
+//alert(serverPath);
 
 var userIp = getURL();
 userIp = userIp.slice(2, userIp.length-1);
