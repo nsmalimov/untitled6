@@ -20,18 +20,36 @@ public class AutorizationServlet extends HttpServlet {
     //TODO проверка по ip
     public static boolean checkIp(String ip) throws ClassNotFoundException, SQLException,  NamingException
     {
+        boolean checkIp = false;
         //проверка ругулярными выражениями
         if (ip.equals("0"))
             return true;
 
-        SQLiteClass.Conn();;
-        boolean checkIp = SQLiteClass.checkIP(ip);
-        SQLiteClass.CloseDB();
+        String[] partsIP = ip.split("\\.");
+
+        String newIP = "";
+
+        boolean first = true;
+
+        for(int i = 0; i < partsIP.length-1; i ++)
+        {
+            if (first) {
+                newIP = newIP + partsIP[i];
+                first = false;
+            }
+            else
+            {
+                newIP = newIP + "." + partsIP[i];
+            }
+        }
+
+        checkIp = SQLiteClass.checkIP(newIP);
+
         return checkIp;
     }
 
     public static boolean checkKeyGen(String name, String key, String ip) throws ClassNotFoundException, SQLException, NamingException {
-        SQLiteClass.Conn();
+        //SQLiteClass.Conn();
         boolean answer = SQLiteClass.checkKeyGenDb(key);
 
         if (answer)
@@ -40,12 +58,12 @@ public class AutorizationServlet extends HttpServlet {
             SQLiteClass.addUserDatabase(name, key, ip);
         }
 
-        SQLiteClass.CloseDB();
+        //SQLiteClass.CloseDB();
         return answer;
     }
 
     public static String checkCookies(HttpServletRequest request) throws ClassNotFoundException, SQLException, NamingException{
-        SQLiteClass.Conn();
+        //SQLiteClass.Conn();
         Cookie[] cookies = null;
         cookies = request.getCookies();
 
@@ -60,10 +78,10 @@ public class AutorizationServlet extends HttpServlet {
                     return userName;
                 }
             }
-            SQLiteClass.CloseDB();
+            //SQLiteClass.CloseDB();
             return userName;
         }
-        SQLiteClass.CloseDB();
+        //SQLiteClass.CloseDB();
         return "";
     }
 
@@ -98,9 +116,8 @@ public class AutorizationServlet extends HttpServlet {
             while ((line = reader.readLine()) != null)
                 jb.append(line);
         } catch (Exception e) {
-            //System.out.println(e);
+            System.out.println(e);
         }
-
 
         try {
 
@@ -239,7 +256,7 @@ public class AutorizationServlet extends HttpServlet {
 
             }
         } catch (Exception e) {
-            //System.out.println(e);
+            System.out.println(e);
         }
     }
 }

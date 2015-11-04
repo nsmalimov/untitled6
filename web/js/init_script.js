@@ -12,12 +12,12 @@ if (portName.length == 0) {
 
 var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
 
-//alert(serverPath);
+var userIp = getURL();
+userIp = userIp.slice(2, userIp.length-1);
 
-//var userIp = getURL();
-//userIp = userIp.slice(2, userIp.length-1);
+userIp = JSON.parse(userIp)["ip"];
 
-//userIp = JSON.parse(userIp)["ip"];
+//alert(userIp);
 
 function serverConnectFunc(serverUrl, jsonData) {
     $.ajax({
@@ -119,10 +119,12 @@ function createJsonAutorization() {
     var latitude_var = null;
     var longitude_var = null;
 
+    json_create.ip = userIp;
+
     //var coordString = getCoordinates(userIp);
 
+    //json_create.ip = "0";
 
-    json_create.ip = "0";
     //var coordJson = JSON.parse(coordString);
 
     //if (coordJson["isp"] === "Saint-Petersburg State University")

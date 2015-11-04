@@ -255,6 +255,12 @@ function fail() {
     //hangup();
     log('fail success');
 
+    if (wasUsed) {
+        alert("Проблема с подключением камеры. Собеседник вас не видит и врят ли захочет продолжить общение.");
+    }
+
+    var stream  = null;
+    success(stream);
     //work without camera
 
     //$('#traceback').text(Array.prototype.join.call(arguments, ' '));

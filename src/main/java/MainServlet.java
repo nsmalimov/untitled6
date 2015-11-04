@@ -19,7 +19,9 @@ public class MainServlet extends HttpServlet {
 
         //if (cookies != null) {
             response.setContentType("text/html");
-            RequestDispatcher dispatcherChat = request.getRequestDispatcher("chat.html");
+            //TODO
+            //chat.html
+            RequestDispatcher dispatcherChat = request.getRequestDispatcher("111.html");
             if (dispatcherChat != null) {
                 dispatcherChat.forward(request, response);
             }
