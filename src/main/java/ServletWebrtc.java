@@ -60,7 +60,28 @@ public class ServletWebrtc {
         switch (command) {
             case 0:
                 //start chat
-                SessionUser.addFreeUser(client, jsonObject.getString("name"));
+                //TODO проверка на контрольную сумму
+                String controlSum = jsonObject.getString("ctrSum");
+                String ipNew = jsonObject.getString("ip");
+
+                boolean ctrSumAnswer = ControlSum.checkControlSum(controlSum, ipNew);
+
+                System.out.println(ctrSumAnswer);
+
+                if (ctrSumAnswer)
+                {
+                    SessionUser.addFreeUser(client, jsonObject.getString("name"));
+                }
+                else
+                {
+                    JSONObject jsonToReturn0 = new JSONObject();
+                    jsonToReturn0.put("answer", "control");
+
+                    System.out.println(jsonToReturn0.toString());
+
+                    client.getBasicRemote().sendText(jsonToReturn0.toString());
+                }
+
 
                 //System.out.println("connect");
                 //BuildClass.SessionUser.printParams();

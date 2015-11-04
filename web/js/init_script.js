@@ -10,6 +10,8 @@ if (portName.length == 0) {
     portName = "80";
 }
 
+var controlSum = "";
+
 var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
 
 var userIp = getURL();
@@ -37,8 +39,12 @@ function serverConnectFunc(serverUrl, jsonData) {
             {
                 case "ok":
                     userName = event['name'];
+                    controlSum = event['ctrlsum'];
+
                     $("#NewKeyInput").val(userName);
                     $('#your_name').text(userName);
+
+                    $('#controlsum').text(controlSum);
 
                     $('#myModal1').modal('hide');
                     $("head").append('<script type="text/javascript" src="js/video.js"></script>');

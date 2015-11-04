@@ -83,6 +83,10 @@ function success(stream) {
     if (wasUsed){
         var sentJson1 = new Object();
         sentJson1.command = "0";
+
+        sentJson1.ctrSum = $('#controlsum').text();
+        sentJson1.ip = userIp;
+
         sentJson1.name = $('#your_name').text();
 
         //componentPropetrOn();
@@ -133,6 +137,15 @@ function success(stream) {
         var getCommand = getJson["answer"];
 
         log(getCommand);
+
+        // не верная контрольная сумма
+        if (getCommand === "control")
+        {
+            alert("Возможно это ошибка. Но судя по всему, вы производите атаку на сервер подменой клиентского кода. Доступ закрыт. Сожалеем.");
+            pc.close();
+            ws.close();
+            $("body").hide();
+        }
 
         if (getCommand == "owner") {
             initiator = false;

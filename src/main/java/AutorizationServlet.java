@@ -188,6 +188,10 @@ public class AutorizationServlet extends HttpServlet {
                     //ip верен cooki верны
                     if (checkIp && !userNameCookies.equals("")) {
                         JSONObject jsonToReturn = new JSONObject();
+
+                        String controlsum = ControlSum.createControlSum(ip);
+                        jsonToReturn.put("ctrlsum", controlsum);
+
                         jsonToReturn.put("answer", "ok");
                         jsonToReturn.put("name", userNameCookies);
                         out.println(jsonToReturn.toString());
@@ -217,6 +221,10 @@ public class AutorizationServlet extends HttpServlet {
                         //обновить ip?
 
                         JSONObject jsonToReturn = new JSONObject();
+
+                        String controlsum = ControlSum.createControlSum(ip);
+                        jsonToReturn.put("ctrlsum", controlsum);
+
                         jsonToReturn.put("answer", "ok");
                         jsonToReturn.put("name", userNameCookies);
                         out.println(jsonToReturn.toString());
@@ -252,6 +260,10 @@ public class AutorizationServlet extends HttpServlet {
                     else
                     {
                         JSONObject jsonToReturn = new JSONObject();
+
+                        String controlsum = ControlSum.createControlSum(userIp);
+                        jsonToReturn.put("ctrlsum", controlsum);
+
                         jsonToReturn.put("answer", "ok");
                         jsonToReturn.put("name", name);
                         out.println(jsonToReturn.toString());
@@ -276,6 +288,10 @@ public class AutorizationServlet extends HttpServlet {
                     //если всё нормально, то отправить куки
                     if (isOk) {
                         JSONObject jsonToReturn1 = new JSONObject();
+
+                        String controlsum = ControlSum.createControlSum(userIP);
+                        jsonToReturn1.put("ctrlsum", controlsum);
+
                         jsonToReturn1.put("answer", "ok");
                         jsonToReturn1.put("name", userName);
                         out.println(jsonToReturn1.toString());
