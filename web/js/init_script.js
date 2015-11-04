@@ -14,10 +14,10 @@ var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
 
 //alert(serverPath);
 
-var userIp = getURL();
-userIp = userIp.slice(2, userIp.length-1);
+//var userIp = getURL();
+//userIp = userIp.slice(2, userIp.length-1);
 
-userIp = JSON.parse(userIp)["ip"];
+//userIp = JSON.parse(userIp)["ip"];
 
 function serverConnectFunc(serverUrl, jsonData) {
     $.ajax({
@@ -119,18 +119,20 @@ function createJsonAutorization() {
     var latitude_var = null;
     var longitude_var = null;
 
-    var coordString = getCoordinates(userIp);
+    //var coordString = getCoordinates(userIp);
 
-    var coordJson = JSON.parse(coordString);
 
-    if (coordJson["isp"] === "Saint-Petersburg State University")
-    {
-        json_create.ip = "0";
-    }
-    else
-    {
-        json_create.ip = userIp;
-    }
+    json_create.ip = "0";
+    //var coordJson = JSON.parse(coordString);
+
+    //if (coordJson["isp"] === "Saint-Petersburg State University")
+    //{
+    //    json_create.ip = "0";
+    //}
+    //else
+    //{
+    //    json_create.ip = userIp;
+    //}
 
     return JSON.stringify(json_create);
 }

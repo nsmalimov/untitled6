@@ -253,7 +253,10 @@ function success(stream) {
 function fail() {
     //обработка отсутствия камеры
     //hangup();
-    log('fail success')
+    log('fail success');
+
+    //work without camera
+
     //$('#traceback').text(Array.prototype.join.call(arguments, ' '));
     //$('#traceback').attr('class', 'bg-danger');
     //console.error.apply(console, arguments);
@@ -348,6 +351,7 @@ function newInterlocutorButton() {
     wasUsed = true;
 
     pc.close();
+
     $('#remote_container').remove();
 
     $('#main_container').prepend("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");

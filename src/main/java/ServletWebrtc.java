@@ -1,5 +1,4 @@
 import Databases.SQLiteClass;
-import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
 import javax.websocket.EncodeException;
@@ -11,6 +10,9 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 
+import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
+import org.json.JSONObject;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 
@@ -21,7 +23,9 @@ import javax.naming.NamingException;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
+
 import static java.util.Collections.emptySet;
+
 import java.io.StringReader;
 
 import BuildClass.SessionUser;
@@ -35,23 +39,10 @@ public class ServletWebrtc {
     }
 
     @OnClose
-    public void onClose(Session session) throws IOException, EncodeException{
-        //Session interlocutor = BuildClass.SessionUser.getInterlocutor(session);
-
-
-        //JSONObject jsonToReturn1 = new JSONObject();
-        //jsonToReturn1.put("answer", "stop_connect");
-
-        //interlocutor.getBasicRemote().sendText(jsonToReturn1.toString());
-
+    public void onClose(Session session) throws IOException, EncodeException {
         BuildClass.SessionUser.closeConnect(session);
 
         //System.out.println("close connect");
-
-        //BuildClass.SessionUser.printParams();
-        //BuildClass.SessionUser.printParams();
-
-
 
         //BuildClass.SessionUser.printParams();
     }
@@ -62,23 +53,17 @@ public class ServletWebrtc {
 
         JSONObject jsonObject = new JSONObject(message);
 
-        int command = Integer.parseInt(jsonObject.getString("command"));
-
-        SQLiteClass.Conn();
-
         //System.out.println(message);
 
-        //System.out.println(jsonObject.getString("name"));
+        int command = Integer.parseInt(jsonObject.getString("command"));
 
-        switch (command)
-        {
+        switch (command) {
             case 0:
                 //start chat
                 SessionUser.addFreeUser(client, jsonObject.getString("name"));
 
                 //System.out.println("connect");
                 //BuildClass.SessionUser.printParams();
-                SQLiteClass.CloseDB();
                 break;
 
             case 1:
@@ -95,7 +80,7 @@ public class ServletWebrtc {
                 jsonToReturn1.put("interlocutorName", interlocutorName1);
 
                 locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
-                SQLiteClass.CloseDB();
+
                 break;
 
             case 2: //new interlocutor
@@ -105,16 +90,13 @@ public class ServletWebrtc {
 
                 //System.out.println("answer " + answer);
 
-                if (answer == 0)
-                {
+                if (answer == 0) {
                     //в режим ожидания
                     JSONObject jsonToReturn2 = new JSONObject();
                     jsonToReturn2.put("answer", "wait_window");
                     client.getBasicRemote().sendText(jsonToReturn2.toString());
                     //System.out.println("wait_command");
-                }
-                else
-                {
+                } else {
                     //начать чат
                     JSONObject jsonToReturn2 = new JSONObject();
                     jsonToReturn2.put("answer", "new_interlocutor");
@@ -126,7 +108,7 @@ public class ServletWebrtc {
                 }
 
                 //BuildClass.SessionUser.printParams();
-                SQLiteClass.CloseDB();
+
                 break;
 
             case 3: //get and set messages
@@ -140,7 +122,7 @@ public class ServletWebrtc {
                 Session locutorSes2 = SessionUser.getInterlocutorSession(client);
 
                 locutorSes2.getBasicRemote().sendText(jsonToReturn3.toString());
-                SQLiteClass.CloseDB();
+
                 break;
 
             case 4:
@@ -149,7 +131,7 @@ public class ServletWebrtc {
 
                 BuildClass.SessionUser.closeConnect(client);
                 //BuildClass.SessionUser.printParams();
-                SQLiteClass.CloseDB();
+
                 break;
 
             case 5:
@@ -166,36 +148,65 @@ public class ServletWebrtc {
                 //System.out.println(jsonToReturn5.toString());
 
                 client.getBasicRemote().sendText(jsonToReturn5.toString());
-                SQLiteClass.CloseDB();
+
                 break;
 
+            //изменить имя на лету
             case 6: //change name
                 String ip = jsonObject.getString("ip");
                 String newName = jsonObject.getString("new_name");
 
+                //System.out.println(newName);
+
                 try {
                     SQLiteClass.updateName(newName, ip);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     //System.out.println(e);
                 }
 
                 JSONObject jsonToReturn6 = new JSONObject();
                 jsonToReturn6.put("answer", "changed");
+                jsonToReturn6.put("NewName", newName);
+
+                SessionUser.userSessionId.put(client.getId(), newName);
 
                 client.getBasicRemote().sendText(jsonToReturn6.toString());
 
+                Session locutorSes3 = SessionUser.getInterlocutorSession(client);
+
+                if (!locutorSes3.equals("")) {
+
+                    JSONObject jsonToReturn7 = new JSONObject();
+                    jsonToReturn7.put("answer", "changed_interlocutor_name");
+                    jsonToReturn7.put("interlocutorName", newName);
+
+                    locutorSes3.getBasicRemote().sendText(jsonToReturn7.toString());
+                }
+
                 //System.out.println(jsonToReturn6.toString());
-                SQLiteClass.CloseDB();
+
+                break;
+
+            case 7:
+                JSONObject jsonToReturn8 = new JSONObject();
+                jsonToReturn8.put("answer", "new_window");
+
+                Session locutorSes8 = SessionUser.getInterlocutorSession(client);
+
+                locutorSes8.getBasicRemote().sendText(jsonToReturn8.toString());
+
+                SessionUser.simpleClose(client);
+
+                JSONObject jsonToReturn9 = new JSONObject();
+                jsonToReturn9.put("answer", "wait_window");
+
+                client.getBasicRemote().sendText(jsonToReturn9.toString());
+
                 break;
 
             default:
                 //System.out.println("default");
-                SQLiteClass.CloseDB();
                 break;
-
-
         }
     }
 }
