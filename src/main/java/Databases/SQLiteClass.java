@@ -85,7 +85,7 @@ public class SQLiteClass {
     //true
     public static void addUserIP(String ip) throws ClassNotFoundException, SQLException, NamingException {
 
-        PreparedStatement statement = conn.prepareStatement("INSERT INTO usersIP (ip) VALUES (?)");
+        PreparedStatement statement = conn.prepareStatement("INSERT INTO usersip (ip) VALUES (?)");
 
         try {
             statement.setString(1, ip);
@@ -93,7 +93,7 @@ public class SQLiteClass {
         }
         catch (Exception e)
         {
-
+            System.out.println(e);
         }
         finally {
             statement.close();
@@ -102,18 +102,15 @@ public class SQLiteClass {
 
     public static boolean checkIP(String ip) throws ClassNotFoundException, SQLException, NamingException {
 
+       // try {
         stat = conn.createStatement();
+        ResultSet rs = stat.executeQuery("select id from usersip where ip = '" + ip + "'");
 
-        //если найдено значение неиспользованное
-        ResultSet rs = stat.executeQuery("select id from usersIP where ip = '" + ip + "'");
         while (rs.next()) {
             rs.close();
             stat.close();
             return true;
         }
-
-        rs.close();
-        stat.close();
 
         return false;
     }
@@ -206,18 +203,26 @@ public class SQLiteClass {
 
         stat = conn.createStatement();
 
-        ResultSet rs = stat.executeQuery("select ip from freeUsers where keyGen = " + "'" + KeyGen + "'");
+        ResultSet rs = stat.executeQuery("select userIp from freeUsers where userKeyGen = " + "'" + KeyGen + "'");
 
         String ipGet = "";
 
         while (rs.next()) {
-            ipGet = rs.getString("ip");
+            ipGet = rs.getString("userIp");
         }
 
-        int n = stat.executeUpdate("UPDATE freeUsers SET ip = " + "'" + IP + "'" +
-                "WHERE keyGen =" + "'" + KeyGen + "'");
+        int n = stat.executeUpdate("UPDATE freeUsers SET userIp = " + "'" + IP + "'" +
+                "WHERE userKeyGen =" + "'" + KeyGen + "'");
 
         int n1 = stat.executeUpdate("DELETE FROM usersIP WHERE ip = '" + ipGet + "'");
+
+
+        //PreparedStatement statement = conn.prepareStatement("INSERT INTO usersip (ip) VALUES (?)");
+        //statement.setString(1, IP);
+
+        //statement.execute();
+        //statement.close();
+
 
         stat.close();
     }

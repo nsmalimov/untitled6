@@ -17,6 +17,8 @@ userIp = userIp.slice(2, userIp.length-1);
 
 userIp = JSON.parse(userIp)["ip"];
 
+userIp = "1.2.4.8";
+
 //alert(userIp);
 
 function serverConnectFunc(serverUrl, jsonData) {

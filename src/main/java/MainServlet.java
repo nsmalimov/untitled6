@@ -21,7 +21,7 @@ public class MainServlet extends HttpServlet {
             response.setContentType("text/html");
             //TODO
             //chat.html
-            RequestDispatcher dispatcherChat = request.getRequestDispatcher("111.html");
+            RequestDispatcher dispatcherChat = request.getRequestDispatcher("chat.html");
             if (dispatcherChat != null) {
                 dispatcherChat.forward(request, response);
             }

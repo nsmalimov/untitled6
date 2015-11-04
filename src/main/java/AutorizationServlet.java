@@ -17,14 +17,8 @@ import java.util.UUID;
 
 public class AutorizationServlet extends HttpServlet {
 
-    //TODO проверка по ip
-    public static boolean checkIp(String ip) throws ClassNotFoundException, SQLException,  NamingException
+    public static String ipPrepare(String ip)
     {
-        boolean checkIp = false;
-        //проверка ругулярными выражениями
-        if (ip.equals("0"))
-            return true;
-
         String[] partsIP = ip.split("\\.");
 
         String newIP = "";
@@ -42,10 +36,33 @@ public class AutorizationServlet extends HttpServlet {
                 newIP = newIP + "." + partsIP[i];
             }
         }
+        return newIP;
+    }
 
-        checkIp = SQLiteClass.checkIP(newIP);
+    //TODO проверка по ip
+    public static boolean checkIp(String ip) throws ClassNotFoundException, SQLException,  NamingException
+    {
+        boolean checkIp = false;
+        boolean answerCheck = false;
 
-        return checkIp;
+        //проверка ругулярными выражениями
+        //if (ip.equals("0"))
+        //    return true;
+
+        String lastIp = ipPrepare(ip);
+
+        System.out.println(lastIp);
+
+
+        checkIp = SQLiteClass.checkIP(lastIp);
+
+        System.out.println(ip);
+        if (!checkIp)
+        {
+            answerCheck = SQLiteClass.checkIP(ip);
+        }
+
+        return answerCheck;
     }
 
     public static boolean checkKeyGen(String name, String key, String ip) throws ClassNotFoundException, SQLException, NamingException {
@@ -56,6 +73,7 @@ public class AutorizationServlet extends HttpServlet {
         {
             //запись в базу данных
             SQLiteClass.addUserDatabase(name, key, ip);
+            SQLiteClass.addUserIP(ip);
         }
 
         //SQLiteClass.CloseDB();
@@ -97,6 +115,24 @@ public class AutorizationServlet extends HttpServlet {
 
                     userName = SQLiteClass.getNameDb(cookie.getValue());
 
+                    return userName;
+                }
+            }
+            return userName;
+        }
+        return "";
+    }
+
+    public static String getKeyGenCook(HttpServletRequest request) throws ClassNotFoundException, SQLException, NamingException{
+        Cookie[] cookies = null;
+        cookies = request.getCookies();
+
+        String userName = "";
+
+        if (cookies != null) {
+            for(Cookie cookie : cookies){
+                if("userKey".equals(cookie.getName())){
+
                     return cookie.getValue();
                 }
             }
@@ -119,6 +155,8 @@ public class AutorizationServlet extends HttpServlet {
             System.out.println(e);
         }
 
+        System.out.println(jb.toString());
+
         try {
 
             SQLiteClass.Conn();
@@ -140,6 +178,8 @@ public class AutorizationServlet extends HttpServlet {
                     String ip = jsonObject.getString("ip");
 
                     boolean checkIp = checkIp(ip);
+
+                    System.out.println("checkip " + checkIp);
 
                     //String userNameCookies = "Руслан";
 
@@ -167,9 +207,12 @@ public class AutorizationServlet extends HttpServlet {
                     if (!checkIp && !userNameCookies.equals(""))
                     {
                         //добавить ip в базу данных
+
                         SQLiteClass.addUserIP(ip);
 
-                        SQLiteClass.updateIP(getUserKey(request), ip);
+                        String key = getKeyGenCook(request);
+
+                        SQLiteClass.updateIP(key, ip);
 
                         //обновить ip?
 
@@ -226,8 +269,8 @@ public class AutorizationServlet extends HttpServlet {
                     String userName = (String) jsonObject.get("name");
                     String keyGen = (String) jsonObject.get("keyGen");
 
+                    //полный ip
                     String userIP = (String) jsonObject.get("ip");
-
                     boolean isOk = checkKeyGen(userName, keyGen, userIP);
 
                     //если всё нормально, то отправить куки

@@ -126,26 +126,31 @@ public class ServletWebrtc {
                 break;
 
             case 4:
-                //System.out.println(4);
                 //полностью удалить пользователя
 
                 BuildClass.SessionUser.closeConnect(client);
-                //BuildClass.SessionUser.printParams();
 
                 break;
 
             case 5:
                 //сгенерировать ключ и пометить как переданный
 
-                //System.out.println(5);
+                SQLiteClass.Conn();
+                String genKeygen = "null";
 
-                String genKeygen = SQLiteClass.generateKeygen();
+                try {
+                    genKeygen = SQLiteClass.generateKeygen();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                finally {
+                    SQLiteClass.CloseDB();
+                }
+
 
                 JSONObject jsonToReturn5 = new JSONObject();
                 jsonToReturn5.put("answer", "token");
                 jsonToReturn5.put("token", genKeygen);
-
-                //System.out.println(jsonToReturn5.toString());
 
                 client.getBasicRemote().sendText(jsonToReturn5.toString());
 
@@ -158,10 +163,15 @@ public class ServletWebrtc {
 
                 //System.out.println(newName);
 
+                SQLiteClass.Conn();
+
                 try {
                     SQLiteClass.updateName(newName, ip);
                 } catch (Exception e) {
-                    //System.out.println(e);
+                    System.out.println(e);
+                }
+                finally {
+                    SQLiteClass.CloseDB();
                 }
 
                 JSONObject jsonToReturn6 = new JSONObject();
