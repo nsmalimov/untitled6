@@ -98,7 +98,7 @@ public class AutorizationServlet extends HttpServlet {
             while ((line = reader.readLine()) != null)
                 jb.append(line);
         } catch (Exception e) {
-            System.out.println(e);
+            //System.out.println(e);
         }
 
 
@@ -233,13 +233,13 @@ public class AutorizationServlet extends HttpServlet {
                     SQLiteClass.CloseDB();
                     break;
                 default:
-                    System.out.println("default switch");
+                    //System.out.println("default switch");
                     SQLiteClass.CloseDB();
                     break;
 
             }
         } catch (Exception e) {
-            System.out.println(e);
+            //System.out.println(e);
         }
     }
 }
