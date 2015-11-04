@@ -149,16 +149,21 @@ public class SQLiteClass {
     public static String addUser(String userName, String keyGen, String ip) throws ClassNotFoundException, SQLException, NamingException {
         stat = conn.createStatement();
 
+        //jбновить ключ если такой пользователь есть в базе
         ResultSet rs1 = stat.executeQuery("select userIp from freeUsers where userIp = '" + ip + "'" + " and name = '"
                 + userName + "'");
 
         while (rs1.next()) {
-            //rs.close();
+
+            int n = stat.executeUpdate("UPDATE freeUsers SET userKeyGen = " + "'" + keyGen + "'"
+                    + "WHERE userIp =" + "'" + ip + "'");
+
             stat.close();
             return "added";
         }
 
 
+        //если пользователь задаёт новое имя
         boolean marker = false;
         stat = conn.createStatement();
 

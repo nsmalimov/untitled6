@@ -71,7 +71,7 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || 
 
 function initialize() {
     var constraints = {
-        audio: false,
+        audio: true,
         video: true
     };
     navigator.getUserMedia(constraints, success, fail);
@@ -253,6 +253,7 @@ function success(stream) {
 function fail() {
     //обработка отсутствия камеры
     //hangup();
+    log('fail success')
     //$('#traceback').text(Array.prototype.join.call(arguments, ' '));
     //$('#traceback').attr('class', 'bg-danger');
     //console.error.apply(console, arguments);
