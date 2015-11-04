@@ -297,3 +297,9 @@ video#localVideo {
 textarea {
     resize: none;
 }
+
+.custom {
+    width: 98px !important;
+    margin: 0px 20px 0px 27px;
+
+}
