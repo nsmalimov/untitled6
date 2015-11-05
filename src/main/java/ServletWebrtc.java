@@ -205,7 +205,7 @@ public class ServletWebrtc {
 
                 Session locutorSes3 = SessionUser.getInterlocutorSession(client);
 
-                if (!locutorSes3.equals("")) {
+                if (locutorSes3 != null) {
 
                     JSONObject jsonToReturn7 = new JSONObject();
                     jsonToReturn7.put("answer", "changed_interlocutor_name");

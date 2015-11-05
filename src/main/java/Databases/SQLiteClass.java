@@ -103,16 +103,23 @@ public class SQLiteClass {
     public static boolean checkIP(String ip) throws ClassNotFoundException, SQLException, NamingException {
 
        // try {
+
+        boolean answer = false;
+
         stat = conn.createStatement();
         ResultSet rs = stat.executeQuery("select id from usersip where ip = '" + ip + "'");
 
+        System.out.println("ip " + ip);
+
         while (rs.next()) {
-            rs.close();
-            stat.close();
-            return true;
+            System.out.println("yes");
+            answer = true;
         }
 
-        return false;
+        rs.close();
+        stat.close();
+
+        return answer;
     }
 
 

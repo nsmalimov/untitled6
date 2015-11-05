@@ -45,28 +45,24 @@ public class AutorizationServlet extends HttpServlet {
         boolean checkIp = false;
         boolean answerCheck = false;
 
-        //проверка ругулярными выражениями
-        //if (ip.equals("0"))
-        //    return true;
-
         String lastIp = ipPrepare(ip);
-
-        System.out.println(lastIp);
-
 
         checkIp = SQLiteClass.checkIP(lastIp);
 
-        System.out.println(ip);
         if (!checkIp)
         {
             answerCheck = SQLiteClass.checkIP(ip);
+        }
+        else
+        {
+            return true;
         }
 
         return answerCheck;
     }
 
     public static boolean checkKeyGen(String name, String key, String ip) throws ClassNotFoundException, SQLException, NamingException {
-        //SQLiteClass.Conn();
+
         boolean answer = SQLiteClass.checkKeyGenDb(key);
 
         if (answer)
@@ -76,7 +72,6 @@ public class AutorizationServlet extends HttpServlet {
             SQLiteClass.addUserIP(ip);
         }
 
-        //SQLiteClass.CloseDB();
         return answer;
     }
 

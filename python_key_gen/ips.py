@@ -17,7 +17,8 @@ ip_addresses = [
     "81.89.181.0/24", "172.26.20.0/22",
     "195.70.216.0/24", "172.26.24.0/22",
     "81.89.185.0/24", "172.26.28.0/22",
-    "217.197.11.0/24", "92.42.29.128/25", "172.26.92.0/22",
+    "217.197.11.0/24", #"92.42.29.128/25",
+    "172.26.92.0/22",
     "217.197.2.0/23", "172.26.96.0/22",
     "217.197.4.0/23", "172.26.100.0/22",
     "217.197.8.0/24", "172.26.104.0/22"]
@@ -28,6 +29,7 @@ def prepare_ip(ip_address):
     split_ip = ip_address.split("/")
 
     ip = split_ip[0]
+    #print ip
 
     if (split_ip[1] == "24" or split_ip[1] == "25"):
        return [ip[0:-2]]
@@ -69,6 +71,8 @@ def generate_ip():
         for j in new_ip:
             prepeared_array.append(copy.deepcopy(j))
 
+    prepeared_array.append("92.42.29")
+
     return prepeared_array
 
 
@@ -90,6 +94,9 @@ def insert_to_db(generated_array):
     conn.close()  
 
 generated_array = generate_ip()
+
+#for i in generated_array:
+#   print i
 
 generated_array = list(set(generated_array))
 insert_to_db(generated_array)      

@@ -19,7 +19,7 @@ userIp = userIp.slice(2, userIp.length-1);
 
 userIp = JSON.parse(userIp)["ip"];
 
-userIp = "1.2.4.8";
+//userIp = "1.2.4.9";
 
 //alert(userIp);
 
@@ -57,7 +57,7 @@ function serverConnectFunc(serverUrl, jsonData) {
                     $("#keyInputerClass3").hide();
 
                     //TODO rewrite
-                    $("#NameInput").val("Руслан");
+                    //$("#NameInput").val("Руслан");
 
                     $("#registerButton").hide();
 
@@ -73,8 +73,8 @@ function serverConnectFunc(serverUrl, jsonData) {
                     $("#nameButton").hide();
 
                     //TODO rewrite
-                    $("#NameInput").val("Руслан");
-                    $("#KeyInput").val("9YQH-E8CI-N2XJ-2YV");
+                    //$("#NameInput").val("Руслан");
+                    //$("#KeyInput").val("9YQH-E8CI-N2XJ-2YV");
 
                     break;
 
