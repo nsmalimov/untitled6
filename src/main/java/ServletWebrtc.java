@@ -66,7 +66,7 @@ public class ServletWebrtc {
 
                 boolean ctrSumAnswer = ControlSum.checkControlSum(controlSum, ipNew);
 
-                System.out.println(ctrSumAnswer);
+                //System.out.println(ctrSumAnswer);
 
                 if (ctrSumAnswer)
                 {
@@ -77,7 +77,7 @@ public class ServletWebrtc {
                     JSONObject jsonToReturn0 = new JSONObject();
                     jsonToReturn0.put("answer", "control");
 
-                    System.out.println(jsonToReturn0.toString());
+                    //System.out.println(jsonToReturn0.toString());
 
                     client.getBasicRemote().sendText(jsonToReturn0.toString());
                 }
@@ -162,7 +162,7 @@ public class ServletWebrtc {
                 try {
                     genKeygen = SQLiteClass.generateKeygen();
                 } catch (Exception e) {
-                    System.out.println(e);
+                    //System.out.println(e);
                 }
                 finally {
                     SQLiteClass.CloseDB();
@@ -182,14 +182,16 @@ public class ServletWebrtc {
                 String ip = jsonObject.getString("ip");
                 String newName = jsonObject.getString("new_name");
 
+                String lastName = jsonObject.getString("last_name");
+
                 //System.out.println(newName);
 
                 SQLiteClass.Conn();
 
                 try {
-                    SQLiteClass.updateName(newName, ip);
+                    SQLiteClass.updateName(lastName, newName, ip);
                 } catch (Exception e) {
-                    System.out.println(e);
+                    //System.out.println(e);
                 }
                 finally {
                     SQLiteClass.CloseDB();

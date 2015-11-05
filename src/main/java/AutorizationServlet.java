@@ -147,10 +147,10 @@ public class AutorizationServlet extends HttpServlet {
             while ((line = reader.readLine()) != null)
                 jb.append(line);
         } catch (Exception e) {
-            System.out.println(e);
+            //System.out.println(e);
         }
 
-        System.out.println(jb.toString());
+        //System.out.println(jb.toString());
 
         try {
 
@@ -174,7 +174,7 @@ public class AutorizationServlet extends HttpServlet {
 
                     boolean checkIp = checkIp(ip);
 
-                    System.out.println("checkip " + checkIp);
+                    //System.out.println("checkip " + checkIp);
 
                     //String userNameCookies = "Руслан";
 

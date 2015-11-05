@@ -27,7 +27,7 @@ public class SQLiteClass {
 
     }
 
-    //true
+    //###
     public static boolean checkKeyGenDb(String keyGen) throws ClassNotFoundException, SQLException, NamingException {
         stat = conn.createStatement();
 
@@ -45,6 +45,7 @@ public class SQLiteClass {
         return false;
     }
 
+    //###
     //добавить пользователя в базу данных
     public static void addUserDatabase(String userName, String keyGen, String ip) throws ClassNotFoundException, SQLException, NamingException {
 
@@ -63,6 +64,7 @@ public class SQLiteClass {
         statement.close();
     }
 
+    //###
     //получить имя по ключу
     public static String getNameDb(String keyGen) throws ClassNotFoundException, SQLException, NamingException {
 
@@ -82,6 +84,7 @@ public class SQLiteClass {
         return "";
     }
 
+    //###
     //true
     public static void addUserIP(String ip) throws ClassNotFoundException, SQLException, NamingException {
 
@@ -93,26 +96,24 @@ public class SQLiteClass {
         }
         catch (Exception e)
         {
-            System.out.println(e);
+            //System.out.println(e);
         }
         finally {
             statement.close();
         }
     }
 
+    //###
     public static boolean checkIP(String ip) throws ClassNotFoundException, SQLException, NamingException {
-
-       // try {
-
         boolean answer = false;
 
         stat = conn.createStatement();
         ResultSet rs = stat.executeQuery("select id from usersip where ip = '" + ip + "'");
 
-        System.out.println("ip " + ip);
+        //System.out.println("ip " + ip);
 
         while (rs.next()) {
-            System.out.println("yes");
+            //System.out.println("yes");
             answer = true;
         }
 
@@ -122,7 +123,7 @@ public class SQLiteClass {
         return answer;
     }
 
-
+    //###
     public static String generateKeygen() throws ClassNotFoundException, SQLException, NamingException {
 
         stat = conn.createStatement();
@@ -145,56 +146,13 @@ public class SQLiteClass {
         return "";
     }
 
+    //###
     public static void CloseDB() throws ClassNotFoundException, SQLException {
-        //conn.commit();
         conn.close();
     }
 
+    //###
     public static String addUser(String userName, String keyGen, String ip) throws ClassNotFoundException, SQLException, NamingException {
-        stat = conn.createStatement();
-
-        //jбновить ключ если такой пользователь есть в базе
-        ResultSet rs1 = stat.executeQuery("select userIp from freeUsers where userIp = '" + ip + "'" + " and name = '"
-                + userName + "'");
-
-        while (rs1.next()) {
-
-            int n = stat.executeUpdate("UPDATE freeUsers SET userKeyGen = " + "'" + keyGen + "'"
-                    + "WHERE userIp =" + "'" + ip + "'");
-
-            stat.close();
-            return "added";
-        }
-
-
-        //если пользователь задаёт новое имя
-        boolean marker = false;
-        stat = conn.createStatement();
-
-        //если найдено значение неиспользованное
-        ResultSet rs = stat.executeQuery("select userIp from freeUsers where userIp = '" + ip + "'" + " and name != '"
-                + userName + "'");
-        while (rs.next()) {
-            //rs.close();
-
-            marker = true;
-            break;
-        }
-
-        rs.close();
-        //stat.close();
-
-        if (marker) {
-            int n = stat.executeUpdate("UPDATE freeUsers SET name = " + "'" + userName + "'" +
-                    ",userKeyGen = " + "'" + keyGen + "'"
-                    + "WHERE userIp =" + "'" + ip + "'");
-            stat.close();
-            return "added";
-        }
-
-        stat.close();
-
-
         PreparedStatement statement = conn.prepareStatement("INSERT INTO freeUsers (name,  userKeyGen, userIp) VALUES ( ?, ?, ?)");
         statement.setString(1, userName);
         statement.setString(2, keyGen);
@@ -206,6 +164,8 @@ public class SQLiteClass {
         return "added";
     }
 
+    //###
+    //обновить ip (если пользователи с 1 ip?)
     public static void updateIP(String KeyGen, String IP) throws ClassNotFoundException, SQLException, NamingException {
 
         stat = conn.createStatement();
@@ -223,23 +183,15 @@ public class SQLiteClass {
 
         int n1 = stat.executeUpdate("DELETE FROM usersIP WHERE ip = '" + ipGet + "'");
 
-
-        //PreparedStatement statement = conn.prepareStatement("INSERT INTO usersip (ip) VALUES (?)");
-        //statement.setString(1, IP);
-
-        //statement.execute();
-        //statement.close();
-
-
         stat.close();
     }
 
-    public static void updateName(String newName, String IP) throws ClassNotFoundException, SQLException, NamingException {
+    public static void updateName(String lastName, String newName, String IP) throws ClassNotFoundException, SQLException, NamingException {
 
         stat = conn.createStatement();
 
         int n = stat.executeUpdate("UPDATE freeUsers SET name = " + "'" + newName + "'" +
-                "WHERE userIp =" + "'" + IP + "'");
+                "WHERE userIp =" + "'" + IP + "'" + "and name = " + "'" + lastName + "'");
 
         stat.close();
     }

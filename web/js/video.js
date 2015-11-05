@@ -427,6 +427,7 @@ function changeNickName()
     json_create.command = "6";
     json_create.new_name = $('#NewKeyInput').val();
     json_create.ip = userIp;
+    json_create.last_name = $('#your_name').text();
 
     var json = JSON.stringify(json_create);
     ws.send(json);
