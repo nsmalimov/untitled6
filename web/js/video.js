@@ -352,7 +352,7 @@ function newInterlocutor() {
 
     waitingWindowStart();
 
-    initiator = false;
+    initiator = true;
     wasUsed = false;
 
     ws.send(JSON.stringify(sentJson));
