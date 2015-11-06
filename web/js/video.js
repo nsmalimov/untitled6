@@ -50,6 +50,7 @@ ws.onmessage = function (event) {
 var publisher = null;
 var subscriber = null;
 
+var onlyText = false;
 
 var wasUsed = false;
 
@@ -63,38 +64,24 @@ function initSocket() {
         publisher = OT.initPublisher('local_container', pubOptions, function (error) {
             if (error) {
                 alert("Проблемы с камерой. Собеседник вас не видит и врят ли захочет продолжить общение.");
-                //sentJson1.video = "yes";
             } else {
-                //sentJson1.video = "no";
             }
         });
         wasUsed = true;
     }
-
-
-    if (!publisher.hasVideo)
-    {
-        sentJson1.video = "no";
-    }
     else
     {
-        sentJson1.video = "yes";
+
     }
 
     sentJson1.command = "0";
-
     sentJson1.ctrSum = $('#controlsum').text();
     sentJson1.ip = userIp;
-
-    //проверка на возможность отправлять видео
-    //sentJson1.video = "yes";
-
     sentJson1.name = $('#your_name').text();
-
-    $("#stopButton").attr("disabled", false);
-
+    sentJson1.video = "yes";
     ws.send(JSON.stringify(sentJson1));
 
+    $("#stopButton").attr("disabled", false);
     waitingWindowStart();
 }
 
@@ -123,28 +110,20 @@ ws.onmessage = function (event) {
                 session.publish(publisher);
             }
         });
+
+        //log(onlyText);
+        //log(getJson["video"]);
     }
 
-    //if (getCommand === "only_text")
-    //{
-    //    //if only text
-    //    $('#interlocutor_name').text(getJson["interlocutorName"]);
-    //
-    //    alert("only text");
-    //
-    //    session.connect(token, function (error) {
-    //        if (error) {
-    //            console.log(error.message);
-    //        } else {
-    //            session.publish(publisher);
-    //        }
-    //    });
-    //
-    //    componentPropetrOn();
-    //    waitingWindowStop();
-    //}
-
     //// не верная контрольная сумма
+
+    if (getCommand === "only_text"){
+        //if (!onlyText) {
+        upDateChatBoxGet("Системное сообщение", "У собеседника нет камеры");
+        //}
+    }
+
+
     if (getCommand === "control") {
         alert("Возможно это ошибка. Но судя по всему, вы производите атаку на сервер подменой клиентского кода. Доступ закрыт. Сожалеем.");
 
@@ -159,7 +138,6 @@ ws.onmessage = function (event) {
     }
 
     if (getCommand === "new_window") {
-
         hangup();
         componentPropetrOff();
         $('#myModal2').modal('show');
@@ -167,7 +145,10 @@ ws.onmessage = function (event) {
 
     //перейти в режим ожидания
     if (getCommand === "wait_window") {
-        waitingWindowStart();
+        hangup();
+        initSocket();
+        componentPropetrOff();
+        //$('#myModal2').modal('show');
     }
 
     if (getJson["answer"] === "token") {
@@ -225,10 +206,13 @@ function hangup() {
 }
 
 function newInterlocutor() {
+    //hangup();
     initSocket();
+    componentPropetrOff();
 }
 
 function newInterlocutorButton() {
+    //hangup();
     initSocket();
     componentPropetrOff();
 }

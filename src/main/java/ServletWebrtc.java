@@ -94,7 +94,6 @@ public class ServletWebrtc {
                         JSONObject jsonToReturn1 = new JSONObject();
                         jsonToReturn1.put("answer", "start");
                         jsonToReturn1.put("token", token);
-                        jsonToReturn1.put("video", "yes");
                         jsonToReturn1.put("interlocutorName", interlocutorName1);
 
                         client.getBasicRemote().sendText(jsonToReturn1.toString());
@@ -112,7 +111,6 @@ public class ServletWebrtc {
                         String token = OpenTook.generateToken();
 
                         JSONObject jsonToReturn1 = new JSONObject();
-                        jsonToReturn1.put("video", "no");
                         jsonToReturn1.put("answer", "start");
                         jsonToReturn1.put("token", token);
                         jsonToReturn1.put("interlocutorName", interlocutorName1);
@@ -124,6 +122,10 @@ public class ServletWebrtc {
                     } catch (Exception e) {
                         System.out.println(e);
                     }
+
+                    JSONObject jsonToReturn12 = new JSONObject();
+                    jsonToReturn12.put("answer", "only_text");
+                    locutorSes1.getBasicRemote().sendText(jsonToReturn12.toString());
                 }
 
                 break;
