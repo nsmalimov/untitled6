@@ -1,8 +1,5 @@
-var initiator;
-var pc;
-
 var serverHostName = window.location.hostname;
-//
+
 var portName = window.location.port;
 if (portName.length == 0) {
     portName = "80";
@@ -14,42 +11,37 @@ var isVideoCall = 0;
 
 var ws = null;
 
-if (serverHostName === 'videochatspbu.ru'){
+if (serverHostName === 'videochatspbu.ru') {
     ws = new WebSocket("ws://" + "95.213.199.90" + ":" + "8080" + "/webrtc");
 }
-
-else
-{
+else {
     ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
 }
 
-var count_tocken = 0;
+var apiKey = '45400602';
+var sessionId = '2_MX40NTQwMDYwMn5-MTQ0NjgxMDEwMTUzOH52WVR6SmJ5Q29pRlljMG5MY2N3aG5VdVF-UH4';
 
-ws.onmessage = function(event)
-{
+var session = OT.initSession(apiKey, sessionId);
+
+ws.onmessage = function (event) {
     var getData = JSON.parse(event.data);
-    if (getData["answer"] === "token")
-    {
+    if (getData["answer"] === "token") {
         //поставить ограничение на количество генерируемых ключей
-        if (getData["token"] == "")
-        {
+        if (getData["token"] == "") {
             $('#token_space').append("<p>" + "Ключей нет, обратитесь к администратору" + "</p>");
             $('#tokenButton').hide();
         }
-        else
-        {
+        else {
             $('#token_space').append("<p>" + getData["token"] + "</p>");
         }
-        count_tocken  = count_tocken + 1;
+        count_tocken = count_tocken + 1;
 
-        if (count_tocken > 7)
-        {
+        if (count_tocken > 7) {
             $('#tokenButton').attr("disabled", true);
         }
     }
 
-    if (getData["answer"] === "changed")
-    {
+    if (getData["answer"] === "changed") {
         $('#my_profile').modal('hide');
 
         $("#NameInput").val(getData["NewName"]);
@@ -57,265 +49,170 @@ ws.onmessage = function(event)
         alert("Name was changed");
     }
 };
-function initSocket()
-{
-    //alert(wasUsed);
-    initialize();
+
+function initSocket() {
+    var sentJson1 = new Object();
+    sentJson1.command = "0";
+
+    sentJson1.ctrSum = $('#controlsum').text();
+    sentJson1.ip = userIp;
+
+    sentJson1.name = $('#your_name').text();
+
+    //componentPropetrOn();
+    $("#stopButton").attr("disabled", false);
+
+    ws.send(JSON.stringify(sentJson1));
+
+    waitingWindowStart();
 }
 
+ws.onmessage = function (event) {
 
-var PeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-var IceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
-var SessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
-navigator.getUserMedia = navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+    var getJson = JSON.parse(event.data);
+    var getCommand = getJson["answer"];
 
-function initialize() {
-    var constraints = {
-        audio: true,
-        video: true
-    };
-    navigator.getUserMedia(constraints, success, fail);
-}
 
-function success(stream) {
-    pc = new PeerConnection(null);
+    ///получить токен и начать трансляцию
+    if (getCommand === "start")
+    {
+        var token = getJson["token"];
 
-    if (wasUsed){
-        var sentJson1 = new Object();
-        sentJson1.command = "0";
+        session.on({
+            streamCreated: function (event) {
+                var options = {width: 400, height: 300};
+                session.subscribe(event.stream, 'remote_container', options);
+            }
+        });
 
-        sentJson1.ctrSum = $('#controlsum').text();
-        sentJson1.ip = userIp;
-
-        sentJson1.name = $('#your_name').text();
-
-        //componentPropetrOn();
-        $("#stopButton").attr("disabled", false);
-
-        ws.send(JSON.stringify(sentJson1));
-
-        waitingWindowStart();
-    }
-    else {
-        //var sentJson = new Object();
-        //
-        //sentJson.command = "0";
-        //sentJson.name = $('#your_name').text();
-        //
-        ////componentPropetrOn();
-        //$("#stopButton").attr("disabled", false);
-        //
-        //ws.send(JSON.stringify(sentJson));
-        //waitingWindowStart();
-    }
-
-    if (stream) {
-        pc.addStream(stream);
-        if (isVideoCall != 1) {
-            $('#local').attachStream(stream);
-            isVideoCall = 1;
-        }
-    }
-
-    pc.onaddstream = function(event) {
-        $('#remote').attachStream(event.stream);
-        //logStreaming(true);
-    };
-
-    pc.onicecandidate = function(event) {
-        if (event.candidate) {
-
-            var sentJson = new Object();
-            sentJson.sentdata = JSON.stringify(event.candidate);
-            sentJson.command = "1";
-            ws.send(JSON.stringify(sentJson));
-        }
-    };
-
-    ws.onmessage = function (event) {
-        var getJson = JSON.parse(event.data);
-        var getCommand = getJson["answer"];
-
-        log(getCommand);
-
-        // не верная контрольная сумма
-        if (getCommand === "control")
-        {
-            alert("Возможно это ошибка. Но судя по всему, вы производите атаку на сервер подменой клиентского кода. Доступ закрыт. Сожалеем.");
-            pc.close();
-            ws.close();
-            $("body").hide();
-        }
-
-        if (getCommand == "owner") {
-            initiator = false;
-
-            if (initiator) {
-                createOffer();
+        //token = 'T1==cGFydG5lcl9pZD00NTQwMDYwMiZzaWc9MTI4Njg2NTg2ZmQwZjY4YWJmZDJkZTY1YjAxYjY3MjM4YjhhMmI0Mzpyb2xlPXB1Ymxpc2hlciZzZXNzaW9uX2lkPTJfTVg0ME5UUXdNRFl3TW41LU1UUTBOamd4TURFd01UVXpPSDUyV1ZSNlNtSjVRMjlwUmxsak1HNU1ZMk4zYUc1VmRWRi1VSDQmY3JlYXRlX3RpbWU9MTQ0NjgxMDEwOCZub25jZT0wLjQzNTc0MDc4MDA0OTY1NjImZXhwaXJlX3RpbWU9MTQ0OTQwMjA4NiZjb25uZWN0aW9uX2RhdGE9';
+        session.connect(token, function (error) {
+            if (error) {
+                console.log(error.message);
             } else {
-                log('Waiting for guest connection...');
+                session.publish('local_container', {width: 400, height: 300});
             }
-            //initialize();
-        }
-        if (getCommand == "guest") {
-            $('#interlocutor_name').text(getJson["nameInterlocutor"]);
-            initiator = true;
+        });
 
-            if (initiator) {
-                createOffer();
-            } else {
-                log('Waiting for guest connection...');
-            }
-            //initialize();
-        }
-
-        if (getCommand === "system"){
-
-            componentPropetrOn();
-
-            var signal = JSON.parse(getJson["data"]);
-            if (signal.sdp) {
-                if (initiator) {
-                    receiveAnswer(signal);
-                    waitingWindowStop();
-                } else {
-                    $('#interlocutor_name').text(getJson["interlocutorName"]);
-
-                    receiveOffer(signal);
-                    waitingWindowStop();
-                }
-            } else if (signal.candidate) {
-
-                pc.addIceCandidate(new IceCandidate(signal));
-            }
-        }
-
-        if (getCommand === "message")
-        {
-            var textMessages = getJson["message"];
-            var interlocutorNameChat = $('#interlocutor_name').text();
-            upDateChatBoxGet(interlocutorNameChat, textMessages);
-        }
-
-        if (getCommand === "new_window")
-        {
-            pc.close();
-            $('#remote_container').remove();
-
-            $('#main_container').prepend("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
-
-            componentPropetrOff();
-            $('#myModal2').modal('show');
-        }
-
-        //перейти в режим ожидания
-        if (getCommand === "wait_window")
-        {
-            success(stream);
-            waitingWindowStart();
-            initiator = false;
-
-        }
-
-        //найден собеседник (ответить)
-        if (getCommand === "new_interlocutor")
-        {
-            pc.close();
-            success(stream);
-            createOffer();
-        }
-
-        if (getJson["answer"] === "token")
-        {
-            //поставить ограничение на количество генерируемых ключей
-
-
-            if (getJson["token"] == "")
-            {
-                $('#token_space').append("<p>" + "Ключей нет, обратитесь к администратору" + "</p>");
-                $('#tokenButton').hide();
-            }
-            else
-            {
-                $('#token_space').append("<p>" + getJson["token"] + "</p>");
-            }
-
-            count_tocken  = count_tocken + 1;
-
-            if (count_tocken > 7)
-            {
-                $('#tokenButton').attr("disabled", true);
-            }
-        }
-
-        if (getJson["answer"] === "changed")
-        {
-            $('#my_profile').modal('hide');
-            $("#NameInput").val(getJson["NewName"]);
-            alert("Name was changed");
-        }
-
-        if (getJson["answer"] === "changed_interlocutor_name")
-        {
-            $('#interlocutor_name').text(getJson["interlocutorName"]);
-            log(getJson["interlocutorName"]);
-        }
-    };
-}
-
-function fail() {
-    //обработка отсутствия камеры
-    //hangup();
-    log('fail success');
-
-    if (wasUsed) {
-        alert("Проблема с подключением камеры. Собеседник вас не видит и врят ли захочет продолжить общение.");
     }
 
-    var stream  = null;
-    success(stream);
-    //work without camera
+    log(getCommand);
 
-    //$('#traceback').text(Array.prototype.join.call(arguments, ' '));
-    //$('#traceback').attr('class', 'bg-danger');
-    //console.error.apply(console, arguments);
-}
-
-function createOffer() {
-    log('Creating offer. Please wait.');
-    pc.createOffer(function(offer) {
-        log('Success offer');
-        pc.setLocalDescription(offer, function() {
-            log('Sending to remote...');
-            var sentJson = new Object();
-            sentJson.sentdata = JSON.stringify(offer);
-            sentJson.command = "1";
-            ws.send(JSON.stringify(sentJson));
-        }, fail);
-    }, fail);
-}
-
-function receiveOffer(offer) {
-    log('Received offer.');
-    pc.setRemoteDescription(new SessionDescription(offer), function() {
-        log('Creating response');
-        pc.createAnswer(function(answer) {
-            log('Created response');
-            pc.setLocalDescription(answer, function() {
-                log('Sent response');
-                var sentJson = new Object();
-                sentJson.sentdata = JSON.stringify(answer);
-                sentJson.command = "1";
-                ws.send(JSON.stringify(sentJson));
-            }, fail);
-        }, fail);
-    }, fail);
-}
-
-function receiveAnswer(answer) {
-    log('received answer');
-    pc.setRemoteDescription(new SessionDescription(answer));
-}
+    //
+    //// не верная контрольная сумма
+    //if (getCommand === "control") {
+    //    alert("Возможно это ошибка. Но судя по всему, вы производите атаку на сервер подменой клиентского кода. Доступ закрыт. Сожалеем.");
+    //    pc.close();
+    //    ws.close();
+    //    $("body").hide();
+    //}
+    //
+    //if (getCommand == "owner") {
+    //
+    //
+    //    initiator = false;
+    //
+    //    if (initiator) {
+    //        createOffer();
+    //    } else {
+    //        log('Waiting for guest connection...');
+    //    }
+    //    //initialize();
+    //}
+    //if (getCommand == "guest") {
+    //    $('#interlocutor_name').text(getJson["nameInterlocutor"]);
+    //    initiator = true;
+    //
+    //    if (initiator) {
+    //        createOffer();
+    //    } else {
+    //        log('Waiting for guest connection...');
+    //    }
+    //    //initialize();
+    //}
+    //
+    //if (getCommand === "system") {
+    //
+    //    componentPropetrOn();
+    //
+    //    var signal = JSON.parse(getJson["data"]);
+    //    if (signal.sdp) {
+    //        if (initiator) {
+    //            receiveAnswer(signal);
+    //            waitingWindowStop();
+    //        } else {
+    //            $('#interlocutor_name').text(getJson["interlocutorName"]);
+    //
+    //            receiveOffer(signal);
+    //            waitingWindowStop();
+    //        }
+    //    } else if (signal.candidate) {
+    //
+    //        pc.addIceCandidate(new IceCandidate(signal));
+    //    }
+    //}
+    //
+    //if (getCommand === "message") {
+    //    var textMessages = getJson["message"];
+    //    var interlocutorNameChat = $('#interlocutor_name').text();
+    //    upDateChatBoxGet(interlocutorNameChat, textMessages);
+    //}
+    //
+    //if (getCommand === "new_window") {
+    //    pc.close();
+    //    $('#remote_container').remove();
+    //
+    //    $('#main_container').prepend("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
+    //
+    //    componentPropetrOff();
+    //    $('#myModal2').modal('show');
+    //}
+    //
+    ////перейти в режим ожидания
+    //if (getCommand === "wait_window") {
+    //    success(stream);
+    //    waitingWindowStart();
+    //    initiator = false;
+    //
+    //}
+    //
+    ////найден собеседник (ответить)
+    //if (getCommand === "new_interlocutor") {
+    //    pc.close();
+    //    success(stream);
+    //    createOffer();
+    //}
+    //
+    //if (getJson["answer"] === "token") {
+    //    //поставить ограничение на количество генерируемых ключей
+    //
+    //
+    //    if (getJson["token"] == "") {
+    //        $('#token_space').append("<p>" + "Ключей нет, обратитесь к администратору" + "</p>");
+    //        $('#tokenButton').hide();
+    //    }
+    //    else {
+    //        $('#token_space').append("<p>" + getJson["token"] + "</p>");
+    //    }
+    //
+    //    count_tocken = count_tocken + 1;
+    //
+    //    if (count_tocken > 7) {
+    //        $('#tokenButton').attr("disabled", true);
+    //    }
+    //}
+    //
+    //if (getJson["answer"] === "changed") {
+    //    $('#my_profile').modal('hide');
+    //    $("#NameInput").val(getJson["NewName"]);
+    //    alert("Name was changed");
+    //}
+    //
+    //if (getJson["answer"] === "changed_interlocutor_name") {
+    //    $('#interlocutor_name').text(getJson["interlocutorName"]);
+    //    log(getJson["interlocutorName"]);
+    //}
+};
 
 function log() {
     $('#traceback').text(Array.prototype.join.call(arguments, ' '));
@@ -359,7 +256,6 @@ function newInterlocutor() {
 }
 
 
-
 function newInterlocutorButton() {
 
     var sentJson = new Object();
@@ -378,12 +274,6 @@ function newInterlocutorButton() {
     componentPropetrOff();
 }
 
-jQuery.fn.attachStream = function(stream) {
-    this.each(function() {
-        this.src = URL.createObjectURL(stream);
-        this.play();
-    });
-};
 
 function upDateChatBoxSent(name, message) {
 
@@ -421,8 +311,7 @@ function generateToken() {
     ws.send(json);
 }
 
-function changeNickName()
-{
+function changeNickName() {
     var json_create = new Object();
     json_create.command = "6";
     json_create.new_name = $('#NewKeyInput').val();

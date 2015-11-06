@@ -15,11 +15,11 @@
     <link href="http://pingendo.github.io/pingendo-bootstrap/themes/default/bootstrap.css"
           rel="stylesheet" type="text/css">
 
+    <script src='//static.opentok.com/v2/js/opentok.min.js'></script>
+
     <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-
-    <script src="js/global_var.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/chat.css">
 
@@ -33,7 +33,6 @@
     <script src="js/window_loader/jquery.introLoader.js"></script>
 
     <script src="js/init_script.js"></script>
-    <script src="js/webrtc-adapter.js"></script>
 
     <script type="text/javascript" src="http://vk.com/js/api/share.js?92" charset="windows-1251"></script>
 
@@ -73,11 +72,9 @@
         <div class="col-md-5 col-sm-5" id="main_container">
 
             <div class="row" id="remote_container">
-                <video id="remote" autoplay></video>
             </div>
 
-            <div class="row">
-                <video id="local" autoplay muted></video>
+            <div class="row" id="local_container">
             </div>
 
         </div>

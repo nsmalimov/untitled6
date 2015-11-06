@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Студенческая чат рулетка</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <script>
+        var apiKey = '45400602';
+        var sessionId = '2_MX40NTQwMDYwMn5-MTQ0NjgxMDEwMTUzOH52WVR6SmJ5Q29pRlljMG5MY2N3aG5VdVF-UH4';
+        var token = 'T1==cGFydG5lcl9pZD00NTQwMDYwMiZzaWc9MTI4Njg2NTg2ZmQwZjY4YWJmZDJkZTY1YjAxYjY3MjM4YjhhMmI0Mzpyb2xlPXB1Ymxpc2hlciZzZXNzaW9uX2lkPTJfTVg0ME5UUXdNRFl3TW41LU1UUTBOamd4TURFd01UVXpPSDUyV1ZSNlNtSjVRMjlwUmxsak1HNU1ZMk4zYUc1VmRWRi1VSDQmY3JlYXRlX3RpbWU9MTQ0NjgxMDEwOCZub25jZT0wLjQzNTc0MDc4MDA0OTY1NjImZXhwaXJlX3RpbWU9MTQ0OTQwMjA4NiZjb25uZWN0aW9uX2RhdGE9';
+        var session = OT.initSession(apiKey, sessionId);
+
+        session.on({
+            streamCreated: function(event) {
+                session.subscribe(event.stream, 'subscribersDiv', {insertMode: 'append'});
+            }
+        });
+
+        session.connect(token, function(error) {
+            if (error) {
+                console.log(error.message);
+            } else {
+                session.publish('myPublisherDiv', {width: 320, height: 240});
+            }
+        });
+    </script>
+
+</head>
+
+<body>
+<div id='myPublisherDiv'></div>
+<div id='subscribersDiv'></div>
+
+</body>
+</html>

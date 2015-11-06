@@ -49,24 +49,23 @@ public class ServletWebrtc {
 
     @OnMessage
     public void onMessage(String message, Session client)
-            throws IOException, EncodeException, IOException, EncodeException, SQLException, NamingException, ClassNotFoundException {
+            throws IOException, EncodeException, IOException, EncodeException, SQLException,
+            NamingException, ClassNotFoundException {
 
         JSONObject jsonObject = new JSONObject(message);
 
-        //System.out.println(message);
+        System.out.println(message);
 
         int command = Integer.parseInt(jsonObject.getString("command"));
 
         switch (command) {
             case 0:
-                //start chat
+                //добавить и соеденить
                 //TODO проверка на контрольную сумму
                 String controlSum = jsonObject.getString("ctrSum");
                 String ipNew = jsonObject.getString("ip");
 
                 boolean ctrSumAnswer = ControlSum.checkControlSum(controlSum, ipNew);
-
-                //System.out.println(ctrSumAnswer);
 
                 if (ctrSumAnswer)
                 {
@@ -76,31 +75,31 @@ public class ServletWebrtc {
                 {
                     JSONObject jsonToReturn0 = new JSONObject();
                     jsonToReturn0.put("answer", "control");
-
-                    //System.out.println(jsonToReturn0.toString());
-
                     client.getBasicRemote().sendText(jsonToReturn0.toString());
                 }
 
-
-                //System.out.println("connect");
-                //BuildClass.SessionUser.printParams();
-                break;
-
-            case 1:
-                //recived ICE candidate
-                String data = jsonObject.getString("sentdata");
+                if (SessionUser.getInterlocutorName(client).equals(""))
+                {
+                    break;
+                }
 
                 Session locutorSes1 = SessionUser.getInterlocutorSession(client);
-
                 String interlocutorName1 = SessionUser.userSessionId.get(locutorSes1.getId());
 
-                JSONObject jsonToReturn1 = new JSONObject();
-                jsonToReturn1.put("answer", "system");
-                jsonToReturn1.put("data", data);
-                jsonToReturn1.put("interlocutorName", interlocutorName1);
+                try {
+                    String token = OpenTook.generateToken();
+                    JSONObject jsonToReturn1 = new JSONObject();
+                    jsonToReturn1.put("answer", "start");
+                    jsonToReturn1.put("token", token);
+                    jsonToReturn1.put("interlocutorName", interlocutorName1);
 
-                locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
+                    client.getBasicRemote().sendText(jsonToReturn1.toString());
+                    locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
+                }
+                catch (Exception e)
+                {
+
+                }
 
                 break;
 
@@ -220,7 +219,7 @@ public class ServletWebrtc {
 
                 break;
 
-            case 7:
+            case 7: //новый пользователь
                 JSONObject jsonToReturn8 = new JSONObject();
                 jsonToReturn8.put("answer", "new_window");
 
