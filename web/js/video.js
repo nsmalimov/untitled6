@@ -4,10 +4,7 @@ var portName = window.location.port;
 if (portName.length == 0) {
     portName = "80";
 }
-
-var wasUsed = true;
-
-var isVideoCall = 0;
+count_tocken = 0;
 
 var ws = null;
 
@@ -53,31 +50,47 @@ ws.onmessage = function (event) {
 var publisher = null;
 var subscriber = null;
 
+
+var wasUsed = false;
+
 function initSocket() {
 
-    var pubOptions = {publishAudio:true, publishVideo:true, width: 400, height: 300, insertMode: 'replace'};
-
-    publisher = OT.initPublisher('local_container', pubOptions, function(error) {
-        if (error) {
-            sentJson1.video = "yes";
-        } else {
-
-            sentJson1.video = "no";
-        }
-    });
+    var pubOptions = {publishAudio:true, publishVideo:true, width: 400, height: 300};
 
     var sentJson1 = new Object();
+
+    if (!wasUsed) {
+        publisher = OT.initPublisher('local_container', pubOptions, function (error) {
+            if (error) {
+                alert("Проблемы с камерой. Собеседник вас не видит и врят ли захочет продолжить общение.");
+                //sentJson1.video = "yes";
+            } else {
+                //sentJson1.video = "no";
+            }
+        });
+        wasUsed = true;
+    }
+
+
+    if (!publisher.hasVideo)
+    {
+        sentJson1.video = "no";
+    }
+    else
+    {
+        sentJson1.video = "yes";
+    }
+
     sentJson1.command = "0";
 
     sentJson1.ctrSum = $('#controlsum').text();
     sentJson1.ip = userIp;
 
     //проверка на возможность отправлять видео
-    sentJson1.video = "yes";
+    //sentJson1.video = "yes";
 
     sentJson1.name = $('#your_name').text();
 
-    //componentPropetrOn();
     $("#stopButton").attr("disabled", false);
 
     ws.send(JSON.stringify(sentJson1));
@@ -110,35 +123,27 @@ ws.onmessage = function (event) {
                 session.publish(publisher);
             }
         });
-
-        session.on({
-            streamCreated: function (event) {
-                var options = {width: 400, height: 300, insertMode: 'replace'};
-                session.subscribe(event.stream, 'remote_container', options);
-            }
-        });
-
-        //session.connect(token, function (error) {
-        //    if (error) {
-        //        console.log(error.message);
-        //    } else {
-        //        session.publish('local_container', {width: 400, height: 300});
-        //    }
-        //});
     }
 
-    if (getCommand === "only_text")
-    {
-        //if only text
-        $('#interlocutor_name').text(getJson["interlocutorName"]);
-
-        componentPropetrOn();
-        waitingWindowStop();
-    }
-
-
-
+    //if (getCommand === "only_text")
+    //{
+    //    //if only text
+    //    $('#interlocutor_name').text(getJson["interlocutorName"]);
     //
+    //    alert("only text");
+    //
+    //    session.connect(token, function (error) {
+    //        if (error) {
+    //            console.log(error.message);
+    //        } else {
+    //            session.publish(publisher);
+    //        }
+    //    });
+    //
+    //    componentPropetrOn();
+    //    waitingWindowStop();
+    //}
+
     //// не верная контрольная сумма
     if (getCommand === "control") {
         alert("Возможно это ошибка. Но судя по всему, вы производите атаку на сервер подменой клиентского кода. Доступ закрыт. Сожалеем.");
@@ -154,36 +159,19 @@ ws.onmessage = function (event) {
     }
 
     if (getCommand === "new_window") {
-        $('#remote_container').remove();
 
-        $('#main_container').prepend("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
-
+        hangup();
         componentPropetrOff();
         $('#myModal2').modal('show');
     }
 
     //перейти в режим ожидания
     if (getCommand === "wait_window") {
-        success(stream);
         waitingWindowStart();
-        initiator = false;
-
     }
-
-    //
-    ////найден собеседник (ответить)
-    //if (getCommand === "new_interlocutor") {
-    //    pc.close();
-    //    success(stream);
-    //    createOffer();
-    //}
-    //
-
 
     if (getJson["answer"] === "token") {
         //поставить ограничение на количество генерируемых ключей
-
-
         if (getJson["token"] == "") {
             $('#token_space').append("<p>" + "Ключей нет, обратитесь к администратору" + "</p>");
             $('#tokenButton').hide();
@@ -199,8 +187,6 @@ ws.onmessage = function (event) {
         }
     }
 
-
-
     if (getJson["answer"] === "changed") {
         $('#my_profile').modal('hide');
         $("#NameInput").val(getJson["NewName"]);
@@ -213,13 +199,22 @@ ws.onmessage = function (event) {
     }
 };
 
+session.on({
+    streamCreated: function (event) {
+        var options = {width: 400, height: 300};
+        subscriber = session.subscribe(event.stream, 'remote_container', options);
+    }
+});
+
 function log() {
     $('#traceback').text(Array.prototype.join.call(arguments, ' '));
     console.log.apply(console, arguments);
 }
 
 function hangup() {
-    session.disconnect();
+
+    session.unsubscribe(subscriber);
+    $("#main_container").prepend("<div class='row' id='remote_container'></div>");
 
     componentPropetrOff();
 
@@ -227,32 +222,14 @@ function hangup() {
     var sentJson = new Object();
     sentJson.command = "4";
     ws.send(JSON.stringify(sentJson));
-
 }
 
 function newInterlocutor() {
-    var sentJson = new Object();
-    sentJson.command = "2";
-    sentJson.name = $('#your_name').text();
-
-    $('#myModal2').modal('hide');
-
-    waitingWindowStart();
-
-    ws.send(JSON.stringify(sentJson));
+    initSocket();
 }
 
-
 function newInterlocutorButton() {
-
-    var sentJson = new Object();
-    sentJson.command = "7";
-    ws.send(JSON.stringify(sentJson));
-
-    $('#remote_container').remove();
-
-    $('#main_container').prepend("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
-
+    initSocket();
     componentPropetrOff();
 }
 
