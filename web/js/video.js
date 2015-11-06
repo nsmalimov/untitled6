@@ -103,6 +103,7 @@ ws.onmessage = function (event) {
 
         $('#interlocutor_name').text(getJson["interlocutorName"]);
 
+        //присоедениться к сессии
         session.connect(token, function (error) {
             if (error) {
                 console.log(error.message);
@@ -110,6 +111,14 @@ ws.onmessage = function (event) {
                 session.publish(publisher);
             }
         });
+
+        session.on({
+            streamCreated: function (event) {
+                var options = {width: 400, height: 300};
+                subscriber = session.subscribe(event.stream, 'remote_container', options);
+            }
+        });
+
 
         //log(onlyText);
         //log(getJson["video"]);
@@ -179,13 +188,6 @@ ws.onmessage = function (event) {
         log(getJson["interlocutorName"]);
     }
 };
-
-session.on({
-    streamCreated: function (event) {
-        var options = {width: 400, height: 300};
-        subscriber = session.subscribe(event.stream, 'remote_container', options);
-    }
-});
 
 function log() {
     $('#traceback').text(Array.prototype.join.call(arguments, ' '));
