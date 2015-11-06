@@ -65,6 +65,8 @@ public class ServletWebrtc {
                 String controlSum = jsonObject.getString("ctrSum");
                 String ipNew = jsonObject.getString("ip");
 
+                String isVideo = jsonObject.getString("video");
+
                 boolean ctrSumAnswer = ControlSum.checkControlSum(controlSum, ipNew);
 
                 if (ctrSumAnswer)
@@ -83,22 +85,36 @@ public class ServletWebrtc {
                     break;
                 }
 
-                Session locutorSes1 = SessionUser.getInterlocutorSession(client);
-                String interlocutorName1 = SessionUser.userSessionId.get(locutorSes1.getId());
+                if (isVideo.equals("yes")) {
+                    Session locutorSes1 = SessionUser.getInterlocutorSession(client);
+                    String interlocutorName1 = SessionUser.userSessionId.get(locutorSes1.getId());
 
-                try {
-                    String token = OpenTook.generateToken();
-                    JSONObject jsonToReturn1 = new JSONObject();
-                    jsonToReturn1.put("answer", "start");
-                    jsonToReturn1.put("token", token);
-                    jsonToReturn1.put("interlocutorName", interlocutorName1);
+                    try {
+                        String token = OpenTook.generateToken();
+                        JSONObject jsonToReturn1 = new JSONObject();
+                        jsonToReturn1.put("answer", "start");
+                        jsonToReturn1.put("token", token);
+                        jsonToReturn1.put("interlocutorName", interlocutorName1);
 
-                    client.getBasicRemote().sendText(jsonToReturn1.toString());
-                    locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
+                        client.getBasicRemote().sendText(jsonToReturn1.toString());
+                        locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
+                    } catch (Exception e) {
+                    }
                 }
-                catch (Exception e)
+                else
                 {
+                    Session locutorSes1 = SessionUser.getInterlocutorSession(client);
+                    String interlocutorName1 = SessionUser.userSessionId.get(locutorSes1.getId());
 
+                    try {
+                        JSONObject jsonToReturn1 = new JSONObject();
+                        jsonToReturn1.put("answer", "only_text");
+                        jsonToReturn1.put("interlocutorName", interlocutorName1);
+
+                        client.getBasicRemote().sendText(jsonToReturn1.toString());
+                        locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
+                    } catch (Exception e) {
+                    }
                 }
 
                 break;

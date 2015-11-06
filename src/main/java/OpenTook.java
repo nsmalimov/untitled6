@@ -18,22 +18,13 @@ public class OpenTook {
 
         OpenTok opentok = new OpenTok(apiKey, apiSecret);
 
-        // A session that attempts to stream media directly between clients:
-        Session session = opentok.createSession();
+        TokenOptions tokenOpts = new TokenOptions.Builder()
+                .expireTime((System.currentTimeMillis() / 1000L) + (1 * 60)) // in one week
+                .build();
 
-        // Store this sessionId in the database for later use:
-        String sessionId = session.getSessionId();
-
-        String token = session.generateToken(new TokenOptions.Builder()
-                //20 минут
-                .expireTime((System.currentTimeMillis() / 1000L) + (20 * 60)) // in one week
-                .build());
+        String token = opentok.generateToken("2_MX40NTQwMDYwMn5-MTQ0NjgxMDEwMTUzOH52WVR6Sm" +
+                "J5Q29pRlljMG5MY2N3aG5VdVF-UH4", tokenOpts);
 
         return token;
-    }
-
-    public static void main(String args[]) throws OpenTokException
-    {
-        String token = generateToken();
     }
 }

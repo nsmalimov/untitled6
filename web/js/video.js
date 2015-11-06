@@ -50,12 +50,34 @@ ws.onmessage = function (event) {
     }
 };
 
+var publisher = null;
+var subscriber = null;
+
 function initSocket() {
+
+    var pubOptions = {publishAudio:true, publishVideo:true, width: 400, height: 300};
+    publisher = OT.initPublisher('local_container', pubOptions);
+    //session.publish(publisher);
+
+
+
+
+    //if (!stream.hasAudio) {
+    //    // You may want to adjust the user interface
+    //    sentJson1.video = "no";
+    //}
+    //else
+    //{
+    //    sentJson1.video = "yes";
+    //}
+
+
     var sentJson1 = new Object();
     sentJson1.command = "0";
 
     sentJson1.ctrSum = $('#controlsum').text();
     sentJson1.ip = userIp;
+    sentJson1.video = "yes";
 
     sentJson1.name = $('#your_name').text();
 
@@ -73,10 +95,20 @@ ws.onmessage = function (event) {
     var getCommand = getJson["answer"];
 
 
+    log(getCommand);
+
     ///получить токен и начать трансляцию
     if (getCommand === "start")
     {
         var token = getJson["token"];
+
+        session.connect(token, function (error) {
+            if (error) {
+                console.log(error.message);
+            } else {
+                session.publish(publisher);
+            }
+        });
 
         session.on({
             streamCreated: function (event) {
@@ -85,18 +117,21 @@ ws.onmessage = function (event) {
             }
         });
 
-        //token = 'T1==cGFydG5lcl9pZD00NTQwMDYwMiZzaWc9MTI4Njg2NTg2ZmQwZjY4YWJmZDJkZTY1YjAxYjY3MjM4YjhhMmI0Mzpyb2xlPXB1Ymxpc2hlciZzZXNzaW9uX2lkPTJfTVg0ME5UUXdNRFl3TW41LU1UUTBOamd4TURFd01UVXpPSDUyV1ZSNlNtSjVRMjlwUmxsak1HNU1ZMk4zYUc1VmRWRi1VSDQmY3JlYXRlX3RpbWU9MTQ0NjgxMDEwOCZub25jZT0wLjQzNTc0MDc4MDA0OTY1NjImZXhwaXJlX3RpbWU9MTQ0OTQwMjA4NiZjb25uZWN0aW9uX2RhdGE9';
-        session.connect(token, function (error) {
-            if (error) {
-                console.log(error.message);
-            } else {
-                session.publish('local_container', {width: 400, height: 300});
-            }
-        });
-
+        //session.connect(token, function (error) {
+        //    if (error) {
+        //        console.log(error.message);
+        //    } else {
+        //        session.publish('local_container', {width: 400, height: 300});
+        //    }
+        //});
     }
 
-    log(getCommand);
+    if (getCommand === "only_text")
+    {
+        //if only text
+    }
+
+
 
     //
     //// не верная контрольная сумма
@@ -220,13 +255,7 @@ function log() {
 }
 
 function hangup() {
-    pc.close();
-
-    waitingWindowStop();
-
-    $('#remote_container').remove();
-
-    $('#main_container').prepend("<div class='row' id='remote_container'><video id='remote' autoplay></video></div>");
+    session.disconnect();
 
     componentPropetrOff();
 
@@ -235,9 +264,6 @@ function hangup() {
     sentJson.command = "4";
     ws.send(JSON.stringify(sentJson));
 
-    initiator = true;
-
-    wasUsed = true;
 }
 
 function newInterlocutor() {
