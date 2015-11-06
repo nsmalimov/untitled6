@@ -99,6 +99,7 @@ public class ServletWebrtc {
                         client.getBasicRemote().sendText(jsonToReturn1.toString());
                         locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
                     } catch (Exception e) {
+                        System.out.println(e);
                     }
                 }
                 else
@@ -111,9 +112,12 @@ public class ServletWebrtc {
                         jsonToReturn1.put("answer", "only_text");
                         jsonToReturn1.put("interlocutorName", interlocutorName1);
 
+                        System.out.println(jsonToReturn1.toString());
+
                         client.getBasicRemote().sendText(jsonToReturn1.toString());
                         locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
                     } catch (Exception e) {
+                        System.out.println(e);
                     }
                 }
 

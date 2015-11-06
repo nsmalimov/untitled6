@@ -235,7 +235,20 @@ video#localVideo {
 
 /*dima css*/
 
-#remote_container #remote {
+#remote_container {
+    margin: 10px auto;
+    width: 84.3%;
+    display: block;
+}
+
+
+#local_container {
+    margin: 10px auto;
+    width: 84.3%;
+    display: block;
+}
+
+#remote {
     margin: 10px auto;
     width: 84.3%;
     display: block;
@@ -303,3 +316,5 @@ textarea {
     margin: 0px 20px 0px 27px;
 
 }
+
+
