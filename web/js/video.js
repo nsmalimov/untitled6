@@ -103,6 +103,11 @@ ws.onmessage = function (event) {
 
         $('#interlocutor_name').text(getJson["interlocutorName"]);
 
+        if (wasUsed)
+        {
+            session.disconnect();
+        }
+
         //присоедениться к сессии
         session.connect(token, function (error) {
             if (error) {
