@@ -61,22 +61,26 @@ function initSocket() {
 
     var sentJson1 = new Object();
 
-    if (!wasUsed) {
-        publisher = OT.initPublisher('local_container', pubOptions, function (error) {
-            if (error) {
-                alert("Проблемы с камерой. Собеседник вас не видит и врят ли захочет продолжить общение.");
-            } else {
-            }
-        });
-        wasUsed = true;
-    }
+    publisher = OT.initPublisher('local_container', pubOptions, function (error) {
+        if (error) {
+            alert("Проблемы с камерой. Собеседник вас не видит и врят ли захочет продолжить общение.");
+            sentJson1.command = "0";
+            sentJson1.ctrSum = $('#controlsum').text();
+            sentJson1.ip = userIp;
+            sentJson1.name = $('#your_name').text();
+            sentJson1.video = "no";
+            ws.send(JSON.stringify(sentJson1));
+        } else {
+            sentJson1.command = "0";
+            sentJson1.ctrSum = $('#controlsum').text();
+            sentJson1.ip = userIp;
+            sentJson1.name = $('#your_name').text();
+            sentJson1.video = "yes";
+            ws.send(JSON.stringify(sentJson1));
+        }
+    });
 
-    sentJson1.command = "0";
-    sentJson1.ctrSum = $('#controlsum').text();
-    sentJson1.ip = userIp;
-    sentJson1.name = $('#your_name').text();
-    sentJson1.video = "yes";
-    ws.send(JSON.stringify(sentJson1));
+
 
     $("#stopButton").attr("disabled", false);
     waitingWindowStart();
@@ -99,26 +103,15 @@ ws.onmessage = function (event) {
         var token = getJson["token"];
 
         $('#interlocutor_name').text(getJson["interlocutorName"]);
-
-        //if (session)
-        //{
-        //    session.disconnect();
-        //}
-
         sessionId = getJson["session_name"];
-
-        log(sessionId);
 
         session = OT.initSession(apiKey, sessionId);
 
-        //присоедениться к сессии
-        session.connect(token, function (error) {
-            if (error) {
-                console.log(error.message);
-            } else {
-                session.publish(publisher);
-            }
+        session.on("sessionConnected", function (event) {
+            session.publish(publisher);
         });
+
+        session.connect(token);
 
         session.on({
             streamCreated: function (event) {
@@ -128,16 +121,12 @@ ws.onmessage = function (event) {
         });
 
 
-        //log(onlyText);
-        //log(getJson["video"]);
     }
 
     //// не верная контрольная сумма
 
     if (getCommand === "only_text"){
-        //if (!onlyText) {
         upDateChatBoxGet("Системное сообщение", "У собеседника нет камеры");
-        //}
     }
 
 
@@ -204,7 +193,13 @@ function log() {
 
 function hangup() {
 
-    session.unsubscribe(subscriber);
+    //session.unsubscribe(subscriber);
+
+    session.disconnect();
+
+
+
+    $("#main_container").prepend("<div class='row' id='local_container'></div>");
     $("#main_container").prepend("<div class='row' id='remote_container'></div>");
 
     componentPropetrOff();

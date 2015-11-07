@@ -41,22 +41,19 @@ public class ServletWebrtc {
 
     @OnClose
     public void onClose(Session session) throws IOException, EncodeException, SQLException,
-    NamingException, ClassNotFoundException {
+            NamingException, ClassNotFoundException {
 
         String sessionName = SessionUser.userSessions.get(session.getId());
 
+        OpenTook.Conn();
+
         OpenTook.updateSession(sessionName, 0);
+        OpenTook.CloseDB();
 
         BuildClass.SessionUser.closeConnect(session);
 
         //TODO
         //удаление из базы используемый номер комнаты
-
-
-
-        //System.out.println("close connect");
-
-        //BuildClass.SessionUser.printParams();
     }
 
     @OnMessage
@@ -81,110 +78,77 @@ public class ServletWebrtc {
 
                 boolean ctrSumAnswer = ControlSum.checkControlSum(controlSum, ipNew);
 
-                if (ctrSumAnswer)
-                {
-                    SessionUser.addFreeUser(client, jsonObject.getString("name"));
-                }
-                else
-                {
+                if (ctrSumAnswer) {
+                    SessionUser.addFreeUser(client, jsonObject.getString("name"), isVideo);
+                } else {
                     JSONObject jsonToReturn0 = new JSONObject();
                     jsonToReturn0.put("answer", "control");
                     client.getBasicRemote().sendText(jsonToReturn0.toString());
                 }
 
-                if (SessionUser.getInterlocutorName(client).equals(""))
-                {
+                if (SessionUser.getInterlocutorName(client).equals("")) {
                     break;
                 }
 
-                if (isVideo.equals("yes")) {
-                    Session locutorSes1 = SessionUser.getInterlocutorSession(client);
-                    String interlocutorName1 = SessionUser.userSessionId.get(locutorSes1.getId());
+                Session locutorSes1 = SessionUser.getInterlocutorSession(client);
+                String interlocutorName1 = SessionUser.userSessionId.get(locutorSes1.getId());
 
-                    try {
-                        String tokens = OpenTook.generateToken();
+                try {
+                    String tokens = OpenTook.generateToken();
 
-                        String[] tok = tokens.split(",");
+                    String[] tok = tokens.split(",");
 
-                        String token1 = tok[0];
-                        String token2 = tok[1];
+                    String token1 = tok[0];
+                    String token2 = tok[1];
 
-                        String sessionName = tok[2];
+                    String sessionName = tok[2];
 
-                        System.out.println(sessionName);
+                    System.out.println(sessionName);
 
-                        System.out.println(token1);
-                        System.out.println(token2);
+                    System.out.println(token1);
+                    System.out.println(token2);
 
-                        JSONObject jsonToReturn1 = new JSONObject();
-                        jsonToReturn1.put("answer", "start");
-                        jsonToReturn1.put("token", token1);
-                        jsonToReturn1.put("session_name", sessionName);
-                        jsonToReturn1.put("interlocutorName", interlocutorName1);
+                    JSONObject jsonToReturn1 = new JSONObject();
+                    jsonToReturn1.put("answer", "start");
+                    jsonToReturn1.put("token", token1);
+                    jsonToReturn1.put("session_name", sessionName);
+                    jsonToReturn1.put("interlocutorName", interlocutorName1);
 
-                        client.getBasicRemote().sendText(jsonToReturn1.toString());
+                    client.getBasicRemote().sendText(jsonToReturn1.toString());
 
-                        JSONObject jsonToReturn2 = new JSONObject();
-                        jsonToReturn2.put("answer", "start");
-                        jsonToReturn2.put("token", token2);
-                        jsonToReturn2.put("session_name", sessionName);
-                        jsonToReturn2.put("interlocutorName", interlocutorName1);
+                    JSONObject jsonToReturn2 = new JSONObject();
+                    jsonToReturn2.put("answer", "start");
+                    jsonToReturn2.put("token", token2);
+                    jsonToReturn2.put("session_name", sessionName);
+                    jsonToReturn2.put("interlocutorName", interlocutorName1);
 
-                        locutorSes1.getBasicRemote().sendText(jsonToReturn2.toString());
+                    if (SessionUser.hasVideoId.containsKey(client.getId()))
+                    {
+                        JSONObject jsonToReturn12 = new JSONObject();
+                        jsonToReturn12.put("answer", "only_text");
 
-                        SessionUser.userSessions.put(client.getId(), sessionName);
-                        SessionUser.userSessions.put(locutorSes1.getId(), sessionName);
-
-                    } catch (Exception e) {
-                        System.out.println(e);
-                    }
-                }
-                else
-                {
-                    Session locutorSes1 = SessionUser.getInterlocutorSession(client);
-                    String interlocutorName1 = SessionUser.userSessionId.get(locutorSes1.getId());
-
-                    try {
-                        String tokens = OpenTook.generateToken();
-
-                        String[] tok = tokens.split(",");
-
-                        String token1 = tok[0];
-                        String token2 = tok[1];
-
-                        String sessionName = tok[2];
-
-                        System.out.println(sessionName);
-
-                        System.out.println(token1);
-                        System.out.println(token2);
-
-                        JSONObject jsonToReturn1 = new JSONObject();
-                        jsonToReturn1.put("answer", "start");
-                        jsonToReturn1.put("token", token1);
-                        jsonToReturn1.put("session_name", sessionName);
-                        jsonToReturn1.put("interlocutorName", interlocutorName1);
-
-                        client.getBasicRemote().sendText(jsonToReturn1.toString());
-
-                        JSONObject jsonToReturn2 = new JSONObject();
-                        jsonToReturn2.put("answer", "start");
-                        jsonToReturn2.put("token", token2);
-                        jsonToReturn2.put("session_name", sessionName);
-                        jsonToReturn2.put("interlocutorName", interlocutorName1);
-
-                        SessionUser.userSessions.put(client.getId(), sessionName);
-                        SessionUser.userSessions.put(locutorSes1.getId(), sessionName);
-
-                        locutorSes1.getBasicRemote().sendText(jsonToReturn2.toString());
-                    } catch (Exception e) {
-                        System.out.println(e);
+                        locutorSes1.getBasicRemote().sendText(jsonToReturn12.toString());
+                        SessionUser.hasVideoId.remove(client.getId());
                     }
 
-                    JSONObject jsonToReturn12 = new JSONObject();
-                    jsonToReturn12.put("answer", "only_text");
-                    locutorSes1.getBasicRemote().sendText(jsonToReturn12.toString());
+                    if (SessionUser.hasVideoId.containsKey(locutorSes1.getId()))
+                    {
+                        JSONObject jsonToReturn12 = new JSONObject();
+                        jsonToReturn12.put("answer", "only_text");
+
+                        client.getBasicRemote().sendText(jsonToReturn12.toString());
+                        SessionUser.hasVideoId.remove(locutorSes1.getId());
+                    }
+
+                    locutorSes1.getBasicRemote().sendText(jsonToReturn2.toString());
+
+                    SessionUser.userSessions.put(client.getId(), sessionName);
+                    SessionUser.userSessions.put(locutorSes1.getId(), sessionName);
+
+                } catch (Exception e) {
+                    System.out.println(e);
                 }
+
 
                 break;
 
@@ -254,8 +218,7 @@ public class ServletWebrtc {
                     genKeygen = SQLiteClass.generateKeygen();
                 } catch (Exception e) {
                     //System.out.println(e);
-                }
-                finally {
+                } finally {
                     SQLiteClass.CloseDB();
                 }
 
@@ -283,8 +246,7 @@ public class ServletWebrtc {
                     SQLiteClass.updateName(lastName, newName, ip);
                 } catch (Exception e) {
                     //System.out.println(e);
-                }
-                finally {
+                } finally {
                     SQLiteClass.CloseDB();
                 }
 

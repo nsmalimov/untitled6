@@ -25,6 +25,8 @@ public class SessionUser {
 
     public static Map<String, String> userSessionId = new HashMap<String, String>();
 
+    public static Map<String, String> hasVideoId = new HashMap<String, String>();
+
     public static Map<String, String> waitUsers = new HashMap<String, String>();
 
     public static void printParams()
@@ -56,10 +58,15 @@ public class SessionUser {
         }
     }
 
-    public static void addFreeUser(Session session, String name) throws IOException, EncodeException
+    public static void addFreeUser(Session session, String name, String isVideo) throws IOException, EncodeException
     {
         sessions.put(session.getId(), session);
         userSessionId.put(session.getId(), name);
+
+        if (isVideo.equals("no"))
+        {
+            hasVideoId.put(session.getId(), "000");
+        }
 
         if (freeUsersArray.size() == 0)
         {
