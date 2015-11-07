@@ -10,6 +10,7 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 
+import com.opentok.OpenTok;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.json.JSONObject;
 
@@ -90,14 +91,35 @@ public class ServletWebrtc {
                     String interlocutorName1 = SessionUser.userSessionId.get(locutorSes1.getId());
 
                     try {
-                        String token = OpenTook.generateToken();
+                        String tokens = OpenTook.generateToken();
+
+                        String[] tok = tokens.split(",");
+
+                        String token1 = tok[0];
+                        String token2 = tok[1];
+
+                        String sessionName = tok[2];
+
+                        System.out.println(sessionName);
+
+                        System.out.println(token1);
+                        System.out.println(token2);
+
                         JSONObject jsonToReturn1 = new JSONObject();
                         jsonToReturn1.put("answer", "start");
-                        jsonToReturn1.put("token", token);
+                        jsonToReturn1.put("token", token1);
+                        jsonToReturn1.put("session_name", sessionName);
                         jsonToReturn1.put("interlocutorName", interlocutorName1);
 
                         client.getBasicRemote().sendText(jsonToReturn1.toString());
-                        locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
+
+                        JSONObject jsonToReturn2 = new JSONObject();
+                        jsonToReturn2.put("answer", "start");
+                        jsonToReturn2.put("token", token2);
+                        jsonToReturn2.put("session_name", sessionName);
+                        jsonToReturn2.put("interlocutorName", interlocutorName1);
+
+                        locutorSes1.getBasicRemote().sendText(jsonToReturn2.toString());
                     } catch (Exception e) {
                         System.out.println(e);
                     }
@@ -108,17 +130,35 @@ public class ServletWebrtc {
                     String interlocutorName1 = SessionUser.userSessionId.get(locutorSes1.getId());
 
                     try {
-                        String token = OpenTook.generateToken();
+                        String tokens = OpenTook.generateToken();
+
+                        String[] tok = tokens.split(",");
+
+                        String token1 = tok[0];
+                        String token2 = tok[1];
+
+                        String sessionName = tok[2];
+
+                        System.out.println(sessionName);
+
+                        System.out.println(token1);
+                        System.out.println(token2);
 
                         JSONObject jsonToReturn1 = new JSONObject();
                         jsonToReturn1.put("answer", "start");
-                        jsonToReturn1.put("token", token);
+                        jsonToReturn1.put("token", token1);
+                        jsonToReturn1.put("session_name", sessionName);
                         jsonToReturn1.put("interlocutorName", interlocutorName1);
 
-                        System.out.println(jsonToReturn1.toString());
-
                         client.getBasicRemote().sendText(jsonToReturn1.toString());
-                        locutorSes1.getBasicRemote().sendText(jsonToReturn1.toString());
+
+                        JSONObject jsonToReturn2 = new JSONObject();
+                        jsonToReturn2.put("answer", "start");
+                        jsonToReturn2.put("token", token2);
+                        jsonToReturn2.put("session_name", sessionName);
+                        jsonToReturn2.put("interlocutorName", interlocutorName1);
+
+                        locutorSes1.getBasicRemote().sendText(jsonToReturn2.toString());
                     } catch (Exception e) {
                         System.out.println(e);
                     }

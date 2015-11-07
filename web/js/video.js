@@ -15,11 +15,6 @@ else {
     ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
 }
 
-var apiKey = '45400602';
-var sessionId = '2_MX40NTQwMDYwMn5-MTQ0NjgxMDEwMTUzOH52WVR6SmJ5Q29pRlljMG5MY2N3aG5VdVF-UH4';
-
-var session = OT.initSession(apiKey, sessionId);
-
 ws.onmessage = function (event) {
     var getData = JSON.parse(event.data);
     if (getData["answer"] === "token") {
@@ -50,9 +45,13 @@ ws.onmessage = function (event) {
 var publisher = null;
 var subscriber = null;
 
+var sessionId = null;
+
 var onlyText = false;
 
 var wasUsed = false;
+
+var apiKey = '45400602';
 
 function initSocket() {
 
@@ -68,10 +67,6 @@ function initSocket() {
             }
         });
         wasUsed = true;
-    }
-    else
-    {
-
     }
 
     sentJson1.command = "0";
@@ -103,10 +98,16 @@ ws.onmessage = function (event) {
 
         $('#interlocutor_name').text(getJson["interlocutorName"]);
 
-        if (wasUsed)
-        {
-            session.disconnect();
-        }
+        //if (wasUsed)
+        //{
+        //    session.disconnect();
+        //}
+
+        sessionId = getJson["session_name"];
+
+        log(sessionId);
+
+        session = OT.initSession(apiKey, sessionId);
 
         //присоедениться к сессии
         session.connect(token, function (error) {
