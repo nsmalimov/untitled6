@@ -53,6 +53,8 @@ var wasUsed = false;
 
 var apiKey = '45400602';
 
+var session = null;
+
 function initSocket() {
 
     var pubOptions = {publishAudio:true, publishVideo:true, width: 400, height: 300};
@@ -98,7 +100,7 @@ ws.onmessage = function (event) {
 
         $('#interlocutor_name').text(getJson["interlocutorName"]);
 
-        //if (wasUsed)
+        //if (session)
         //{
         //    session.disconnect();
         //}
@@ -221,7 +223,7 @@ function newInterlocutor() {
 }
 
 function newInterlocutorButton() {
-    //hangup();
+    hangup();
     initSocket();
     componentPropetrOff();
 }
