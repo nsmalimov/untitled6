@@ -40,8 +40,19 @@ public class ServletWebrtc {
     }
 
     @OnClose
-    public void onClose(Session session) throws IOException, EncodeException {
+    public void onClose(Session session) throws IOException, EncodeException, SQLException,
+    NamingException, ClassNotFoundException {
+
+        String sessionName = SessionUser.userSessions.get(session.getId());
+
+        OpenTook.updateSession(sessionName, 0);
+
         BuildClass.SessionUser.closeConnect(session);
+
+        //TODO
+        //удаление из базы используемый номер комнаты
+
+
 
         //System.out.println("close connect");
 
@@ -120,6 +131,10 @@ public class ServletWebrtc {
                         jsonToReturn2.put("interlocutorName", interlocutorName1);
 
                         locutorSes1.getBasicRemote().sendText(jsonToReturn2.toString());
+
+                        SessionUser.userSessions.put(client.getId(), sessionName);
+                        SessionUser.userSessions.put(locutorSes1.getId(), sessionName);
+
                     } catch (Exception e) {
                         System.out.println(e);
                     }
@@ -157,6 +172,9 @@ public class ServletWebrtc {
                         jsonToReturn2.put("token", token2);
                         jsonToReturn2.put("session_name", sessionName);
                         jsonToReturn2.put("interlocutorName", interlocutorName1);
+
+                        SessionUser.userSessions.put(client.getId(), sessionName);
+                        SessionUser.userSessions.put(locutorSes1.getId(), sessionName);
 
                         locutorSes1.getBasicRemote().sendText(jsonToReturn2.toString());
                     } catch (Exception e) {

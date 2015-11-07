@@ -172,7 +172,9 @@ public class AutorizationServlet extends HttpServlet {
 
                     String ip = jsonObject.getString("ip");
 
-                    boolean checkIp = checkIp(ip);
+                    //boolean checkIp = checkIp(ip);
+
+                    boolean checkIp = true;
 
                     //System.out.println("checkip " + checkIp);
 

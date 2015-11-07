@@ -21,6 +21,8 @@ public class SessionUser {
     public static Map<String, String> map1 = new HashMap<String, String>();
     public static Map<String, String> map2 = new HashMap<String, String>();
 
+    public static Map<String, String> userSessions = new HashMap<String, String>();
+
     public static Map<String, String> userSessionId = new HashMap<String, String>();
 
     public static Map<String, String> waitUsers = new HashMap<String, String>();

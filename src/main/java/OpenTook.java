@@ -83,7 +83,7 @@ public class OpenTook {
         //Session session = opentok.createSession();
 
         TokenOptions tokenOpts = new TokenOptions.Builder()
-                .expireTime((System.currentTimeMillis() / 1000L) + (6 * 60)) // in one week
+                .expireTime((System.currentTimeMillis() / 1000L) + (1 * 60)) // in one week
                 .build();
 
         Conn();
