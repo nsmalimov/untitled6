@@ -64,6 +64,15 @@ public class OpenTook {
         stat.close();
     }
 
+    public static void updateAllNull() throws ClassNotFoundException, SQLException, NamingException {
+
+        stat = conn.createStatement();
+
+        int n = stat.executeUpdate("UPDATE rooms SET much = " + Integer.toString(0));
+
+        stat.close();
+    }
+
     public static String generateToken() throws OpenTokException,ClassNotFoundException, SQLException, NamingException
     {
         int apiKey = 45400602; // YOUR API KEY
@@ -93,11 +102,12 @@ public class OpenTook {
 
         Conn();
 
-        String sessionName = getFreeSession();
+        //String sessionName = getFreeSession();
 
-        updateSession(sessionName, 2);
+        updateAllNull();
+        //updateSession(sessionName, 2);
 
-        System.out.println(sessionName);
+        //System.out.println(sessionName);
 
         CloseDB();
     }

@@ -210,6 +210,7 @@ function hangup() {
     //call closeConnect server
     var sentJson = new Object();
     sentJson.command = "4";
+    sentJson.session = sessionId;
     ws.send(JSON.stringify(sentJson));
 }
 

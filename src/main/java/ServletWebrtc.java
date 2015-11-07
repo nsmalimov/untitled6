@@ -215,6 +215,13 @@ public class ServletWebrtc {
             case 4:
                 //полностью удалить пользователя
 
+                String sessionToRemove = jsonObject.getString("session");
+                OpenTook.Conn();
+                OpenTook.updateSession(sessionToRemove, 0);
+                OpenTook.CloseDB();
+
+                System.out.println("update " + sessionToRemove);
+
                 BuildClass.SessionUser.closeConnect(client);
 
                 break;
