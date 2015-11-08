@@ -64,6 +64,32 @@ public class OpenTook {
         stat.close();
     }
 
+    public static void updateMinusOne(String sessionName) throws ClassNotFoundException, SQLException, NamingException {
+
+        stat = conn.createStatement();
+        ResultSet rs = stat.executeQuery("select much from rooms where session = '" + sessionName + "'");
+
+        while (rs.next()) {
+            int answer = rs.getInt("much");
+
+            if (answer == 0)
+            {
+                rs.close();
+                stat.close();
+                return;
+            }
+
+            answer -= 1;
+
+            int n = stat.executeUpdate("UPDATE rooms SET much = " + Integer.toString(answer)
+                    + "where session = '" + sessionName + "'");
+            break;
+        }
+
+        rs.close();
+        stat.close();
+    }
+
     public static void updateAllNull() throws ClassNotFoundException, SQLException, NamingException {
 
         stat = conn.createStatement();
@@ -83,7 +109,7 @@ public class OpenTook {
         //Session session = opentok.createSession();
 
         TokenOptions tokenOpts = new TokenOptions.Builder()
-                .expireTime((System.currentTimeMillis() / 1000L) + (1 * 60)) // in one week
+                .expireTime((System.currentTimeMillis() / 1000L) + (20 * 60)) // in one week
                 .build();
 
         Conn();

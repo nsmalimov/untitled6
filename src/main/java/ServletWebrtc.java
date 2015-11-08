@@ -47,8 +47,13 @@ public class ServletWebrtc {
 
         OpenTook.Conn();
 
-        OpenTook.updateSession(sessionName, 0);
+        OpenTook.updateMinusOne(sessionName);
         OpenTook.CloseDB();
+
+        if (SessionUser.hasVideoId.containsKey(session.getId()))
+        {
+            SessionUser.hasVideoId.remove(session.getId());
+        }
 
         BuildClass.SessionUser.closeConnect(session);
 
@@ -63,7 +68,7 @@ public class ServletWebrtc {
 
         JSONObject jsonObject = new JSONObject(message);
 
-        System.out.println(message);
+        //System.out.println(message);
 
         int command = Integer.parseInt(jsonObject.getString("command"));
 
@@ -103,10 +108,10 @@ public class ServletWebrtc {
 
                     String sessionName = tok[2];
 
-                    System.out.println(sessionName);
+                    //System.out.println(sessionName);
 
-                    System.out.println(token1);
-                    System.out.println(token2);
+                    //System.out.println(token1);
+                    //System.out.println(token2);
 
                     JSONObject jsonToReturn1 = new JSONObject();
                     jsonToReturn1.put("answer", "start");
@@ -146,37 +151,9 @@ public class ServletWebrtc {
                     SessionUser.userSessions.put(locutorSes1.getId(), sessionName);
 
                 } catch (Exception e) {
-                    System.out.println(e);
+                    //System.out.println(e);
                 }
 
-
-                break;
-
-            case 2: //new interlocutor
-
-                //System.out.println(2);
-                int answer = SessionUser.connectTwo(client);
-
-                //System.out.println("answer " + answer);
-
-                if (answer == 0) {
-                    //в режим ожидания
-                    JSONObject jsonToReturn2 = new JSONObject();
-                    jsonToReturn2.put("answer", "wait_window");
-                    client.getBasicRemote().sendText(jsonToReturn2.toString());
-                    //System.out.println("wait_command");
-                } else {
-                    //начать чат
-                    JSONObject jsonToReturn2 = new JSONObject();
-                    jsonToReturn2.put("answer", "new_interlocutor");
-
-                    String interlocutorName = SessionUser.getInterlocutorName(client);
-
-                    jsonToReturn2.put("interlocutorName", interlocutorName);
-                    client.getBasicRemote().sendText(jsonToReturn2.toString());
-                }
-
-                //BuildClass.SessionUser.printParams();
 
                 break;
 
@@ -199,10 +176,10 @@ public class ServletWebrtc {
 
                 String sessionToRemove = jsonObject.getString("session");
                 OpenTook.Conn();
-                OpenTook.updateSession(sessionToRemove, 0);
+                OpenTook.updateMinusOne(sessionToRemove);
                 OpenTook.CloseDB();
 
-                System.out.println("update " + sessionToRemove);
+                //System.out.println("update " + sessionToRemove);
 
                 BuildClass.SessionUser.closeConnect(client);
 
@@ -269,8 +246,6 @@ public class ServletWebrtc {
                     locutorSes3.getBasicRemote().sendText(jsonToReturn7.toString());
                 }
 
-                //System.out.println(jsonToReturn6.toString());
-
                 break;
 
             case 7: //новый пользователь
@@ -291,7 +266,6 @@ public class ServletWebrtc {
                 break;
 
             default:
-                //System.out.println("default");
                 break;
         }
     }
