@@ -1,3 +1,3 @@
-Sample video chat java
+Simple video chat java
 
 Use WebRTC technology
