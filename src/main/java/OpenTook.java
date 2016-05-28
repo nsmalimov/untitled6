@@ -1,13 +1,6 @@
-import Databases.SQLiteClass;
 import com.opentok.OpenTok;
-import com.opentok.exception.OpenTokException;
-
-import com.opentok.MediaMode;
-import com.opentok.ArchiveMode;
-import com.opentok.Session;
-import com.opentok.SessionProperties;
 import com.opentok.TokenOptions;
-import com.opentok.Role;
+import com.opentok.exception.OpenTokException;
 
 import javax.naming.NamingException;
 import java.sql.*;
@@ -72,8 +65,7 @@ public class OpenTook {
         while (rs.next()) {
             int answer = rs.getInt("much");
 
-            if (answer == 0)
-            {
+            if (answer == 0) {
                 rs.close();
                 stat.close();
                 return;
@@ -99,14 +91,11 @@ public class OpenTook {
         stat.close();
     }
 
-    public static String generateToken() throws OpenTokException,ClassNotFoundException, SQLException, NamingException
-    {
+    public static String generateToken() throws OpenTokException, ClassNotFoundException, SQLException, NamingException {
         int apiKey = 45400602; // YOUR API KEY
         String apiSecret = "e832beaf7185469a0f6c42ba4f2358d8c0e78165";
 
         OpenTok opentok = new OpenTok(apiKey, apiSecret);
-
-        //Session session = opentok.createSession();
 
         TokenOptions tokenOpts = new TokenOptions.Builder()
                 .expireTime((System.currentTimeMillis() / 1000L) + (20 * 60)) // in one week
@@ -123,18 +112,10 @@ public class OpenTook {
         return token1 + "," + token2 + "," + sessionId;
     }
 
-    public static void main(String args[]) throws ClassNotFoundException, SQLException, NamingException
-    {
+    public static void main(String args[]) throws ClassNotFoundException, SQLException, NamingException {
 
         Conn();
-
-        //String sessionName = getFreeSession();
-
         updateAllNull();
-        //updateSession(sessionName, 2);
-
-        //System.out.println(sessionName);
-
         CloseDB();
     }
 }

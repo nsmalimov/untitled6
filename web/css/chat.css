@@ -214,7 +214,7 @@ textarea {
     font-family: 'Roboto', sans-serif;
 }
 
-.button_main{
+.button_main {
     margin: 0px 8px 20px 0px;
     width: 80px;
     height: 50px;
@@ -232,16 +232,13 @@ video#localVideo {
     margin: 0 20px 20px 0;
 }
 
-
 /*dima css*/
-
 
 #remote_container {
     margin: 10px auto;
     width: 84.3%;
     display: block;
 }
-
 
 #local_container {
     margin: 10px auto;
@@ -259,15 +256,17 @@ video#localVideo {
     float: none;
 }
 
-
 @media screen and (max-width: 768px) {
-    #remote_container #remote {width:70%;}
-    #local {width:70%;}
+    #remote_container #remote {
+        width: 70%;
+    }
+
+    #local {
+        width: 70%;
+    }
 }
 
-
 /*dima css end*/
-
 
 @media screen and (max-width: 400px) {
     video {
@@ -275,25 +274,32 @@ video#localVideo {
         margin: 0 0 10px 0;
         width: calc(50% - 7px);
     }
+
     video#localVideo {
         margin: 0 10px 20px 0;
     }
 
 }
 
-#enter_button{
+#enter_button {
     float: none;
     display: table-cell;
     vertical-align: middle;
 }
 
-.btn.newclass {width:25%; display:block; margin: 0 auto;}
+.btn.newclass {
+    width: 25%;
+    display: block;
+    margin: 0 auto;
+}
 
 .button_main {
     margin: 0px 0px 0px 22px;
 }
 
-[hidden] { display: none; }
+[hidden] {
+    display: none;
+}
 
 textarea {
     resize: none;

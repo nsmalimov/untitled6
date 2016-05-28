@@ -1,15 +1,14 @@
 package BuildClass;
 
-import Databases.SQLiteClass;
 import org.json.JSONObject;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 
-import javax.naming.NamingException;
 import javax.websocket.EncodeException;
 import javax.websocket.Session;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class SessionUser {
@@ -29,16 +28,15 @@ public class SessionUser {
 
     public static Map<String, String> waitUsers = new HashMap<String, String>();
 
-    public static void printParams()
-    {
+    public static void printParams() {
         System.out.println("print on");
 
-        for (Map.Entry<String,Session> entry : sessions.entrySet()) {
+        for (Map.Entry<String, Session> entry : sessions.entrySet()) {
 
             System.out.println("Sessions " + "Key : " + entry.getKey() + " Value : " + entry.getValue());
         }
 
-        for (String s: freeUsersArray)
+        for (String s : freeUsersArray)
             System.out.println("freeUsersArray: " + s);
 
         for (Map.Entry<String, String> entry : map1.entrySet()) {
@@ -58,27 +56,22 @@ public class SessionUser {
         }
     }
 
-    public static void addFreeUser(Session session, String name, String isVideo) throws IOException, EncodeException
-    {
+    public static void addFreeUser(Session session, String name, String isVideo) throws IOException, EncodeException {
         sessions.put(session.getId(), session);
         userSessionId.put(session.getId(), name);
 
-        if (isVideo.equals("no"))
-        {
+        if (isVideo.equals("no")) {
             hasVideoId.put(session.getId(), "000");
         }
 
-        if (freeUsersArray.size() == 0)
-        {
+        if (freeUsersArray.size() == 0) {
             freeUsersArray.add(session.getId());
 
             JSONObject jsonToReturn = new JSONObject();
             jsonToReturn.put("answer", "owner");
             session.getBasicRemote().sendText(jsonToReturn.toString());
 
-        }
-        else
-        {
+        } else {
             String waitingUsersId = freeUsersArray.get(0);
 
             map1.put(session.getId(), waitingUsersId);
@@ -87,7 +80,6 @@ public class SessionUser {
             JSONObject jsonToReturn = new JSONObject();
 
             jsonToReturn.put("answer", "guest");
-            //System.out.println("guest " + session.getId());
 
             jsonToReturn.put("nameInterlocutor", userSessionId.get(waitingUsersId));
 
@@ -100,13 +92,11 @@ public class SessionUser {
     public static Session getInterlocutorSession(Session client) {
         String needSent = "";
 
-        if (map1.containsKey(client.getId()))
-        {
+        if (map1.containsKey(client.getId())) {
             needSent = map1.get(client.getId());
         }
 
-        if (map2.containsKey(client.getId()))
-        {
+        if (map2.containsKey(client.getId())) {
             needSent = map2.get(client.getId());
         }
 
@@ -118,13 +108,11 @@ public class SessionUser {
     public static String getInterlocutorName(Session client) {
         String needSent = "";
 
-        if (map1.containsKey(client.getId()))
-        {
+        if (map1.containsKey(client.getId())) {
             needSent = map1.get(client.getId());
         }
 
-        if (map2.containsKey(client.getId()))
-        {
+        if (map2.containsKey(client.getId())) {
             needSent = map2.get(client.getId());
         }
 
@@ -160,47 +148,38 @@ public class SessionUser {
 
         boolean checker = false;
 
-        if (map1.containsKey(session.getId()))
-        {
+        if (map1.containsKey(session.getId())) {
             map1.remove(session.getId());
             checker = true;
         }
 
-        if (map2.containsKey(session.getId()))
-        {
+        if (map2.containsKey(session.getId())) {
             map2.remove(session.getId());
             checker = true;
         }
 
-        if (map1.containsKey(interlocutorName))
-        {
+        if (map1.containsKey(interlocutorName)) {
             map1.remove(interlocutorName);
             checker = true;
         }
 
-        if (map2.containsKey(interlocutorName))
-        {
+        if (map2.containsKey(interlocutorName)) {
             map2.remove(interlocutorName);
             checker = true;
         }
 
-        if (sessions.containsKey(session.getId()))
-        {
+        if (sessions.containsKey(session.getId())) {
             sessions.remove(session.getId());
         }
 
-        if (userSessionId.containsKey(session.getId()))
-        {
+        if (userSessionId.containsKey(session.getId())) {
             userSessionId.remove(session.getId());
         }
 
 
         try {
             freeUsersArray.remove(session.getId());
-        }
-        catch (Throwable e)
-        {
-            //System.out.println(e);
+        } catch (Throwable e) {
         }
 
         //сказать что собеседник вышел => открыть окно подтверждения
@@ -218,35 +197,28 @@ public class SessionUser {
 
         String interlocutorName = getInterlocutorName(session);
 
-        if (map1.containsKey(session.getId()))
-        {
+        if (map1.containsKey(session.getId())) {
             map1.remove(session.getId());
         }
 
-        if (map2.containsKey(session.getId()))
-        {
+        if (map2.containsKey(session.getId())) {
             map2.remove(session.getId());
         }
 
-        if (map1.containsKey(interlocutorName))
-        {
+        if (map1.containsKey(interlocutorName)) {
             map1.remove(interlocutorName);
         }
 
-        if (map2.containsKey(interlocutorName))
-        {
+        if (map2.containsKey(interlocutorName)) {
             map2.remove(interlocutorName);
         }
 
-        if (sessions.containsKey(session.getId()))
-        {
+        if (sessions.containsKey(session.getId())) {
             sessions.remove(session.getId());
         }
 
-        if (userSessionId.containsKey(session.getId()))
-        {
+        if (userSessionId.containsKey(session.getId())) {
             userSessionId.remove(session.getId());
         }
-
     }
 }

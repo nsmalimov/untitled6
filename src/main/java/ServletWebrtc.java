@@ -1,35 +1,12 @@
+import BuildClass.SessionUser;
 import Databases.SQLiteClass;
-
-import javax.servlet.http.HttpServlet;
-import javax.websocket.EncodeException;
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.OnError;
-import javax.websocket.Session;
-import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
-
-import com.opentok.OpenTok;
-import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.json.JSONObject;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-
+import javax.naming.NamingException;
+import javax.websocket.*;
+import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.sql.SQLException;
-import javax.naming.NamingException;
-
-
-import java.util.*;
-import java.util.concurrent.ConcurrentMap;
-
-import static java.util.Collections.emptySet;
-
-import java.io.StringReader;
-
-import BuildClass.SessionUser;
 
 @ServerEndpoint(value = "/webrtc")
 public class ServletWebrtc {
@@ -50,8 +27,7 @@ public class ServletWebrtc {
         OpenTook.updateMinusOne(sessionName);
         OpenTook.CloseDB();
 
-        if (SessionUser.hasVideoId.containsKey(session.getId()))
-        {
+        if (SessionUser.hasVideoId.containsKey(session.getId())) {
             SessionUser.hasVideoId.remove(session.getId());
         }
 
@@ -67,8 +43,6 @@ public class ServletWebrtc {
             NamingException, ClassNotFoundException {
 
         JSONObject jsonObject = new JSONObject(message);
-
-        //System.out.println(message);
 
         int command = Integer.parseInt(jsonObject.getString("command"));
 
@@ -108,11 +82,6 @@ public class ServletWebrtc {
 
                     String sessionName = tok[2];
 
-                    //System.out.println(sessionName);
-
-                    //System.out.println(token1);
-                    //System.out.println(token2);
-
                     JSONObject jsonToReturn1 = new JSONObject();
                     jsonToReturn1.put("answer", "start");
                     jsonToReturn1.put("token", token1);
@@ -127,8 +96,7 @@ public class ServletWebrtc {
                     jsonToReturn2.put("session_name", sessionName);
                     jsonToReturn2.put("interlocutorName", interlocutorName1);
 
-                    if (SessionUser.hasVideoId.containsKey(client.getId()))
-                    {
+                    if (SessionUser.hasVideoId.containsKey(client.getId())) {
                         JSONObject jsonToReturn12 = new JSONObject();
                         jsonToReturn12.put("answer", "only_text");
 
@@ -136,8 +104,7 @@ public class ServletWebrtc {
                         SessionUser.hasVideoId.remove(client.getId());
                     }
 
-                    if (SessionUser.hasVideoId.containsKey(locutorSes1.getId()))
-                    {
+                    if (SessionUser.hasVideoId.containsKey(locutorSes1.getId())) {
                         JSONObject jsonToReturn12 = new JSONObject();
                         jsonToReturn12.put("answer", "only_text");
 
@@ -151,7 +118,6 @@ public class ServletWebrtc {
                     SessionUser.userSessions.put(locutorSes1.getId(), sessionName);
 
                 } catch (Exception e) {
-                    //System.out.println(e);
                 }
 
 
@@ -179,8 +145,6 @@ public class ServletWebrtc {
                 OpenTook.updateMinusOne(sessionToRemove);
                 OpenTook.CloseDB();
 
-                //System.out.println("update " + sessionToRemove);
-
                 BuildClass.SessionUser.closeConnect(client);
 
                 break;
@@ -194,7 +158,6 @@ public class ServletWebrtc {
                 try {
                     genKeygen = SQLiteClass.generateKeygen();
                 } catch (Exception e) {
-                    //System.out.println(e);
                 } finally {
                     SQLiteClass.CloseDB();
                 }
@@ -215,14 +178,11 @@ public class ServletWebrtc {
 
                 String lastName = jsonObject.getString("last_name");
 
-                //System.out.println(newName);
-
                 SQLiteClass.Conn();
 
                 try {
                     SQLiteClass.updateName(lastName, newName, ip);
                 } catch (Exception e) {
-                    //System.out.println(e);
                 } finally {
                     SQLiteClass.CloseDB();
                 }

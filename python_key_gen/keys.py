@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
+import psycopg2
 import random
 import string
-import sys
-import psycopg2
 
 
 def insert_to_db(generated_array, marker):
-
     conn = psycopg2.connect("dbname='videochat' user='postgres' host='localhost' password='ve;br'")
 
     cur = conn.cursor()
 
     for i in generated_array:
-        query =  "INSERT INTO keyGens (keyGen, marker) VALUES (%s, %s);"
+        query = "INSERT INTO keyGens (keyGen, marker) VALUES (%s, %s);"
         data = (i, marker)
 
         cur.execute(query, data)
 
     conn.commit()
     conn.close()
+
 
 def generate_fund():
     result = ""
@@ -42,5 +41,6 @@ def insert_key():
         generated_array.append(generate_fund())
 
     insert_to_db(generated_array, "not_used")
+
 
 insert_key()

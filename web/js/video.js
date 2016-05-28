@@ -57,7 +57,7 @@ var session = null;
 
 function initSocket() {
 
-    var pubOptions = {publishAudio:true, publishVideo:true, width: 400, height: 300};
+    var pubOptions = {publishAudio: true, publishVideo: true, width: 400, height: 300};
 
     var sentJson1 = new Object();
 
@@ -81,7 +81,6 @@ function initSocket() {
     });
 
 
-
     $("#stopButton").attr("disabled", false);
     waitingWindowStart();
 }
@@ -95,8 +94,7 @@ ws.onmessage = function (event) {
     log(getCommand);
 
     ///получить токен и начать трансляцию
-    if (getCommand === "start")
-    {
+    if (getCommand === "start") {
         componentPropetrOn();
         waitingWindowStop();
 
@@ -125,7 +123,7 @@ ws.onmessage = function (event) {
 
     //// не верная контрольная сумма
 
-    if (getCommand === "only_text"){
+    if (getCommand === "only_text") {
         upDateChatBoxGet("Системное сообщение", "У собеседника нет камеры");
     }
 
@@ -196,7 +194,6 @@ function hangup() {
     //session.unsubscribe(subscriber);
 
     session.disconnect();
-
 
 
     $("#main_container").prepend("<div class='row' id='local_container'></div>");

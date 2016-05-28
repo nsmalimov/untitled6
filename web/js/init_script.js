@@ -15,7 +15,7 @@ var controlSum = "";
 var serverPath = serverProtocolName + "//" + serverHostName + ":" + portName;
 
 var userIp = getURL();
-userIp = userIp.slice(2, userIp.length-1);
+userIp = userIp.slice(2, userIp.length - 1);
 
 userIp = JSON.parse(userIp)["ip"];
 
@@ -35,8 +35,7 @@ function serverConnectFunc(serverUrl, jsonData) {
 
         success: function (event) {
             //парсинг ответов сервера
-            switch (event["answer"])
-            {
+            switch (event["answer"]) {
                 case "ok":
                     userName = event['name'];
                     controlSum = event['ctrlsum'];
@@ -100,7 +99,7 @@ function createJsonRegistration() {
     return JSON.stringify(json_create);
 }
 
-function getURL(){
+function getURL() {
     return $.ajax({
         type: "GET",
         url: "http://jsonip.com?callback=?",
@@ -109,7 +108,7 @@ function getURL(){
     }).responseText;
 }
 
-function getCoordinates(userIp){
+function getCoordinates(userIp) {
     return $.ajax({
         type: "GET",
         url: "http://www.telize.com/geoip/" + userIp,
@@ -158,41 +157,36 @@ function autorizeFunc() {
     serverConnectFunc(serverPath, jsonData);
 }
 
-function sentRegistrationData(){
+function sentRegistrationData() {
     var jsonData = createJsonRegistration();
     serverConnectFunc(serverPath, jsonData);
 }
 
 //TODO
 //сделать прозрачным экран ожидания
-function waitingWindowStart()
-{
+function waitingWindowStart() {
     $('#demo-content').show();
     componentPropetrOff();
 
     $("#startButton").prop('disabled', true);
 }
 
-function waitingWindowStop()
-{
+function waitingWindowStop() {
     $('#demo-content').hide();
     var loader = $('#element').data('introLoader');
     //loader.stop();
 }
 
-function inviteFreind()
-{
+function inviteFreind() {
     $('#invite_friend').modal('show');
 }
 
 
-function myProfile()
-{
+function myProfile() {
     $('#my_profile').modal('show');
 }
 
-function componentPropetrOn()
-{
+function componentPropetrOn() {
     $("#stopButton").prop('disabled', false);
     $("#newButton").prop('disabled', false);
     $("#startButton").prop('disabled', true);
@@ -202,8 +196,7 @@ function componentPropetrOn()
     $('#text_input').prop('disabled', false);
 }
 
-function componentPropetrOff()
-{
+function componentPropetrOff() {
     $("#stopButton").prop('disabled', true);
     $("#newButton").prop('disabled', true);
     $("#startButton").prop('disabled', false);
@@ -217,8 +210,7 @@ function componentPropetrOff()
     $('#myModal2').modal('hide');
 }
 
-function sentName()
-{
+function sentName() {
     var jsonData = new Object();
     jsonData.command = 2;
     jsonData.name = $("#NameInput").val();
@@ -227,29 +219,29 @@ function sentName()
     serverConnectFunc(serverPath, JSON.stringify(jsonData));
 }
 
-window.onload = function() {
+window.onload = function () {
     //Документ и все ресурсы загружены
 
-    $('#myModal1').keydown(function (e){
-        if(e.keyCode == 13){
+    $('#myModal1').keydown(function (e) {
+        if (e.keyCode == 13) {
             sentRegistrationData();
         }
     });
 
-    $('#myModal2').keydown(function (e){
-        if(e.keyCode == 13){
+    $('#myModal2').keydown(function (e) {
+        if (e.keyCode == 13) {
             sentRegistrationData();
         }
     });
 
-    $('#invite_friend').keydown(function (e){
-        if(e.keyCode == 13){
+    $('#invite_friend').keydown(function (e) {
+        if (e.keyCode == 13) {
             sentRegistrationData();
         }
     });
 
-    $('#my_profile').keydown(function (e){
-        if(e.keyCode == 13){
+    $('#my_profile').keydown(function (e) {
+        if (e.keyCode == 13) {
             sentRegistrationData();
         }
     });
@@ -264,9 +256,8 @@ window.onload = function() {
     //    }
     //});
 
-    $("#text_input").keydown(function(e){
-        if (e.keyCode == 13 && !e.shiftKey)
-        {
+    $("#text_input").keydown(function (e) {
+        if (e.keyCode == 13 && !e.shiftKey) {
             sentMessages();
         }
     });
