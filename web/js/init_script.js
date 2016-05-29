@@ -19,10 +19,6 @@ userIp = userIp.slice(2, userIp.length - 1);
 
 userIp = JSON.parse(userIp)["ip"];
 
-//userIp = "1.2.4.9";
-
-//alert(userIp);
-
 function serverConnectFunc(serverUrl, jsonData) {
     $.ajax({
         url: serverUrl + "/autorization",
@@ -31,7 +27,6 @@ function serverConnectFunc(serverUrl, jsonData) {
 
         dataType: 'json',
         async: true,
-        //contentType: 'application/json',
 
         success: function (event) {
             //парсинг ответов сервера
@@ -55,9 +50,6 @@ function serverConnectFunc(serverUrl, jsonData) {
                     $("#keyInputerClass2").hide();
                     $("#keyInputerClass3").hide();
 
-                    //TODO rewrite
-                    //$("#NameInput").val("Руслан");
-
                     $("#registerButton").hide();
 
                     break;
@@ -70,10 +62,6 @@ function serverConnectFunc(serverUrl, jsonData) {
                     $('#myModal1').modal('show');
 
                     $("#nameButton").hide();
-
-                    //TODO rewrite
-                    //$("#NameInput").val("Руслан");
-                    //$("#KeyInput").val("9YQH-E8CI-N2XJ-2YV");
 
                     break;
 
@@ -128,21 +116,6 @@ function createJsonAutorization() {
 
     json_create.ip = userIp;
 
-    //var coordString = getCoordinates(userIp);
-
-    //json_create.ip = "0";
-
-    //var coordJson = JSON.parse(coordString);
-
-    //if (coordJson["isp"] === "Saint-Petersburg State University")
-    //{
-    //    json_create.ip = "0";
-    //}
-    //else
-    //{
-    //    json_create.ip = userIp;
-    //}
-
     return JSON.stringify(json_create);
 }
 
@@ -174,7 +147,6 @@ function waitingWindowStart() {
 function waitingWindowStop() {
     $('#demo-content').hide();
     var loader = $('#element').data('introLoader');
-    //loader.stop();
 }
 
 function inviteFreind() {
@@ -249,12 +221,6 @@ window.onload = function () {
     autorizeFunc();
 
     componentPropetrOff();
-
-    //$('#text_input').keydown(function (e){
-    //    if(e.keyCode == 13){
-    //        sentMessages();
-    //    }
-    //});
 
     $("#text_input").keydown(function (e) {
         if (e.keyCode == 13 && !e.shiftKey) {

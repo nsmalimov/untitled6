@@ -152,7 +152,6 @@ ws.onmessage = function (event) {
         hangup();
         initSocket();
         componentPropetrOff();
-        //$('#myModal2').modal('show');
     }
 
     if (getJson["answer"] === "token") {
@@ -209,7 +208,6 @@ function hangup() {
 }
 
 function newInterlocutor() {
-    //hangup();
     initSocket();
     componentPropetrOff();
 }
