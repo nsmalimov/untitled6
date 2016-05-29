@@ -16,7 +16,7 @@ public class SQLiteClass {
 
         //полный путь к базе данных
 
-        conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1/videochat", "postgres", "ve;br");
+        conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1/videochat", "postgres", "");
 
     }
 

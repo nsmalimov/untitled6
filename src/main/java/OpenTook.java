@@ -18,7 +18,7 @@ public class OpenTook {
 
         //полный путь к базе данных
 
-        conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1/videochat", "postgres", "ve;br");
+        conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1/videochat", "postgres", "");
 
     }
 
@@ -92,8 +92,8 @@ public class OpenTook {
     }
 
     public static String generateToken() throws OpenTokException, ClassNotFoundException, SQLException, NamingException {
-        int apiKey = 45400602; // YOUR API KEY
-        String apiSecret = "e832beaf7185469a0f6c42ba4f2358d8c0e78165";
+        int apiKey = ; // YOUR API KEY
+        String apiSecret = "";
 
         OpenTok opentok = new OpenTok(apiKey, apiSecret);
 

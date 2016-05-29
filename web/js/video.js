@@ -8,8 +8,8 @@ count_tocken = 0;
 
 var ws = null;
 
-if (serverHostName === 'videochatspbu.ru') {
-    ws = new WebSocket("ws://" + "95.213.199.90" + ":" + "8080" + "/webrtc");
+if (serverHostName === '') {
+    ws = new WebSocket("ws://" + "" + ":" + "8080" + "/webrtc");
 }
 else {
     ws = new WebSocket("ws://" + serverHostName + ":" + portName + "/webrtc");
@@ -51,7 +51,7 @@ var onlyText = false;
 
 var wasUsed = false;
 
-var apiKey = '45400602';
+var apiKey = '';
 
 var session = null;
 

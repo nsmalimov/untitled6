@@ -5,7 +5,7 @@ import string
 
 
 def insert_to_db(generated_array, marker):
-    conn = psycopg2.connect("dbname='videochat' user='postgres' host='localhost' password='ve;br'")
+    conn = psycopg2.connect("dbname='videochat' user='postgres' host='localhost' password=''")
 
     cur = conn.cursor()
 

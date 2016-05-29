@@ -2,14 +2,14 @@ import copy
 import psycopg2
 from opentok import OpenTok
 
-apiKey = 45400602
-apiSecret = "e832beaf7185469a0f6c42ba4f2358d8c0e78165"
+apiKey = _
+apiSecret = ""
 
 opentok = OpenTok(apiKey, apiSecret)
 
 
 def insert_to_db(generated_array):
-    conn = psycopg2.connect("dbname='videochat' user='postgres' host='localhost' password='ve;br'")
+    conn = psycopg2.connect("dbname='videochat' user='postgres' host='localhost' password=''")
 
     cur = conn.cursor()
 
